@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* When switching to Light (html has no .dark class), Old (Dark) should be on top to shrink */
+html:not(.dark)::view-transition-old(root) {
+  z-index: 2147483646;
+}
+html:not(.dark)::view-transition-new(root) {
+  z-index: 1;
+}

@@ -3,13 +3,16 @@ import { PROFILE, EXPERIENCE, PROJECTS, EDUCATION, LEADERSHIP, ICONS_MAP } from 
 import Section from './components/Section';
 import Card from './components/Card';
 import Badge from './components/Badge';
-import { Link as LinkIcon, Globe, Mail, Sun, Moon } from 'lucide-react';
+import { ThemeSwitch } from './components/ThemeSwitch';
+import { useTheme } from 'next-themes';
+import { Link as LinkIcon, Globe, Mail } from 'lucide-react';
 
 const App: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [lineHeight, setLineHeight] = useState(0);
   const [activeSection, setActiveSection] = useState<string>('education');
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === 'dark';
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -20,16 +23,6 @@ const App: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   // Handle the timeline line drawing
   useEffect(() => {
@@ -121,13 +114,7 @@ const App: React.FC = () => {
       <div className="max-w-2xl mx-auto px-6 py-20 relative z-10">
         
         {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="fixed top-6 right-6 z-50 p-2 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-all duration-300 shadow-lg"
-          aria-label="Toggle theme"
-        >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+        <ThemeSwitch className="fixed top-6 right-6 z-50 shadow-lg" />
 
         {/* Header - Outside of the timeline line scope */}
         <header className="mb-20">
