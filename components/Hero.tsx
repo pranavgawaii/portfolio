@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { PROFILE, ICONS_MAP } from '../constants';
 import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check } from 'lucide-react';
+import MusicPlayer from './MusicPlayer';
+import ContactModal from './ContactModal';
 
 const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color: string }) => (
   <span className="inline-flex items-center gap-1.5 mx-1 font-medium text-neutral-800 dark:text-neutral-200 border-b border-neutral-200 dark:border-neutral-800 pb-0.5 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors">
@@ -52,6 +54,7 @@ const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, labe
 
 const Hero: React.FC = () => {
   const [showResume, setShowResume] = useState(false);
+  const [showContact, setShowContact] = useState(false);
 
   return (
     <header className="pt-32 pb-20">
@@ -98,13 +101,13 @@ const Hero: React.FC = () => {
             <span>Resume / CV</span>
           </button>
           
-          <a 
-            href="mailto:pranavgawai1518@gmail.com"
+          <button 
+            onClick={() => setShowContact(true)}
             className="flex items-center gap-2 px-5 py-2.5 text-sm bg-neutral-900 dark:bg-white text-white dark:text-black border border-transparent rounded-lg font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
           >
             <Mail size={16} />
             <span>Get in touch</span>
-          </a>
+          </button>
         </div>
 
         {/* Social Icons */}
@@ -122,7 +125,13 @@ const Hero: React.FC = () => {
           })}
         </div>
 
+        {/* Music Player */}
+        <MusicPlayer />
+
       </div>
+
+      {/* Contact Modal */}
+      <ContactModal isOpen={showContact} onClose={() => setShowContact(false)} />
 
       {/* Resume Modal */}
       {showResume && (
