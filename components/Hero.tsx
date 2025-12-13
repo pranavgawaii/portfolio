@@ -27,7 +27,7 @@ const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, labe
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative p-2 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+      className="group relative p-1.5 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
       aria-label={label}
     >
       <span className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-neutral-900 dark:bg-neutral-700 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ${isEmail ? '' : 'pointer-events-none'} flex items-center gap-2 z-50`}>
@@ -45,7 +45,7 @@ const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, labe
         {/* Bridge to prevent tooltip from closing when moving mouse to it */}
         <span className="absolute top-full left-0 w-full h-2 bg-transparent"></span>
       </span>
-      <Icon size={24} strokeWidth={1.5} />
+      <Icon size={20} strokeWidth={1.5} />
     </a>
   );
 };
