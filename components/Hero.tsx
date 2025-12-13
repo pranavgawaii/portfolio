@@ -9,6 +9,24 @@ const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color
   </span>
 );
 
+const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, label: string }) => {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative p-2 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+      aria-label={label}
+    >
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-neutral-900 dark:bg-neutral-700 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        {label}
+        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-700"></span>
+      </span>
+      <Icon size={24} strokeWidth={1.5} />
+    </a>
+  );
+};
+
 const Hero: React.FC = () => {
   const [showResume, setShowResume] = useState(false);
 
@@ -67,20 +85,16 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Social Icons */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-1">
           {PROFILE.socials.map((social) => {
             const Icon = ICONS_MAP[social.icon.toLowerCase()] || LinkIcon;
             return (
-              <a 
-                key={social.name} 
+              <SocialLink 
+                key={social.name}
                 href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors transform hover:scale-110"
-                aria-label={social.name}
-              >
-                <Icon size={24} strokeWidth={1.5} />
-              </a>
+                icon={Icon}
+                label={social.name}
+              />
             );
           })}
         </div>
