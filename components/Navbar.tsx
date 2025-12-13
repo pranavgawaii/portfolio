@@ -5,12 +5,15 @@ const Navbar: React.FC = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      // For mobile browsers, offset for fixed navbar
+      const yOffset = -80; // Adjust if your navbar height changes
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
   return (
-    <nav className="fixed bottom-6 sm:top-6 sm:bottom-auto left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl grid grid-cols-3 items-center px-4 py-2 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl rounded-full border border-neutral-200 dark:border-neutral-800 shadow-lg transition-all duration-300">
+    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl grid grid-cols-3 items-center px-4 py-2 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl rounded-full border border-neutral-200 dark:border-neutral-800 shadow-lg transition-all duration-300">
       
       {/* Left: Empty */}
       <div></div>
