@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-20 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#050505]">
+    <footer className="mt-20 border-t border-neutral-200 dark:border-neutral-800">
       <div className="max-w-5xl mx-auto px-4 py-10 flex flex-col items-center gap-6">
         {/* Social Links */}
         <div className="flex flex-col items-center gap-2 w-full">
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             className="text-center font-sans text-[15px] md:text-[16px] text-neutral-400 dark:text-neutral-500 font-normal leading-tight"
             style={{ fontFamily: 'Plus Jakarta Sans, Inter, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
-            Design &amp; Developed by <span className="font-bold text-white dark:text-white" style={{fontWeight:700}}>pranavgawai</span><br />
+            Design &amp; Developed by <span className="font-bold text-black dark:text-white" style={{fontWeight:700}}>pranavgawai</span><br />
             <span className="text-[14px] md:text-[15px] text-neutral-400 dark:text-neutral-500">© 2025. All rights reserved.</span>
           </div>
         </div>

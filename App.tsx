@@ -15,6 +15,7 @@ import LeadershipCard from './components/LeadershipCard';
 import { useTheme } from 'next-themes';
 import { Globe, Mail, GraduationCap, Calendar, MapPin, ArrowUp } from 'lucide-react';
 import { ProjectItem } from './types';
+import GitHubActivitySection from './components/GitHubActivitySection';
 
 const App: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -238,27 +239,30 @@ const App: React.FC = () => {
 
         {/* About Me Section */}
         <AboutMe />
+        <GitHubActivitySection />
 
         {/* Featured Blog Section */}
         <FeaturedBlog />
 
         {/* Contact Section */}
-        <section className="mt-24 mb-12 text-center">
-             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Get In Touch</h2>
-             <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-md mx-auto">
-                If you’ve made it this far, we should talk.
-I’m open to collaborations, internships, and interesting problems.
-Have a question or an idea? My inbox is always open.
-             </p>
-             <a
-               href="https://x.com/messages/compose?recipient_id=pranavgawai_"
-               target="_blank"
-               rel="noopener noreferrer"
-               className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-neutral-900 border border-neutral-800 rounded-lg text-sm font-medium text-white dark:text-neutral-300 hover:bg-neutral-800 hover:text-white hover:border-neutral-700 transition-all group"
-             >
-               <Mail size={16} className="group-hover:-translate-y-0.5 transition-transform" />
-               Say Hello
-             </a>
+        <section className="mt-24 mb-12 flex justify-center items-center">
+          <div className="w-full max-w-3xl rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white/70 dark:bg-[#111]/70 shadow-[0_2px_16px_0_rgba(0,0,0,0.10)] backdrop-blur-md px-6 py-16 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Get In Touch</h2>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-md mx-auto">
+              If you’ve made it this far, we should talk :)<br/>
+              I’m open to Work , Collaborations, & Interesting problems.<br/>
+              Have a question or an idea? My inbox is always open.
+            </p>
+            <a
+              href="https://x.com/messages/compose?recipient_id=pranavgawai_"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-neutral-900 border border-neutral-800 rounded-lg text-sm font-medium text-white dark:text-neutral-300 hover:bg-neutral-800 hover:text-white hover:border-neutral-700 transition-all group"
+            >
+              <Mail size={16} className="group-hover:-translate-y-0.5 transition-transform" />
+              Say Hello
+            </a>
+          </div>
         </section>
 
         <Footer />
