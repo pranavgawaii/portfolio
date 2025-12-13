@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
         
         {/* Profile Picture */}
         <div className="relative mb-8">
-          <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white dark:border-[#050505] shadow-xl">
+          <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border-4 border-white dark:border-[#050505] shadow-xl">
             <img 
               src="/pgg.JPG" 
               alt={PROFILE.name}
@@ -30,7 +30,7 @@ const Hero: React.FC = () => {
             />
           </div>
           {/* Status Dot */}
-          <div className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-6 h-6 bg-white dark:bg-[#050505] rounded-full flex items-center justify-center">
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white dark:bg-[#050505] rounded-full flex items-center justify-center">
             <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-[#050505]"></div>
           </div>
         </div>

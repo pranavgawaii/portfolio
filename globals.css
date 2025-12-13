@@ -40,10 +40,20 @@ html {
   mix-blend-mode: normal;
 }
 
-/* When switching to Light (html has no .dark class), Old (Dark) should be on top to shrink */
+/* When switching to Light (html has no .dark class) */
+/* Old (Dark) is on top and shrinks to reveal New (Light) */
 html:not(.dark)::view-transition-old(root) {
   z-index: 2147483646;
 }
 html:not(.dark)::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* When switching to Dark (html has .dark class) */
+/* New (Dark) is on top and expands to cover Old (Light) */
+html.dark::view-transition-new(root) {
+  z-index: 2147483646;
+}
+html.dark::view-transition-old(root) {
   z-index: 1;
 }
