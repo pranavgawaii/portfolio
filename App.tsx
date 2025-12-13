@@ -5,6 +5,7 @@ import Card from './components/Card';
 import Badge from './components/Badge';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import ProjectModal from './components/ProjectModal';
 import { useTheme } from 'next-themes';
 import { Globe, Mail } from 'lucide-react';
@@ -282,12 +283,7 @@ const App: React.FC = () => {
              </a>
         </section>
 
-        <footer className="pb-12 pt-8 border-t border-neutral-200 dark:border-neutral-900/50">
-            <div className="flex justify-between items-center text-xs text-neutral-500 dark:text-neutral-600">
-                <p>© {new Date().getFullYear()} {PROFILE.name}</p>
-                <p>{PROFILE.location}</p>
-            </div>
-        </footer>
+        <Footer />
 
       </div>
 

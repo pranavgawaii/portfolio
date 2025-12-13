@@ -3,9 +3,9 @@ import { PROFILE, ICONS_MAP } from '../constants';
 import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers } from 'lucide-react';
 
 const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color: string }) => (
-  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 mx-1 text-sm font-medium bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-md align-middle transform hover:-translate-y-0.5 transition-transform cursor-default">
+  <span className="inline-flex items-center gap-1.5 mx-1 font-medium text-neutral-800 dark:text-neutral-200 border-b border-neutral-200 dark:border-neutral-800 pb-0.5 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors">
     <Icon size={14} className={color} />
-    <span className="text-neutral-700 dark:text-neutral-300">{name}</span>
+    {name}
   </span>
 );
 
@@ -34,24 +34,14 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Headline */}
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6">
-          Hi, I'm {PROFILE.name.split(' ')[0]} <span className="text-neutral-400 dark:text-neutral-600">—</span> A Full Stack web developer.
+        <h1 className="text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6 whitespace-nowrap">
+          Hi, I'm {PROFILE.name.split(' ')[0]} <span className="text-neutral-500 dark:text-neutral-500">— A Full Stack web developer.</span>
         </h1>
 
         {/* Bio with Badges */}
         <div className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-3xl mb-10">
           <p>
-            I build interactive web apps using 
-            <TechBadge icon={Code} name="TypeScript" color="text-blue-500" />
-            ,
-            <TechBadge icon={Cpu} name="React" color="text-cyan-500" />
-            ,
-            <TechBadge icon={Layers} name="Next.js" color="text-black dark:text-white" />
-            ,
-            <TechBadge icon={Server} name="Node.js" color="text-green-600" />
-            and
-            <TechBadge icon={Database} name="PostgreSQL" color="text-blue-400" />
-            . With a focus on <span className="font-semibold text-neutral-900 dark:text-white">UI</span> design. Enthusiastic about <span className="font-semibold text-neutral-900 dark:text-white">AI & ML</span>, driven by a keen eye for design.
+            I build interactive web apps using TypeScript, React, Next.js, Node.js and PostgreSQL. With a focus on UI design. Enthusiastic about AI & ML, driven by a keen eye for design.
           </p>
         </div>
 
