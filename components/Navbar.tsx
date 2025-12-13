@@ -17,6 +17,7 @@ const Navbar: React.FC = () => {
 
       {/* Center: Navigation Links */}
       <div className="flex items-center justify-center gap-6 text-[14px] font-medium text-neutral-600 dark:text-neutral-400">
+        <button onClick={() => scrollToSection('home')} className="hover:text-black dark:hover:text-white transition-colors">Home</button>
         <button onClick={() => scrollToSection('experience')} className="hover:text-black dark:hover:text-white transition-colors">Work</button>
         <button onClick={() => scrollToSection('projects')} className="hover:text-black dark:hover:text-white transition-colors">Projects</button>
         <button onClick={() => scrollToSection('skills')} className="hover:text-black dark:hover:text-white transition-colors">Skills</button>

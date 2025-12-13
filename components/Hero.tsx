@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PROFILE, ICONS_MAP } from '../constants';
-import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X } from 'lucide-react';
+import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check } from 'lucide-react';
 
 const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color: string }) => (
   <span className="inline-flex items-center gap-1.5 mx-1 font-medium text-neutral-800 dark:text-neutral-200 border-b border-neutral-200 dark:border-neutral-800 pb-0.5 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors">
@@ -10,6 +10,18 @@ const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color
 );
 
 const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, label: string }) => {
+  const [copied, setCopied] = useState(false);
+  const isEmail = label === "Email";
+  const email = href.replace("mailto:", "");
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <a
       href={href}
@@ -18,9 +30,20 @@ const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, labe
       className="group relative p-2 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
       aria-label={label}
     >
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-neutral-900 dark:bg-neutral-700 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+      <span className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-neutral-900 dark:bg-neutral-700 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ${isEmail ? '' : 'pointer-events-none'} flex items-center gap-2 z-50`}>
         {label}
+        {isEmail && (
+          <button 
+            onClick={handleCopy}
+            className="hover:text-green-400 transition-colors focus:outline-none p-0.5 rounded hover:bg-white/10"
+            title="Copy email"
+          >
+            {copied ? <Check size={12} /> : <Copy size={12} />}
+          </button>
+        )}
         <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-700"></span>
+        {/* Bridge to prevent tooltip from closing when moving mouse to it */}
+        <span className="absolute top-full left-0 w-full h-2 bg-transparent"></span>
       </span>
       <Icon size={24} strokeWidth={1.5} />
     </a>

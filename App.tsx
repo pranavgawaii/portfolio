@@ -101,7 +101,9 @@ const App: React.FC = () => {
         <Navbar />
 
         {/* Hero Section */}
-        <Hero />
+        <div id="home">
+          <Hero />
+        </div>
 
         {/* Content Wrapper - The Timeline Line lives here */}
         <div ref={contentRef} className="relative">
