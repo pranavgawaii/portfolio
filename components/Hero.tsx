@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PROFILE, ICONS_MAP } from '../constants';
-import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers } from 'lucide-react';
+import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X } from 'lucide-react';
 
 const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color: string }) => (
   <span className="inline-flex items-center gap-1.5 mx-1 font-medium text-neutral-800 dark:text-neutral-200 border-b border-neutral-200 dark:border-neutral-800 pb-0.5 hover:border-neutral-400 dark:hover:border-neutral-600 transition-colors">
@@ -10,6 +10,8 @@ const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color
 );
 
 const Hero: React.FC = () => {
+  const [showResume, setShowResume] = useState(false);
+
   return (
     <header className="pt-32 pb-20">
       <div className="flex flex-col items-start">
@@ -47,21 +49,19 @@ const Hero: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex flex-wrap gap-4 mb-12">
-          <a 
-            href="/resume.pdf" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#050505] text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
+          <button 
+            onClick={() => setShowResume(true)}
+            className="flex items-center gap-2 px-5 py-2.5 text-sm bg-white dark:bg-[#050505] text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
           >
-            <FileText size={18} />
+            <FileText size={16} />
             <span>Resume / CV</span>
-          </a>
+          </button>
           
           <a 
             href="mailto:pranavgawai1518@gmail.com"
-            className="flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-black border border-transparent rounded-lg font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm bg-neutral-900 dark:bg-white text-white dark:text-black border border-transparent rounded-lg font-medium hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors"
           >
-            <Mail size={18} />
+            <Mail size={16} />
             <span>Get in touch</span>
           </a>
         </div>
@@ -86,6 +86,30 @@ const Hero: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Resume Modal */}
+      {showResume && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowResume(false)}>
+          <div className="relative w-full max-w-4xl h-[85vh] bg-white dark:bg-[#111] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
+              <h3 className="font-semibold text-neutral-900 dark:text-white">Resume Preview</h3>
+              <button 
+                onClick={() => setShowResume(false)}
+                className="p-1 text-neutral-500 hover:text-black dark:hover:text-white transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 bg-neutral-100 dark:bg-neutral-900">
+              <iframe 
+                src="https://drive.google.com/file/d/1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi/preview" 
+                className="w-full h-full border-0"
+                title="Resume Preview"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
