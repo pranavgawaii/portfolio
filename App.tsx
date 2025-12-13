@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PROFILE, EXPERIENCE, PROJECTS, EDUCATION, LEADERSHIP, ICONS_MAP } from './constants';
+import { PROFILE, EXPERIENCE, PROJECTS, EDUCATION, LEADERSHIP } from './constants';
 import Section from './components/Section';
 import Card from './components/Card';
 import Badge from './components/Badge';
-import { ThemeSwitch } from './components/ThemeSwitch';
+import Hero from './components/Hero';
+import Navbar from './components/Navbar';
+import ProjectModal from './components/ProjectModal';
 import { useTheme } from 'next-themes';
-import { Link as LinkIcon, Globe, Mail } from 'lucide-react';
+import { Globe, Mail } from 'lucide-react';
+import { ProjectItem } from './types';
 
 const App: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -13,16 +16,7 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('education');
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
   // Handle the timeline line drawing
   useEffect(() => {
@@ -98,74 +92,15 @@ const App: React.FC = () => {
             }}
         ></div>
         
-        {/* Mouse Spotlight Effect */}
-        <div 
-          className="absolute inset-0 transition-opacity duration-300"
-          style={{
-            background: isDarkMode 
-              ? `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(29, 78, 216, 0.15), transparent 80%)`
-              : `radial-gradient(600px at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.15), transparent 80%)`,
-          }}
-        ></div>
-
         <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isDarkMode ? 'via-[#050505]/50 to-[#050505]' : 'via-white/50 to-white'} opacity-80 transition-colors duration-300`}></div>
       </div>
 
       <div className="max-w-2xl mx-auto px-6 py-20 relative z-10">
         
-        {/* Theme Toggle */}
-        <ThemeSwitch className="fixed top-6 right-6 z-50 shadow-lg" />
+        <Navbar />
 
-        {/* Header - Outside of the timeline line scope */}
-        <header className="mb-20">
-           <div className="flex justify-between items-start mb-8">
-                {/* Profile Picture */}
-                <div className="relative group">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl relative z-10 group-hover:scale-105 transition-transform duration-300">
-                        <img 
-                            src="/pgg.JPG" 
-                            alt={PROFILE.name}
-                            className="w-full h-full object-cover opacity-90 group-hover:grayscale-0 transition-all duration-500"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Pranav&backgroundColor=b6e3f4";
-                            }}
-                        />
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-5 z-20">
-                    {PROFILE.socials.map((social) => {
-                        const Icon = ICONS_MAP[social.icon.toLowerCase()] || LinkIcon;
-                        return (
-                            <a 
-                                key={social.name} 
-                                href={social.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors transform hover:-translate-y-1"
-                                aria-label={social.name}
-                            >
-                                <Icon size={20} strokeWidth={1.5} />
-                            </a>
-                        );
-                    })}
-                </div>
-           </div>
-
-           <div>
-               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight">
-                Hi, I'm {PROFILE.name.split(' ')[0]}
-               </h1>
-               <p className="text-base text-neutral-600 dark:text-neutral-500 mb-6 font-medium">
-                   21, Pune | {PROFILE.title}
-               </p>
-               <div className="prose prose-invert max-w-none">
-                   <p className="text-base leading-7 text-neutral-600 dark:text-neutral-400">
-                       {PROFILE.bio}
-                   </p>
-               </div>
-           </div>
-        </header>
+        {/* Hero Section */}
+        <Hero />
 
         {/* Content Wrapper - The Timeline Line lives here */}
         <div ref={contentRef} className="relative">
@@ -255,7 +190,11 @@ const App: React.FC = () => {
                 
             <div className="grid grid-cols-1 gap-6">
                 {PROJECTS.map((project) => (
-                    <Card key={project.id} className="group hover:bg-neutral-100 dark:hover:bg-neutral-900/30 border-neutral-200 dark:border-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-800 transition-all">
+                    <Card 
+                      key={project.id} 
+                      onClick={() => setSelectedProject(project)}
+                      className="group hover:bg-neutral-100 dark:hover:bg-neutral-900/30 border-neutral-200 dark:border-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-800 transition-all"
+                    >
                         <div className="flex justify-between items-start mb-3">
                             <h3 className="font-semibold text-gray-800 dark:text-neutral-200 text-base group-hover:underline decoration-neutral-400 dark:decoration-neutral-700 underline-offset-4">{project.title}</h3>
                             <div className="flex gap-2">
@@ -274,7 +213,7 @@ const App: React.FC = () => {
                                 <Badge key={tech} variant="secondary">{tech}</Badge>
                             ))}
                             {project.github && (
-                                <a href={project.github} target="_blank" rel="noreferrer" className="ml-auto text-neutral-500 hover:text-black dark:hover:text-white transition-colors">
+                                <a href={project.github} target="_blank" rel="noreferrer" className="ml-auto text-neutral-500 hover:text-black dark:hover:text-white transition-colors" onClick={(e) => e.stopPropagation()}>
                                     <Globe size={14} />
                                 </a>
                             )}
@@ -351,6 +290,13 @@ const App: React.FC = () => {
         </footer>
 
       </div>
+
+      {/* Project Modal */}
+      <ProjectModal 
+        project={selectedProject} 
+        isOpen={!!selectedProject} 
+        onClose={() => setSelectedProject(null)} 
+      />
     </div>
   );
 };
