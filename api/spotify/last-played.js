@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     const data = await response.json();
-    res.status(200).json(data.items[0]);
+    res.status(200).json({ track: data.items[0].track });
   } catch (e) {
     res.status(500).json({ error: 'Failed to fetch from Spotify' });
   }

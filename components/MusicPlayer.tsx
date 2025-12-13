@@ -8,7 +8,7 @@ const MusicPlayer = () => {
   useEffect(() => {
     async function fetchTrack() {
       setLoading(true);
-      const res = await fetch('http://localhost:3001/api/spotify/last-played');
+      const res = await fetch('/api/spotify/last-played');
       const data = await res.json();
       setTrack(data);
       setLoading(false);
