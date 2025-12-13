@@ -117,7 +117,8 @@ const App: React.FC = () => {
 
       <div className="max-w-2xl mx-auto px-6 py-28 relative z-10">
         
-        <Navbar />
+        {/* Prevent flicker/hydration mismatch by rendering Navbar only after mount */}
+        {typeof window === 'undefined' ? null : <Navbar />}
 
         {/* Hero Section */}
         <div id="home" className="scroll-mt-28">
