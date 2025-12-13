@@ -95,7 +95,7 @@ const App: React.FC = () => {
         <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isDarkMode ? 'via-[#050505]/50 to-[#050505]' : 'via-white/50 to-white'} opacity-80 transition-colors duration-300`}></div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-6 py-20 relative z-10">
+      <div className="max-w-2xl mx-auto px-6 py-28 relative z-10">
         
         <Navbar />
 
