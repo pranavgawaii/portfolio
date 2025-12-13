@@ -70,14 +70,14 @@ const MusicPlayer = () => {
          {/* Content */}
          <div className="flex-1 min-w-0 flex flex-col justify-center h-full gap-1">
          <div className="flex items-center gap-1.5 mb-0.5">
-            <span className="text-[#FA243C]"><Music size={14} fill="currentColor" /></span>
+            <img src="/AppleMusicicon.png" alt="Apple Music" className="w-4 h-4 object-contain" />
             <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Last played</span>
          </div>
            <h3 className="text-base font-semibold text-neutral-900 dark:text-white truncate">
-             Ishq Jalakar
+             Ishq Jalakar - Karvaan
            </h3>
            <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
-             Shashwat Sachdev, Shahzad Ali, Subhadeep Das Chowdhury, Armaan Khan
+             (From "Dhurandhar")
            </p>
          </div>
 

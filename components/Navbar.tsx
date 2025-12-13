@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl grid grid-cols-3 items-center px-4 py-2 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl rounded-full border border-neutral-200 dark:border-neutral-800 shadow-lg">
+    <nav className="fixed bottom-6 sm:top-6 sm:bottom-auto left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl grid grid-cols-3 items-center px-4 py-2 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl rounded-full border border-neutral-200 dark:border-neutral-800 shadow-lg transition-all duration-300">
       
       {/* Left: Empty */}
       <div></div>
@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
         <button onClick={() => scrollToSection('home')} className="hover:text-black dark:hover:text-white transition-colors">Home</button>
         <button onClick={() => scrollToSection('experience')} className="hover:text-black dark:hover:text-white transition-colors">Work</button>
         <button onClick={() => scrollToSection('projects')} className="hover:text-black dark:hover:text-white transition-colors">Projects</button>
-        <button onClick={() => scrollToSection('skills')} className="hover:text-black dark:hover:text-white transition-colors">Skills</button>
+        <button onClick={() => scrollToSection('about-me')} className="hover:text-black dark:hover:text-white transition-colors whitespace-nowrap">About Me</button>
       </div>
 
       {/* Right: Theme Toggle */}

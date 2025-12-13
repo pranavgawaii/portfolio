@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import { PROFILE, ICONS_MAP } from '../constants';
-import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check } from 'lucide-react';
+import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check, Download } from 'lucide-react';
 import MusicPlayer from './MusicPlayer';
 import ContactModal from './ContactModal';
 
@@ -53,24 +54,31 @@ const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, labe
 };
 
 const Hero: React.FC = () => {
+  const { resolvedTheme } = useTheme();
   const [showResume, setShowResume] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
-    <header className="pt-32 pb-20">
+    <header className="pt-12 pb-20">
       <div className="flex flex-col items-start">
         
         {/* Profile Picture */}
         <div className="relative mb-8">
-          <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border-4 border-white dark:border-[#050505] shadow-xl">
+          <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900">
             <img 
-              src="/pgg.JPG" 
+              src="/coollight.png" 
               alt={PROFILE.name}
-              loading="lazy"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Pranav&backgroundColor=b6e3f4";
-              }}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
+            />
+            <img 
+              src="/cooldark.png" 
+              alt={PROFILE.name}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-100' : 'opacity-0'}`}
             />
           </div>
           {/* Status Dot */}
@@ -80,14 +88,14 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Headline */}
-        <h1 className="text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6 whitespace-nowrap">
+        <h1 className="text-lg sm:text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6 break-words whitespace-normal text-center sm:text-left">
           Hi, I'm {PROFILE.name.split(' ')[0]} <span className="text-neutral-500 dark:text-neutral-500">— A Full Stack web developer.</span>
         </h1>
 
         {/* Bio with Badges */}
         <div className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-3xl mb-10">
           <p>
-            I build interactive web apps using TypeScript, React, Next.js, Node.js and PostgreSQL. With a focus on UI design. Enthusiastic about AI & ML, driven by a keen eye for design.
+            I build production-ready web applications from scratch, working across frontend and backend, with a strong focus on clean architecture, performance, and user experience.
           </p>
         </div>
 
@@ -137,14 +145,26 @@ const Hero: React.FC = () => {
       {showResume && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowResume(false)}>
           <div className="relative w-full max-w-4xl h-[85vh] bg-white dark:bg-[#111] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-800 gap-2">
               <h3 className="font-semibold text-neutral-900 dark:text-white">Resume Preview</h3>
-              <button 
-                onClick={() => setShowResume(false)}
-                className="p-1 text-neutral-500 hover:text-black dark:hover:text-white transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-2">
+                <a
+                  href="https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center p-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#18181b] text-neutral-700 dark:text-neutral-200 rounded-full shadow-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white transition-all duration-200"
+                  title="Download Resume"
+                >
+                  <Download size={20} strokeWidth={2.2} />
+                </a>
+                <button 
+                  onClick={() => setShowResume(false)}
+                  className="p-1 text-neutral-500 hover:text-black dark:hover:text-white transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
             <div className="flex-1 bg-neutral-100 dark:bg-neutral-900">
               <iframe 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { X, ExternalLink, Github } from 'lucide-react';
+import { X, ExternalLink, Github, Youtube } from 'lucide-react';
 import { ProjectItem } from '../types';
 import Badge from './Badge';
 
@@ -55,6 +55,21 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose })
         </div>
 
         <div className="p-6 overflow-y-auto">
+          {/* Preview Tab for Project Images */}
+
+          {(project.title === 'Sahara' || project.title === 'MedSecure24') && (
+            <div className="mb-6 flex flex-col items-center">
+              <div className="w-full max-w-md aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 mb-2">
+                <img
+                  src={project.title === 'Sahara' ? '/saharaar.png' : '/medcare24ar.png'}
+                  alt={project.title + ' Preview'}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span className="block text-sm font-semibold text-blue-600 dark:text-blue-400 tracking-wide mb-1" style={{letterSpacing: '0.04em'}}>System Architecture Diagram</span>
+            </div>
+          )}
+
           <p className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">
             {project.description}
           </p>
@@ -64,7 +79,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose })
               Technologies
             </h4>
             <div className="flex flex-wrap gap-2">
-              {project.tech.map((tech) => (
+              {(project.tech || project.techStack || []).map((tech: string) => (
                 <Badge key={tech} variant="secondary">
                   {tech}
                 </Badge>
@@ -84,10 +99,22 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose })
                 View Project
               </a>
             )}
-            {/* Assuming you might have a github link in the future, or if link is github */}
-            {project.link && project.link.includes('github') && (
+            {/* YouTube Icon (if available) */}
+            {project.youtube && (
+              <a
+                href={project.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
+              >
+                <Youtube size={18} />
+                YouTube
+              </a>
+            )}
+            {/* GitHub Icon */}
+            {project.github && (
                <a 
-                href={project.link}
+                href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors font-medium"

@@ -13,6 +13,7 @@ export interface ExperienceItem {
   techStack?: string[];
   type: 'Current' | 'Past' | 'Internship';
   location?: string;
+  logo?: string;
 }
 
 export interface EducationItem {
@@ -32,6 +33,7 @@ export interface ProjectItem {
   link?: string;
   github?: string;
   status?: string;
+  image?: string;
 }
 
 export interface LeadershipItem {

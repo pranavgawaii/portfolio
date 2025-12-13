@@ -6,9 +6,14 @@ import Badge from './components/Badge';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import AboutMe from './components/AboutMe';
+import FeaturedBlog from './components/FeaturedBlog';
 import ProjectModal from './components/ProjectModal';
+import ProjectCard from './components/ProjectCard';
+import ExperienceCard from './components/ExperienceCard';
+import LeadershipCard from './components/LeadershipCard';
 import { useTheme } from 'next-themes';
-import { Globe, Mail } from 'lucide-react';
+import { Globe, Mail, GraduationCap, Calendar, MapPin, ArrowUp } from 'lucide-react';
 import { ProjectItem } from './types';
 
 const App: React.FC = () => {
@@ -76,6 +81,20 @@ const App: React.FC = () => {
     return `${baseClass} ${activeSection === sectionId ? activeClass : inactiveClass}`;
   };
 
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-[#050505] text-neutral-600 dark:text-neutral-400 selection:bg-neutral-200 dark:selection:bg-neutral-700 selection:text-black dark:selection:text-white font-sans relative overflow-x-hidden transition-colors duration-300">
       
@@ -101,47 +120,79 @@ const App: React.FC = () => {
         <Navbar />
 
         {/* Hero Section */}
-        <div id="home">
+        <div id="home" className="scroll-mt-28">
           <Hero />
         </div>
 
         {/* Content Wrapper - The Timeline Line lives here */}
         <div ref={contentRef} className="relative">
             
-            {/* Timeline Lines (Desktop Only) */}
+            {/* Timeline Line (Responsive) */}
+            {/* Desktop Green Line */}
             <div className="hidden md:block absolute -left-10 top-2 bottom-0 w-[1px] bg-neutral-200 dark:bg-neutral-800/50">
-                <div 
-                    className="absolute top-0 left-0 w-full bg-green-500/80 shadow-[0_0_10px_rgba(34,197,94,0.5)] transition-all duration-100 ease-out"
-                    style={{ height: `${lineHeight}px` }}
-                />
+              <div 
+                className="absolute top-0 left-0 w-full bg-green-500/80 shadow-[0_0_10px_rgba(34,197,94,0.5)] transition-all duration-100 ease-out"
+                style={{ height: `${lineHeight}px` }}
+              />
             </div>
-
-            {/* Mobile Timeline Line */}
-            <div className="absolute left-[-12px] top-2 bottom-0 w-[1px] bg-neutral-200 dark:bg-neutral-800/50 md:hidden"></div>
+            {/* Mobile Green Line */}
+            <div className="md:hidden absolute left-[-12px] top-2 bottom-0 w-[1.5px] bg-neutral-200 dark:bg-neutral-800/50">
+              <div
+                className="absolute top-0 left-0 w-full bg-green-500/80 shadow-[0_0_8px_rgba(34,197,94,0.5)] transition-all duration-100 ease-out"
+                style={{ height: `${lineHeight}px` }}
+              />
+            </div>
 
             {/* Education Section */}
             <Section id="education" title="Education">
                 <div className={getCircleClass('education')}></div>
-                <div className="space-y-8">
+                <div className="space-y-6">
                     {EDUCATION.map((edu) => (
-                        <div key={edu.id} className="relative group">
-                            <div className="flex flex-col md:flex-row md:justify-between mb-1">
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-neutral-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                    {edu.institution}
-                                </h3>
-                                <span className="text-xs font-mono text-neutral-500">{edu.location}</span>
+                        <div key={edu.id} className="group relative p-6 bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                            <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-start">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-2">
+                                       <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                                            <GraduationCap size={22} />
+                                       </div>
+                                       <h3 className="text-lg font-bold text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            {edu.institution}
+                                        </h3>
+                                    </div>
+                                    
+                                    <div className="ml-[52px]">
+                                        {edu.degree && (
+                                            <p className="text-base font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                                                {edu.degree}
+                                            </p>
+                                        )}
+                                        
+                                        <div className="flex flex-wrap gap-y-2 gap-x-5 text-sm text-neutral-500 dark:text-neutral-500 mb-3">
+                                            {edu.period && (
+                                                <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-900 px-2.5 py-1 rounded-md">
+                                                    <Calendar size={14} />
+                                                    <span>{edu.period}</span>
+                                                </div>
+                                            )}
+                                            <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-900 px-2.5 py-1 rounded-md">
+                                                <MapPin size={14} />
+                                                <span>{edu.location}</span>
+                                            </div>
+                                        </div>
+
+                                        {edu.details && (
+                                            <div className="space-y-1.5 pt-1">
+                                                {edu.details.map((detail, i) => (
+                                                    <p key={i} className="text-sm text-neutral-600 dark:text-neutral-400 flex items-center gap-2.5">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-600"></span>
+                                                        {detail}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex flex-col md:flex-row md:justify-between mb-2">
-                                <span className="text-sm text-gray-700 dark:text-neutral-300 font-medium">{edu.degree}</span>
-                                {edu.period && <span className="text-xs text-neutral-500 font-mono">{edu.period}</span>}
-                            </div>
-                            {edu.details && (
-                                <ul className="list-none space-y-1">
-                                    {edu.details.map((detail, i) => (
-                                        <li key={i} className="text-sm text-neutral-600 dark:text-neutral-400">{detail}</li>
-                                    ))}
-                                </ul>
-                            )}
                         </div>
                     ))}
                 </div>
@@ -151,38 +202,9 @@ const App: React.FC = () => {
             <Section id="experience" title="Experience">
                 <div className={getCircleClass('experience')}></div>
                 
-                <div className="space-y-12">
+                <div className="pl-2">
                     {EXPERIENCE.map((exp) => (
-                        <div key={exp.id} className="relative group">
-                            <div className="flex flex-col md:flex-row md:items-baseline md:justify-between mb-2 gap-2">
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-neutral-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
-                                    {exp.role}
-                                </h3>
-                                <span className="text-xs font-mono text-neutral-500">
-                                    {exp.period}
-                                </span>
-                            </div>
-                            
-                            <div className="mb-4 flex justify-between items-center">
-                                <span className="text-sm text-gray-700 dark:text-neutral-300 font-medium">{exp.company}</span>
-                                {exp.location && <span className="text-xs text-neutral-500">{exp.location}</span>}
-                            </div>
-                            
-                            {/* Updated List Styling for Alignment */}
-                            <ul className="list-disc list-outside ml-4 space-y-2 mb-5 text-sm text-neutral-600 dark:text-neutral-400 marker:text-neutral-400 dark:marker:text-neutral-700">
-                                {exp.description.map((desc, i) => (
-                                    <li key={i} className="leading-relaxed pl-1">{desc}</li>
-                                ))}
-                            </ul>
-
-                            {exp.techStack && (
-                                <div className="flex gap-2 flex-wrap">
-                                    {exp.techStack.map(tech => (
-                                        <Badge key={tech} variant="outline">{tech}</Badge>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                        <ExperienceCard key={exp.id} experience={exp} />
                     ))}
                 </div>
             </Section>
@@ -190,98 +212,51 @@ const App: React.FC = () => {
             {/* Projects Section */}
             <Section id="projects" title="Projects">
                 <div className={getCircleClass('projects')}></div>
-                
-            <div className="grid grid-cols-1 gap-6">
-                {PROJECTS.map((project) => (
-                    <Card 
-                      key={project.id} 
-                      onClick={() => setSelectedProject(project)}
-                      className="group hover:bg-neutral-100 dark:hover:bg-neutral-900/30 border-neutral-200 dark:border-neutral-900 hover:border-neutral-300 dark:hover:border-neutral-800 transition-all"
-                    >
-                        <div className="flex justify-between items-start mb-3">
-                            <h3 className="font-semibold text-gray-800 dark:text-neutral-200 text-base group-hover:underline decoration-neutral-400 dark:decoration-neutral-700 underline-offset-4">{project.title}</h3>
-                            <div className="flex gap-2">
-                                {project.status && (
-                                    <span className="px-1.5 py-0.5 text-[10px] bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded border border-green-200 dark:border-green-900/30 uppercase tracking-wider">
-                                        {project.status}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4 leading-relaxed">
-                            {project.description}
-                        </p>
-                        <div className="flex flex-wrap gap-2 items-center">
-                            {project.techStack.map(tech => (
-                                <Badge key={tech} variant="secondary">{tech}</Badge>
-                            ))}
-                            {project.github && (
-                                <a href={project.github} target="_blank" rel="noreferrer" className="ml-auto text-neutral-500 hover:text-black dark:hover:text-white transition-colors" onClick={(e) => e.stopPropagation()}>
-                                    <Globe size={14} />
-                                </a>
-                            )}
-                        </div>
-                    </Card>
-                ))}
-            </div>
-            </Section>
-
-            {/* Technical Skills Section */}
-            <Section id="skills" title="Technical Skills">
-                <div className={getCircleClass('skills')}></div>
-                <div className="space-y-4">
-                    {PROFILE.skills.map((category) => (
-                        <div key={category.name} className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-                            <span className="text-sm font-semibold text-gray-700 dark:text-neutral-300 min-w-[100px] pt-1">
-                                {category.name}:
-                            </span>
-                            <div className="flex flex-wrap gap-2">
-                                {category.skills.map(skill => (
-                                    <Badge key={skill} variant="outline">{skill}</Badge>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-1 gap-8">
+                  {PROJECTS.map((project) => (
+                      <ProjectCard 
+                        key={project.id} 
+                        project={project}
+                        onClick={() => setSelectedProject(project)}
+                      />
+                  ))}
                 </div>
             </Section>
+
 
             {/* Leadership & Recognition Section */}
             <Section id="leadership" title="Leadership & Recognition">
                 <div className={getCircleClass('leadership')}></div>
-                <div className="grid gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {LEADERSHIP.map((item) => (
-                        <div key={item.id} className="p-4 bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800/50 rounded-lg hover:border-neutral-300 dark:hover:border-neutral-700 transition-all">
-                            <div className="flex flex-col gap-1">
-                                <h3 className="text-base font-semibold text-gray-800 dark:text-neutral-200">
-                                    {item.title}
-                                </h3>
-                                <span className="text-sm text-neutral-600 dark:text-neutral-400 font-medium">
-                                    {item.role}
-                                </span>
-                                {item.description && (
-                                    <p className="text-sm text-neutral-500 mt-1">
-                                        {item.description}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
+                        <LeadershipCard key={item.id} item={item} />
                     ))}
                 </div>
             </Section>
         </div>
 
+        {/* About Me Section */}
+        <AboutMe />
+
+        {/* Featured Blog Section */}
+        <FeaturedBlog />
+
         {/* Contact Section */}
         <section className="mt-24 mb-12 text-center">
              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Get In Touch</h2>
              <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-md mx-auto">
-                I'm currently looking for new opportunities. Whether you have a question or just want to say hi, my inbox is always open!
+                If you’ve made it this far, we should talk.
+I’m open to collaborations, internships, and interesting problems.
+Have a question or an idea? My inbox is always open.
              </p>
-             <a 
-                href="mailto:pranavgawai1518@gmail.com"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-neutral-900 border border-neutral-800 rounded-lg text-sm font-medium text-white dark:text-neutral-300 hover:bg-neutral-800 hover:text-white hover:border-neutral-700 transition-all group"
+             <a
+               href="https://x.com/messages/compose?recipient_id=pranavgawai_"
+               target="_blank"
+               rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-neutral-900 border border-neutral-800 rounded-lg text-sm font-medium text-white dark:text-neutral-300 hover:bg-neutral-800 hover:text-white hover:border-neutral-700 transition-all group"
              >
-                <Mail size={16} className="group-hover:-translate-y-0.5 transition-transform" />
-                Say Hello
+               <Mail size={16} className="group-hover:-translate-y-0.5 transition-transform" />
+               Say Hello
              </a>
         </section>
 
@@ -295,6 +270,17 @@ const App: React.FC = () => {
         isOpen={!!selectedProject} 
         onClose={() => setSelectedProject(null)} 
       />
+
+      {/* Back to Top Button */}
+      {showTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-neutral-900 dark:bg-neutral-800 text-white shadow-lg hover:bg-neutral-700 dark:hover:bg-neutral-700 transition-all duration-200 flex items-center justify-center"
+          aria-label="Back to top"
+        >
+          <ArrowUp size={24} />
+        </button>
+      )}
     </div>
   );
 };

@@ -1,92 +1,78 @@
-# Pranav Gawai - Portfolio
+# Pranav Gawai – Portfolio
 
-A minimal, dark-themed personal portfolio website built with React, Vite, and Tailwind CSS. This portfolio showcases my education, experience, projects, and skills in a clean, responsive interface.
+A minimal, modern, and dark-themed personal portfolio website built with React, Vite, and Tailwind CSS. This portfolio showcases my education, experience, projects, and skills in a clean, responsive interface.
 
-## Features
+![Portfolio Screenshot](./public/pgg.JPG)
 
-- 🎨 **Modern Design**: Clean, dark-themed UI with a responsive grid background.
-- 📱 **Responsive**: Fully responsive layout that works seamlessly on desktop and mobile devices.
-- ⚡ **Fast Performance**: Built with Vite for lightning-fast development and production builds.
-- 🛠 **Custom Components**: Reusable components for sections, cards, and badges.
-- 🎭 **Interactive Elements**: Smooth scrolling, hover effects, and timeline visualizations.
+## 🚀 Features
 
-## Tech Stack
+- **Beautiful Hero Section**: Eye-catching introduction with profile, social links, and a live Spotify "Now Playing" card.
+- **Experience Timeline**: Modern, interactive timeline for work and internship experience.
+- **Projects Gallery**: Highlighted projects with tech stack icons, status badges, and quick links.
+- **Education Cards**: Elegant cards for academic background.
+- **Skills Cloud**: Categorized badges for languages, frameworks, databases, and tools.
+- **Leadership & Recognition**: Stylish cards for awards and leadership roles.
+- **Contact Modal**: Easy-to-use modal for reaching out.
+- **Dark/Light Theme**: Seamless theme switching with system preference support.
+- **Mobile Responsive**: Fully responsive and touch-friendly design.
 
-- **Frontend Framework**: [React](https://react.dev/) (v19)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+## 🛠️ Tech Stack
 
-## Getting Started
+- **Frontend**: React 19, TypeScript, Vite
+- **Styling**: Tailwind CSS, custom CSS animations
+- **Icons**: Lucide React, custom SVGs
+- **Integrations**: Spotify API (live music card), EmailJS (contact form)
 
-Follow these steps to set up the project locally on your machine.
+## 📦 Getting Started
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-
-### Installation
-
-1. **Clone the repository**
-
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/pranavgawaii/pranav-gawai-portfolio.git
    cd pranav-gawai-portfolio
    ```
-
-2. **Install dependencies**
-
+2. **Install dependencies:**
    ```bash
    npm install
    ```
-
-3. **Start the development server**
-
+3. **Set up environment variables:**
+   - Copy `.env.example` to `.env` and fill in your Spotify API credentials (see the Spotify integration section below).
+4. **Run the development server:**
    ```bash
    npm run dev
    ```
+5. **Open in your browser:**
+   - Visit [http://localhost:3000](http://localhost:3000) (or the port shown in your terminal).
 
-   The application will be available at `http://localhost:5173` (or the port shown in your terminal).
+## 🎵 Spotify Integration
 
-## Building for Production
+- Displays your currently playing or last played track from Spotify.
+- Requires a Spotify Developer App and refresh token. See the code comments for setup instructions.
 
-To create a production-ready build:
-
-```bash
-npm run build
-```
-
-To preview the production build locally:
-
-```bash
-npm run preview
-```
-
-## Project Structure
+## 📁 Folder Structure
 
 ```
-├── src/
-│   ├── components/    # Reusable UI components (Card, Badge, Section)
-│   ├── constants.tsx  # Portfolio data (Profile, Experience, Projects)
-│   ├── App.tsx        # Main application component
-│   ├── index.css      # Global styles and Tailwind directives
-│   └── main.tsx       # Entry point
-├── public/            # Static assets
-└── package.json       # Project dependencies and scripts
+├── components/         # Reusable React components
+├── public/             # Static assets (images, logos, etc.)
+├── src/                # Providers, types, and utilities
+├── App.tsx             # Main app entry
+├── constants.tsx       # Data for experience, education, projects, etc.
+├── globals.css         # Global styles
+├── index.html          # HTML template
+├── package.json        # Project metadata and scripts
+└── ...
 ```
 
-## Customization
+## ✨ Customization
 
-You can easily update the portfolio content by modifying the `src/constants.tsx` file. This file contains all the data for:
-- Profile information
-- Education history
-- Work experience
-- Projects
-- Skills
-- Leadership & Certifications
+- **Profile & Socials**: Edit your info in `constants.tsx`.
+- **Experience, Projects, Education**: Add or update entries in `constants.tsx`.
+- **Theme**: Tweak colors and styles in `globals.css` or Tailwind config.
+- **Images**: Replace images in the `public/` folder.
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License.
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+> Designed and developed by Pranav Gawai. Built for performance, clarity, and a great user experience.

@@ -40,7 +40,7 @@ const Section: React.FC<SectionProps> = ({ title, children, className = "", id }
     <section 
       id={id} 
       ref={sectionRef}
-      className={`mb-16 relative transition-all duration-700 ease-out transform ${
+      className={`mb-16 scroll-mt-28 relative transition-all duration-700 ease-out transform ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       } ${className}`}
     >
