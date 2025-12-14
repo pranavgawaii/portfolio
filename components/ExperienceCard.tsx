@@ -40,7 +40,7 @@ const TechBadge = ({ name }: { name: string }) => {
 };
 
 const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="group relative pb-12 last:pb-0">
@@ -59,16 +59,45 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience }) => {
 
             <div>
               <div className="flex items-center gap-3 flex-wrap">
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-3">
-                  {experience.company}
-                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="focus:outline-none flex items-center gap-2 group"
+                  aria-label={isOpen ? 'Hide details' : 'Show details'}
+                >
+                  <h3 className="text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2 cursor-pointer">
+                    {experience.company}
+                  </h3>
+                </button>
                 {/* Optional Company Links - Placeholders based on reference */}
                 <div className="flex items-center gap-2 text-neutral-400">
-                   <Globe size={14} className="hover:text-neutral-900 dark:hover:text-white cursor-pointer transition-colors" />
+                  {experience.company.toLowerCase().includes('yes boss') ? (
+                    <a
+                      href="https://yesboss.ai/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-neutral-900 dark:hover:text-white cursor-pointer transition-colors"
+                      aria-label="Visit Yes Boss website"
+                    >
+                      <Globe size={14} />
+                    </a>
+                  ) : (
+                    <Globe size={14} className="hover:text-neutral-900 dark:hover:text-white cursor-pointer transition-colors" />
+                  )}
                 </div>
               </div>
               <p className="text-base font-medium text-neutral-600 dark:text-neutral-400 mt-1 flex items-center gap-3">
-                {experience.role}
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="focus:outline-none flex items-center gap-2"
+                  aria-label={isOpen ? 'Hide details' : 'Show details'}
+                >
+                  {experience.role}
+                  <span className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+                    <ChevronDown size={20} />
+                  </span>
+                </button>
                 {experience.type === 'Current' && (
                     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800">
                         <span className="relative flex h-2 w-2">
@@ -96,9 +125,10 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience }) => {
           </div>
         </div>
 
-        {/* Content Section (Collapsible logic could go here, but reference shows it open) */}
-        <div className={`space-y-6 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-50'}`}>
-          
+        {/* Collapsible Content Section */}
+        <div
+          className={`space-y-6 transition-all duration-500 overflow-hidden ${isOpen ? 'max-h-[1000px] opacity-100 translate-y-0' : 'max-h-0 opacity-0 -translate-y-2 pointer-events-none'}`}
+        >
           {/* Tech Stack */}
           {experience.techStack && (
             <div>
@@ -125,13 +155,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience }) => {
         </div>
       </div>
       
-      {/* Accordion Toggle (Visual only for now as per reference style) */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="absolute top-0 right-0 md:hidden p-2 text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
-      >
-        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-      </button>
+      {/* Arrow moved to role and company name, no floating button */}
     </div>
   );
 };

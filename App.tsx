@@ -263,7 +263,53 @@ const App: React.FC = () => {
               Say Hello
             </a>
           </div>
+
         </section>
+
+
+
+        {/* Virat Kohli Quote with Person Image Floating Bottom Right */}
+        <div style={{ position: 'relative', width: '100%', minHeight: 180, marginBottom: 48 }}>
+          {/* Quote floating on the left, with right margin to avoid image overlay */}
+          <div
+            style={{
+              position: 'relative',
+              zIndex: 2,
+              maxWidth: 520,
+              marginLeft: '2vw',
+              padding: '2.5rem 1.5rem 2.5rem 0',
+              marginRight: 240, // ensures quote never overlays image
+              fontFamily: 'Plus Jakarta Sans, sans-serif',
+              boxSizing: 'border-box',
+            }}
+          >
+            <span style={{ fontSize: 17, fontStyle: 'italic', color: isDarkMode ? '#e0e0e0' : '#222', fontWeight: 500, lineHeight: 1.5, textShadow: isDarkMode ? '0 2px 8px #000' : '0 2px 8px #fff' }}>
+              “You don’t get what you wish for, you get what you work for.”
+            </span>
+            <div style={{ fontSize: 13, color: isDarkMode ? '#aaa' : '#444', marginTop: 12, fontWeight: 400, fontStyle: 'italic' }}>
+              — Virat Kohli
+            </div>
+          </div>
+          {/* Person image absolutely positioned bottom right with reduced opacity */}
+          <img
+            src="/vkbg.png"
+            alt="Virat Kohli Person Only"
+            style={{
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              height: 168,
+              width: 'auto',
+              opacity: 0.65,
+              objectFit: 'contain',
+              objectPosition: 'right bottom',
+              zIndex: 1,
+              pointerEvents: 'none',
+              filter: isDarkMode ? 'brightness(0.8)' : 'brightness(1)',
+              transition: 'opacity 0.3s',
+            }}
+          />
+        </div>
 
         <Footer />
 
