@@ -83,7 +83,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                     id="name"
                     name="user_name"
                     required
-                    placeholder="Your full name"
+                    placeholder="Who’s reaching out?"
                     className="w-full px-4 py-3 bg-neutral-50 dark:bg-[#111] border border-neutral-200 dark:border-neutral-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white text-neutral-900 dark:text-white placeholder-neutral-400 transition-all"
                   />
                 </div>
@@ -96,7 +96,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                     id="phone"
                     name="contact_number"
                     required
-                    placeholder="+1 (123) xxx-xxxx"
+                    placeholder="+91  12345-67890"
                     className="w-full px-4 py-3 bg-neutral-50 dark:bg-[#111] border border-neutral-200 dark:border-neutral-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white text-neutral-900 dark:text-white placeholder-neutral-400 transition-all"
                   />
                 </div>
@@ -111,7 +111,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                   id="email"
                   name="user_email"
                   required
-                  placeholder="your.email@example.com"
+                  placeholder="your.emailid@example.com"
                   className="w-full px-4 py-3 bg-neutral-50 dark:bg-[#111] border border-neutral-200 dark:border-neutral-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white text-neutral-900 dark:text-white placeholder-neutral-400 transition-all"
                 />
               </div>
