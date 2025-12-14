@@ -2,7 +2,7 @@
 
 A minimal, modern, and dark-themed personal portfolio website built with React, Vite, and Tailwind CSS. This portfolio showcases my education, experience, projects, and skills in a clean, responsive interface.
 
-![Portfolio Screenshot](./public/pgg.JPG)
+
 
 ## 🚀 Features
 
