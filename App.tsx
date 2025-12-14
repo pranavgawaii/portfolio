@@ -333,8 +333,8 @@ const App: React.FC = () => {
           <ArrowUp size={24} />
         </button>
       )}
+      <Analytics />
     </div>
-    <Analytics />
   );
 };
 
