@@ -57,6 +57,7 @@ const Hero: React.FC = () => {
   const { resolvedTheme } = useTheme();
   const [showResume, setShowResume] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const [showProfileZoom, setShowProfileZoom] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -68,8 +69,8 @@ const Hero: React.FC = () => {
       <div className="flex flex-col items-start">
         
         {/* Profile Picture */}
-        <div className="relative mb-8">
-          <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900">
+        <div className="relative mb-8 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
+          <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
             <img 
               src="/coollight.png" 
               alt={PROFILE.name}
@@ -86,6 +87,37 @@ const Hero: React.FC = () => {
             <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-[#050505]"></div>
           </div>
         </div>
+
+        {/* Profile Zoom Modal */}
+        {showProfileZoom && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={() => setShowProfileZoom(false)}>
+            <div className="relative w-full max-w-lg flex flex-col items-center" onClick={e => e.stopPropagation()}>
+              <button 
+                onClick={() => setShowProfileZoom(false)}
+                className="absolute top-4 right-4 p-2 text-neutral-200 hover:text-white bg-black/40 rounded-full z-10"
+                aria-label="Close profile zoom"
+              >
+                <X size={28} />
+              </button>
+              <div className="w-72 h-72 md:w-96 md:h-96 rounded-[3rem] overflow-hidden border-4 border-white/20 shadow-2xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300">
+                <img 
+                  src="/coollight.png" 
+                  alt={PROFILE.name}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
+                />
+                <img 
+                  src="/cooldark.png" 
+                  alt={PROFILE.name}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-100' : 'opacity-0'}`}
+                />
+                {/* Status Dot removed */}
+              </div>
+              <div className="mt-6 text-center">
+                <h2 className="text-2xl font-bold text-white drop-shadow-lg">{PROFILE.name}</h2>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Headline */}
         <h1 className="text-lg sm:text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6 break-words whitespace-normal text-center sm:text-left">
