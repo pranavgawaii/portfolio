@@ -65,12 +65,12 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <header className="pt-12 pb-20">
-      <div className="flex flex-col items-start">
+    <header className="pt-10 pb-16 sm:pt-12 sm:pb-20">
+      <div className="flex flex-col items-center sm:items-start w-full px-3 sm:px-0">
         
         {/* Profile Picture */}
-        <div className="relative mb-8 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
-          <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
+        <div className="relative mb-6 sm:mb-8 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
+          <div className="w-24 h-24 xs:w-28 xs:h-28 sm:w-32 sm:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
             <img 
               src="/coollight.png" 
               alt={PROFILE.name}
@@ -120,19 +120,19 @@ const Hero: React.FC = () => {
         )}
 
         {/* Headline */}
-        <h1 className="text-lg sm:text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6 break-words whitespace-normal text-center sm:text-left">
+        <h1 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-4 sm:mb-6 break-words whitespace-normal text-center sm:text-left w-full">
           Hi, I'm {PROFILE.name.split(' ')[0]} <span className="text-neutral-500 dark:text-neutral-500">— A Full Stack web developer.</span>
         </h1>
 
         {/* Bio with Badges */}
-        <div className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-3xl mb-10">
+        <div className="text-base xs:text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-2xl sm:max-w-3xl mb-8 sm:mb-10 w-full">
           <p>
             I build production-ready web applications from scratch, working across frontend and backend, with a strong focus on clean architecture, performance, and user experience.
           </p>
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-wrap gap-4 mb-12">
+        <div className="flex flex-wrap gap-3 sm:gap-4 mb-8 sm:mb-12 w-full justify-center sm:justify-start">
           <button 
             onClick={() => setShowResume(true)}
             className="flex items-center gap-2 px-5 py-2.5 text-sm bg-white dark:bg-[#050505] text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
@@ -151,7 +151,7 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Social Icons */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start w-full">
           {PROFILE.socials.map((social) => {
             const Icon = ICONS_MAP[social.icon.toLowerCase()] || LinkIcon;
             return (
@@ -166,7 +166,9 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Music Player */}
-        <MusicPlayer />
+        <div className="w-full">
+          <MusicPlayer />
+        </div>
 
       </div>
 
