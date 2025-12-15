@@ -49,7 +49,7 @@ const MusicPlayer = () => {
     <div className="w-full max-w-2xl mt-8 bg-white dark:bg-[#111] border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300 group">
        <audio 
          ref={audioRef} 
-         src="/Ishq Jalakar Dhurandhar 320 Kbps.mp3" 
+         src="/Barbaad%20.mp3" 
          onEnded={() => setIsPlaying(false)}
          onTimeUpdate={handleTimeUpdate}
          onLoadedMetadata={handleLoadedMetadata}
@@ -59,8 +59,8 @@ const MusicPlayer = () => {
          {/* Album Art */}
          <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-neutral-100 dark:bg-neutral-800 shadow-inner">
            <img 
-              src="/ishq-jalakar-dhurandhar-500-500.jpg" 
-              alt="Ishq Jalakar" 
+              src="/barbaad.jpg" 
+              alt="Barbaad" 
               className={`w-full h-full object-cover transition-transform duration-500 ${isPlaying ? 'scale-105' : 'group-hover:scale-105'}`}
            />
            {/* Spinning vinyl effect overlay */}
@@ -74,10 +74,10 @@ const MusicPlayer = () => {
             <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Last played</span>
          </div>
            <h3 className="text-base font-semibold text-neutral-900 dark:text-white truncate">
-             Ishq Jalakar - Karvaan
+             Barbaad
            </h3>
            <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
-             (From "Dhurandhar")
+             (From "Saiyaara")
            </p>
          </div>
 
