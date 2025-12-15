@@ -94,12 +94,12 @@ const Hero: React.FC = () => {
             <div className="relative w-full max-w-lg flex flex-col items-center" onClick={e => e.stopPropagation()}>
               <button 
                 onClick={() => setShowProfileZoom(false)}
-                className="absolute top-4 right-4 p-2 text-neutral-200 hover:text-white bg-black/40 rounded-full z-10"
+                className="absolute top-4 right-4 p-1 hover:bg-neutral-200 text-neutral-500 hover:text-black border border-transparent rounded-full z-20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 shadow-sm"
                 aria-label="Close profile zoom"
               >
-                <X size={28} />
+                <X size={22} strokeWidth={1.5} className="" />
               </button>
-              <div className="w-72 h-72 md:w-96 md:h-96 rounded-[3rem] overflow-hidden border-4 border-white/20 shadow-2xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300">
+              <div className="w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300">
                 <img 
                   src="/coollight.png" 
                   alt={PROFILE.name}
