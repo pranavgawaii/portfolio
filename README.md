@@ -48,24 +48,6 @@ A minimal, modern, and dark-themed personal portfolio website built with React, 
 - Displays your currently playing or last played track from Spotify.
 - Requires a Spotify Developer App and refresh token. See the code comments for setup instructions.
 
-### Environment & Deployment (IMPORTANT)
-
-- Do NOT commit your local environment files or secrets. The repository includes an `.env.example` file — copy it to `.env.local` for local development and fill in your values.
-- Configure the following environment variables on Vercel (or your hosting provider) for production deployments:
-   - `SPOTIFY_CLIENT_ID`
-   - `SPOTIFY_CLIENT_SECRET`
-   - `SPOTIFY_REFRESH_TOKEN`
-
-- If you have accidentally committed `.env.local` with secrets, remove it from the repo before pushing:
-
-```bash
-git rm --cached .env.local
-git commit -m "remove local env file from repo"
-git push
-```
-
-The server-side Spotify logic reads credentials only from environment variables. No client-side code contains secrets.
-
 ## 📁 Folder Structure
 
 ```

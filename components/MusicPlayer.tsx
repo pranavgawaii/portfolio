@@ -1,12 +1,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useTheme } from 'next-themes';
 import { Music, Play, X, Pause } from 'lucide-react';
 
 const MusicPlayer = () => {
   const [track, setTrack] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
+  const [showEmbed, setShowEmbed] = useState(false);
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -15,8 +14,6 @@ const MusicPlayer = () => {
   const [sdkReady, setSdkReady] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === 'dark' || (!resolvedTheme && document.documentElement.classList.contains('dark'));
 
   useEffect(() => {
     // Load cached track from localStorage first (so UI doesn't disappear)
@@ -30,19 +27,20 @@ const MusicPlayer = () => {
         const res = await fetch('/api/spotify/now-playing');
         if (!res.ok) return; // don't clear existing track on error
         const data = await res.json();
+        // Only update when we have a valid title (avoid replacing with empty responses)
         if (data && (data.title || data.artist)) {
           setTrack(data);
           try { localStorage.setItem('lastPlayedTrack', JSON.stringify(data)); } catch(e) {}
         }
       } catch (e) {
-        // ignore network errors
+        // network or fetch failed — keep existing cached track
       } finally {
         setLoading(false);
       }
     };
 
     fetchTrack();
-    const interval = setInterval(fetchTrack, 5000);
+    const interval = setInterval(fetchTrack, 5000); // Refresh every 5s
     return () => clearInterval(interval);
   }, []);
 
@@ -57,21 +55,15 @@ const MusicPlayer = () => {
       setIsPreviewPlaying(false);
       setExpanded(false);
     };
-    const onPause = () => {
-      setIsPreviewPlaying(false);
-      setExpanded(false);
-    };
 
     audio.addEventListener('timeupdate', onTime);
     audio.addEventListener('loadedmetadata', onLoaded);
     audio.addEventListener('ended', onEnded);
-    audio.addEventListener('pause', onPause);
 
     return () => {
       audio.removeEventListener('timeupdate', onTime);
       audio.removeEventListener('loadedmetadata', onLoaded);
       audio.removeEventListener('ended', onEnded);
-      audio.removeEventListener('pause', onPause);
       audio.pause();
       try { audio.src = ''; } catch (e) {}
       setCurrentTime(0);
@@ -151,35 +143,12 @@ const MusicPlayer = () => {
     }
   };
 
-  // Theme-aware classes
-  const cardBase = 'w-full max-w-2xl mt-8 rounded-2xl p-4 shadow-sm flex items-center gap-4';
-  const cardThemeClass = isDark ? 'bg-neutral-900 border border-neutral-800' : 'bg-white border border-neutral-200';
-  const titleClass = isDark ? 'text-lg font-bold text-white truncate' : 'text-lg font-bold text-neutral-900 truncate';
-  const artistClass = isDark ? 'text-sm text-neutral-400 truncate' : 'text-sm text-neutral-600 truncate';
-  const btnClass = isDark ? 'flex items-center justify-center w-10 h-10 rounded-xl bg-neutral-800 hover:bg-green-600 transition-colors group' : 'flex items-center justify-center w-10 h-10 rounded-xl bg-neutral-100 hover:bg-green-600 transition-colors group';
-  const iconClass = `${isDark ? 'text-white' : 'text-neutral-900'} group-hover:text-white w-5 h-5`;
-  const modalThemeClass = isDark ? 'bg-neutral-900' : 'bg-white';
-  const albumBgClass = isDark ? 'bg-neutral-800' : 'bg-neutral-100';
-  const closeBtnClass = isDark ? 'p-2 rounded-md bg-neutral-800 hover:bg-neutral-700' : 'p-2 rounded-md bg-neutral-100 hover:bg-neutral-200';
-  const expandedBgClass = isDark ? 'bg-neutral-900' : 'bg-white';
-  const expandedBorderClass = isDark ? 'border border-neutral-800' : 'border border-neutral-200';
-  const expandedTitleClass = isDark ? 'text-sm font-semibold text-white' : 'text-sm font-semibold text-neutral-900';
-  const expandedArtistClass = isDark ? 'text-xs text-neutral-400' : 'text-xs text-neutral-600';
-  const timeTextClass = isDark ? 'text-xs text-neutral-400' : 'text-xs text-neutral-600';
-  const rangeBgClass = isDark ? 'bg-neutral-700' : 'bg-neutral-200';
-
   // Always render the player card. If still loading and no cached track, show minimal placeholder.
   const display = track || { isPlaying: false, title: 'No recent tracks', artist: 'Start playing music on Spotify!', albumImageUrl: null };
 
-  const percentFilled = duration && duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0;
-  const fillColor = '#10B981'; // Tailwind green-500
-  const darkTrackColor = '#374151'; // neutral-700
-  const lightTrackColor = '#E5E7EB'; // neutral-200
-  const trackColor = isDark ? darkTrackColor : lightTrackColor;
-
   return (
     <>
-      <div className={`${cardBase} ${cardThemeClass}`} style={{minHeight: 88}}>
+      <div className="w-full max-w-2xl mt-8 bg-neutral-900 border border-neutral-800 rounded-2xl p-4 shadow-sm flex items-center gap-4" style={{minHeight: 88}}>
       {/* Album Art */}
       <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-neutral-800 flex items-center justify-center">
           {display.albumImageUrl ? (
@@ -193,24 +162,17 @@ const MusicPlayer = () => {
         )}
       </div>
       {/* Content */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center h-full gap-1">
+      <div className="flex-1 min-w-0 flex flex-col justify-center h-full gap-1">
         <div className="flex items-center gap-2 mb-1">
-          <img src="/spotify.png" alt="Spotify" className="w-5 h-5 object-contain" />
+          <svg viewBox="0 0 168 168" width="20" height="20" fill="currentColor" className="text-green-500"><path d="M84 0a84 84 0 1 0 0 168 84 84 0 0 0 0-168zm38.7 120.5c-1.3 2.1-3.9 2.8-6 1.5-16.4-10-37.1-12.3-61.5-6.7-2.4.5-4.7-1-5.2-3.3-.5-2.4 1-4.7 3.3-5.2 26.2-5.9 48.7-3.4 66.7 7.5 2.1 1.3 2.8 3.9 1.5 6zm8.5-18.2c-1.6 2.6-5 3.4-7.5 1.8-18.8-11.5-47.6-14.9-69.9-8.1-2.9.9-6-.7-6.9-3.6-.9-2.9.7-6 3.6-6.9 24.8-7.4 56.1-3.7 77.1 9.2 2.6 1.6 3.4 5 1.8 7.6zm.7-18.7C110.7 74 87.2 71.6 62.7 78.2c-3.4.9-6.9-1-7.8-4.4-.9-3.4 1-6.9 4.4-7.8 27.7-7.4 54.1-4.7 74.2 8.1 3 1.9 3.9 5.9 2 8.9z" /></svg>
             <span className="text-sm font-medium text-green-400">
-            {display.isPlaying ? 'Listening now 🎧' : 'Last played'}
+            {display.isPlaying ? 'Now playing' : 'Last played'}
           </span>
         </div>
-        <div className={titleClass}>
-          <a
-            href={display.songUrl || (display.trackId ? `https://open.spotify.com/track/${display.trackId}` : '#')}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
-            {display.title}
-          </a>
+        <div className="text-lg font-bold text-white truncate">
+          {display.title}
         </div>
-        <div className={artistClass}>
+        <div className="text-sm text-neutral-400 truncate">
           {display.artist ? `by ${display.artist}` : ''}
         </div>
       </div>
@@ -238,41 +200,101 @@ const MusicPlayer = () => {
                   setExpanded(true);
                 }
               }}
-              className={btnClass}
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-neutral-800 hover:bg-green-600 transition-colors group"
               title={isPreviewPlaying ? 'Pause preview' : 'Play preview'}
             >
               {isPreviewPlaying ? (
-                <X className={iconClass} />
+                <X className="w-5 h-5 text-white" />
               ) : (
-                <Play className={iconClass} />
+                <Play className="w-5 h-5 text-white" />
               )}
             </button>
           ) : (
             <button
-              onClick={() => {
-                const url = display.songUrl || (display.trackId ? `https://open.spotify.com/track/${display.trackId}` : undefined);
-                if (url) window.open(url, '_blank', 'noopener');
-              }}
-              className={btnClass}
-              title="Open on Spotify"
+              onClick={() => setShowEmbed(!showEmbed)}
+              className="flex items-center justify-center w-10 h-10 rounded-xl bg-neutral-800 hover:bg-green-600 transition-colors group"
+              title={showEmbed ? "Hide player" : "Play on website"}
             >
-              <Play className={iconClass} />
+              {showEmbed ? (
+                <X className="w-5 h-5 text-white" />
+              ) : (
+                <Play className="w-5 h-5 text-white" />
+              )}
             </button>
           )}
         </div>
       )}
       </div>
 
-      
+      {/* Embedded Player Inline */}
+      {showEmbed && display.trackId && (
+        <div className="mt-4 w-full max-w-2xl">
+          <iframe
+            key={display.trackId}
+            src={`https://open.spotify.com/embed/track/${display.trackId}`}
+            width="100%"
+            height="352"
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+            className="rounded-2xl border border-neutral-800"
+          ></iframe>
+        </div>
+      )}
+
+      {/* Modal player for bigger view (optional) */}
+      {showEmbed && display.trackId && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          aria-hidden={!showEmbed}
+        >
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowEmbed(false)} />
+          <div className="relative w-full max-w-3xl bg-neutral-900 rounded-2xl overflow-hidden shadow-xl">
+            <div className="flex items-center justify-between p-3 border-b border-neutral-800">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-md overflow-hidden bg-neutral-800">
+                  {display.albumImageUrl ? (
+                    <img src={display.albumImageUrl} alt={display.title} className="w-full h-full object-cover" />
+                  ) : null}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-white truncate">{display.title}</div>
+                  <div className="text-xs text-neutral-400 truncate">{display.artist}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowEmbed(false)}
+                className="p-2 rounded-md bg-neutral-800 hover:bg-neutral-700"
+                aria-label="Close player"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+            </div>
+            <iframe
+              key={`modal-${display.trackId}`}
+              src={`https://open.spotify.com/embed/track/${display.trackId}`}
+              width="100%"
+              height="480"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      )}
       {/* Animated expanded player */}
       <div
-        className={`w-full max-w-2xl mt-4 ${expandedBgClass} rounded-2xl overflow-hidden origin-top transform-gpu transition-all ease-out duration-300 ${expanded ? `${expandedBorderClass} max-h-72 p-4 opacity-100 translate-y-0` : 'max-h-0 p-0 opacity-0 -translate-y-2'}`}
+        className={`w-full max-w-2xl mt-4 bg-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 ${expanded ? 'border border-neutral-800 max-h-72 p-4' : 'max-h-0 p-0'}`}
         aria-hidden={!expanded}
       >
         {expanded && (
-          <div className="py-1">
+          <div>
+            <div className="mb-3">
+              <div className="text-sm font-semibold text-white">{track.title} <span className="text-neutral-500">up next: {track.title}</span></div>
+              <div className="text-xs text-neutral-400">{track.artist}</div>
+            </div>
             <div className="flex items-center gap-3">
-              <div className={timeTextClass}>{formatTime(currentTime)}</div>
+              <div className="text-xs text-neutral-400">{formatTime(currentTime)}</div>
               <input
                 type="range"
                 min={0}
@@ -283,13 +305,9 @@ const MusicPlayer = () => {
                   if (audioRef.current) audioRef.current.currentTime = val;
                   setCurrentTime(val);
                 }}
-                style={{
-                  background: `linear-gradient(90deg, ${fillColor} ${percentFilled}%, ${trackColor} ${percentFilled}%)`,
-                  accentColor: fillColor,
-                }}
-                className={`music-range flex-1 h-1 rounded-full appearance-none`}
+                className="flex-1 h-1 bg-neutral-700 accent-green-500 rounded-lg"
               />
-              <div className={timeTextClass}>{formatTime(duration)}</div>
+              <div className="text-xs text-neutral-400">{formatTime(duration)}</div>
             </div>
           </div>
         )}
