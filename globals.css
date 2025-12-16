@@ -86,3 +86,46 @@ html.dark::view-transition-old(root) {
 .animate-music-bar-3 {
   animation: spotify-bar-3 1.2s infinite cubic-bezier(0.4,0,0.2,1) 0.4s;
 }
+
+/* Music player range styling to match thin rounded green progress */
+.music-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background-repeat: no-repeat;
+}
+.music-range:focus {
+  outline: none;
+}
+
+/* WebKit thumb */
+.music-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: #10B981; /* green-500 */
+  box-shadow: 0 0 0 4px rgba(16,185,129,0.12);
+  margin-top: -3px; /* center the thumb */
+}
+
+/* Firefox */
+.music-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: #10B981;
+  border: none;
+}
+
+.music-range::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.music-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+}
