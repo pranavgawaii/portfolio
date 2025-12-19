@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import { Globe, Mail, GraduationCap, Calendar, MapPin, ArrowUp } from 'lucide-react';
 import { ProjectItem } from './types';
 import GitHubActivitySection from './components/GitHubActivitySection';
+import Snowfall from 'react-snowfall';
 
 const App: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -115,6 +116,18 @@ const App: React.FC = () => {
         ></div>
 
         <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isDarkMode ? 'via-[#050505]/50 to-[#050505]' : 'via-white/50 to-white'} opacity-80 transition-colors duration-300`}></div>
+      </div>
+
+      {/* Global Snowfall Effect */}
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        <Snowfall
+          snowflakeCount={60}
+          style={{
+            position: 'fixed',
+            width: '100vw',
+            height: '100vh',
+          }}
+        />
       </div>
 
       <div className="max-w-2xl mx-auto px-6 py-28 relative z-10">
