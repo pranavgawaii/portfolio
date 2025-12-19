@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.6);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(75, 85, 99, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(75, 85, 99, 0.6);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* When switching to Light (html has no .dark class) */
+/* Old (Dark) is on top and shrinks to reveal New (Light) */
+html:not(.dark)::view-transition-old(root) {
+  z-index: 2147483646;
+}
+html:not(.dark)::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* When switching to Dark (html has .dark class) */
+/* New (Dark) is on top and expands to cover Old (Light) */
+html.dark::view-transition-new(root) {
+  z-index: 2147483646;
+}
+html.dark::view-transition-old(root) {
+  z-index: 1;
+}
+
+@keyframes spotify-fade-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes spotify-bar-1 {
+  0%, 100% { height: 6px; }
+  50% { height: 16px; }
+}
+@keyframes spotify-bar-2 {
+  0%, 100% { height: 16px; }
+  50% { height: 8px; }
+}
+@keyframes spotify-bar-3 {
+  0%, 100% { height: 10px; }
+  50% { height: 18px; }
+}
+
+.animate-spotify-fade-in {
+  animation: spotify-fade-in 0.7s cubic-bezier(0.4,0,0.2,1) both;
+}
+.animate-music-bar-1 {
+  animation: spotify-bar-1 1.2s infinite cubic-bezier(0.4,0,0.2,1);
+}
+.animate-music-bar-2 {
+  animation: spotify-bar-2 1.2s infinite cubic-bezier(0.4,0,0.2,1) 0.2s;
+}
+.animate-music-bar-3 {
+  animation: spotify-bar-3 1.2s infinite cubic-bezier(0.4,0,0.2,1) 0.4s;
+}
