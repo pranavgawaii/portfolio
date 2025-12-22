@@ -4,6 +4,8 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+// import { db } from './lib/firebase.js';           <-- REMOVED
+// import { collection, addDoc } from 'firebase/firestore'; <-- REMOVED
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,6 +35,10 @@ loadEnv(path.join(__dirname, '.env.local'));
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN;
+
+// Initialize Firebase dynamically after env vars are loaded
+const { db } = await import('./lib/firebase.js');
+const { collection, addDoc } = await import('firebase/firestore');
 
 const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
 const NOW_PLAYING_ENDPOINT = `https://api.spotify.com/v1/me/player/currently-playing`;
@@ -212,6 +218,44 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ isPlaying: false, error: 'Failed to fetch spotify data', details: error.toString() }));
         }
+    } else if (url.pathname === '/api/track-resume') {
+        // Resume Tracking Endpoint
+        const type = url.searchParams.get('type') || 'view'; // 'view' or 'download'
+
+        // Google Drive Links
+        const VIEW_LINK = "https://drive.google.com/file/d/1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi/preview";
+        const DOWNLOAD_LINK = "https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi";
+
+        const targetUrl = type === 'download' ? DOWNLOAD_LINK : VIEW_LINK;
+
+        // Log to Firebase "silently"
+        try {
+            const safePayload = {
+                timestamp: new Date().toISOString(),
+                type: String(type || 'view'),
+                userAgent: String(req.headers['user-agent'] || 'unknown'),
+                deviceType: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(req.headers['user-agent']) ? 'Mobile' : 'Desktop',
+                ip: "127.0.0.1",
+                location: {
+                    city: "Pune (LocalDev)",
+                    country: "IN",
+                    region: "MH"
+                }
+            };
+
+            console.log('[Resume Tracker] Attempting to log:', safePayload);
+
+            await addDoc(collection(db, "resume_logs"), safePayload);
+            console.log(`[Resume Tracker] Logged ${type} event.`);
+        } catch (error) {
+            console.error(`[Resume Tracker] Error logging:`, error);
+            // Fail open: still redirect even if logging fails
+        }
+
+        // Redirect immediately
+        res.writeHead(307, { 'Location': targetUrl });
+        res.end();
+
     } else {
         res.writeHead(404);
         res.end();

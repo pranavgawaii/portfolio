@@ -134,7 +134,10 @@ const Hero: React.FC = () => {
         {/* Buttons */}
         <div className="flex flex-wrap gap-3 sm:gap-4 mb-8 sm:mb-12 w-full justify-center sm:justify-start">
           <button
-            onClick={() => setShowResume(true)}
+            onClick={() => {
+              setShowResume(true);
+              fetch('/api/track-resume?type=view').catch(console.error);
+            }}
             className="flex items-center gap-2 px-5 py-2.5 text-sm bg-white dark:bg-[#050505] text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
           >
             <FileText size={16} />
@@ -184,6 +187,7 @@ const Hero: React.FC = () => {
               <div className="flex items-center gap-2">
                 <a
                   href="https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi"
+                  onClick={() => fetch('/api/track-resume?type=download').catch(console.error)}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
