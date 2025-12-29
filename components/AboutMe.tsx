@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PROFILE } from '../constants';
+import { useTheme } from 'next-themes';
 
 const AboutMe = () => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const profileImage = mounted && resolvedTheme === 'light' ? '/coollight.png' : '/cooldark.png';
+
   return (
     <section id="about-me" className="max-w-3xl mx-auto px-4 mt-24 mb-20 scroll-mt-28">
       <div className="mb-6">
@@ -14,11 +24,11 @@ const AboutMe = () => {
         {/* Image Section */}
         <div className="w-full md:w-32 md:h-32 flex-shrink-0">
           <div className="w-full h-full aspect-square rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 relative">
-             <img 
-               src="/pgg.JPG" 
-               alt={PROFILE.name} 
-               className="w-full h-full object-cover"
-             />
+            <img
+              src={profileImage}
+              alt={PROFILE.name}
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
@@ -36,14 +46,14 @@ const AboutMe = () => {
               Skills
             </h4>
             <div className="flex flex-wrap items-center gap-4">
-               <TechBadge name="React" src="/React (1).png" />
-               <TechBadge name="JavaScript" src="/JavaScript.png" />
-               <TechBadge name="TypeScript" src="/TypeScript.png" />
-               <TechBadge name="HTML5" src="/HTML5.png" />
-               <TechBadge name="CSS3" src="/CSS3.png" />
-               <TechBadge name="Java" src="/Java.png" />
-               <TechBadge name="MongoDB" src="/MongoDB.png" />
-               <TechBadge name="PostgreSQL" src="/PostgresSQL.png" />
+              <TechBadge name="React" src="/React (1).png" />
+              <TechBadge name="JavaScript" src="/JavaScript.png" />
+              <TechBadge name="TypeScript" src="/TypeScript.png" />
+              <TechBadge name="HTML5" src="/HTML5.png" />
+              <TechBadge name="CSS3" src="/CSS3.png" />
+              <TechBadge name="Java" src="/Java.png" />
+              <TechBadge name="MongoDB" src="/MongoDB.png" />
+              <TechBadge name="PostgreSQL" src="/PostgresSQL.png" />
             </div>
           </div>
         </div>
@@ -63,7 +73,7 @@ const TechBadge = ({ name, src }: { name: string; src: string }) => {
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 rotate-45"></div>
         </div>
       </div>
-      
+
       {/* Icon */}
       <div className="w-8 h-8 transition-transform duration-300 group-hover:-translate-y-1 cursor-pointer">
         <img src={src} alt={name} className="w-full h-full object-contain" />
