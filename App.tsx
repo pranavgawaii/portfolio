@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PROFILE, EXPERIENCE, PROJECTS, EDUCATION, LEADERSHIP } from './constants';
+import { PROFILE, EXPERIENCE, PROJECTS, LEADERSHIP } from './constants';
 import Section from './components/Section';
 import Card from './components/Card';
 import Badge from './components/Badge';
@@ -22,7 +22,7 @@ import Snowfall from 'react-snowfall';
 const App: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [lineHeight, setLineHeight] = useState(0);
-  const [activeSection, setActiveSection] = useState<string>('education');
+  const [activeSection, setActiveSection] = useState<string>('experience');
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
@@ -159,60 +159,7 @@ const App: React.FC = () => {
             />
           </div>
 
-          {/* Education Section */}
-          <Section id="education" title="Education">
-            <div className={getCircleClass('education')}></div>
-            <div className="space-y-6">
-              {EDUCATION.map((edu) => (
-                <div key={edu.id} className="group relative p-6 bg-white dark:bg-[#0a0a0a] border border-neutral-200 dark:border-neutral-800 rounded-2xl hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                  <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
-                          <GraduationCap size={22} />
-                        </div>
-                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {edu.institution}
-                        </h3>
-                      </div>
 
-                      <div className="ml-[52px]">
-                        {edu.degree && (
-                          <p className="text-base font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-                            {edu.degree}
-                          </p>
-                        )}
-
-                        <div className="flex flex-wrap gap-y-2 gap-x-5 text-sm text-neutral-500 dark:text-neutral-500 mb-3">
-                          {edu.period && (
-                            <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-900 px-2.5 py-1 rounded-md">
-                              <Calendar size={14} />
-                              <span>{edu.period}</span>
-                            </div>
-                          )}
-                          <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-900 px-2.5 py-1 rounded-md">
-                            <MapPin size={14} />
-                            <span>{edu.location}</span>
-                          </div>
-                        </div>
-
-                        {edu.details && (
-                          <div className="space-y-1.5 pt-1">
-                            {edu.details.map((detail, i) => (
-                              <p key={i} className="text-sm text-neutral-600 dark:text-neutral-400 flex items-center gap-2.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-600"></span>
-                                {detail}
-                              </p>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Section>
 
           {/* Experience Section */}
           <Section id="experience" title="Experience">
