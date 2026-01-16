@@ -3,7 +3,6 @@ import { useTheme } from 'next-themes';
 import { PROFILE, ICONS_MAP } from '../constants';
 import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check, Download } from 'lucide-react';
 import SpotifyCard from './SpotifyCard';
-import Link from 'next/link';
 import ProgressiveImage from './ProgressiveImage';
 import ContactModal from './ContactModal';
 
@@ -14,7 +13,7 @@ const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color
   </span>
 );
 
-const SocialLink = ({ href, icon: Icon, label }: { href: string, icon: any, label: string }) => {
+const SocialLink: React.FC<{ href: string, icon: any, label: string }> = ({ href, icon: Icon, label }) => {
   const [copied, setCopied] = useState(false);
   const isEmail = label === "Email";
   const email = href.replace("mailto:", "");

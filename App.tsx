@@ -5,7 +5,7 @@ import Card from './components/Card';
 import Badge from './components/Badge';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
-import SpotifyCard from './components/SpotifyCard';
+
 import Footer from './components/Footer';
 import AboutMe from './components/AboutMe';
 import FeaturedBlog from './components/FeaturedBlog';
@@ -262,7 +262,7 @@ const App: React.FC = () => {
           />
         </div>
 
-        <SpotifyCard />
+
 
         <Footer />
 

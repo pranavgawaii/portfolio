@@ -34,6 +34,7 @@ export interface ProjectItem {
   github?: string;
   status?: string;
   image?: string;
+  youtube?: string;
 }
 
 export interface LeadershipItem {

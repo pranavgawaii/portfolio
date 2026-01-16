@@ -7,7 +7,7 @@ interface ProjectCardProps {
   onClick?: () => void;
 }
 
-const TechIcon = ({ name }: { name: string }) => {
+const TechIcon: React.FC<{ name: string }> = ({ name }) => {
   // Map tech names to icons
   const iconMap: Record<string, string> = {
     "React": "/React (1).png",

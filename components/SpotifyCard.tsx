@@ -25,9 +25,15 @@ const SpotifyCard: React.FC = () => {
 
     // Initial state is null to prevent FOUC (Flash of Unstyled Content) or wrong data
     const [track, setTrack] = useState<SpotifyTrack & { previewUrl?: string | null; progressMs?: number; durationMs?: number } | null>(null);
+    const [imageError, setImageError] = useState(false); // Track image load error
     const [loading, setLoading] = useState(true);
     const [isLocalPlaying, setIsLocalPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Reset image error when track changes
+    useEffect(() => {
+        setImageError(false);
+    }, [track?.albumImageUrl]);
 
     useEffect(() => {
         const fetchTrack = async () => {
@@ -113,8 +119,9 @@ const SpotifyCard: React.FC = () => {
                     {/* Album Art */}
                     <div className="relative shrink-0">
                         <img
-                            src={track.albumImageUrl}
+                            src={imageError ? mockTrack.albumImageUrl : track.albumImageUrl}
                             alt={track.title}
+                            onError={() => setImageError(true)}
                             className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                         />
                     </div>
