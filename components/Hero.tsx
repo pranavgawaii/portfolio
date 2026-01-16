@@ -3,6 +3,8 @@ import { useTheme } from 'next-themes';
 import { PROFILE, ICONS_MAP } from '../constants';
 import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check, Download } from 'lucide-react';
 import SpotifyCard from './SpotifyCard';
+import Link from 'next/link';
+import ProgressiveImage from './ProgressiveImage';
 import ContactModal from './ContactModal';
 
 const TechBadge = ({ icon: Icon, name, color }: { icon: any, name: string, color: string }) => (
@@ -71,16 +73,12 @@ const Hero: React.FC = () => {
         {/* Profile Picture */}
         <div className="relative mb-6 sm:mb-8 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
           <div className="w-24 h-24 xs:w-28 xs:h-28 sm:w-32 sm:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
-            <img
-              src="/coollight.png"
+            <ProgressiveImage
+              src={mounted && resolvedTheme === 'dark' ? "/cooldark.png" : "/coollight.png"}
               alt={PROFILE.name}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
+              className="absolute inset-0 w-full h-full"
             />
-            <img
-              src="/cooldark.png"
-              alt={PROFILE.name}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-100' : 'opacity-0'}`}
-            />
+
           </div>
           {/* Status Dot */}
           <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white dark:bg-[#050505] rounded-full flex items-center justify-center">
@@ -100,15 +98,10 @@ const Hero: React.FC = () => {
                 <X size={22} strokeWidth={1.5} className="" />
               </button>
               <div className="w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300">
-                <img
-                  src="/coollight.png"
+                <ProgressiveImage
+                  src={mounted && resolvedTheme === 'dark' ? "/cooldark.png" : "/coollight.png"}
                   alt={PROFILE.name}
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
-                />
-                <img
-                  src="/cooldark.png"
-                  alt={PROFILE.name}
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${mounted && resolvedTheme === 'dark' ? 'opacity-100' : 'opacity-0'}`}
+                  className="absolute inset-0 w-full h-full"
                 />
                 {/* Status Dot removed */}
               </div>

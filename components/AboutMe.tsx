@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ProgressiveImage from './ProgressiveImage';
 import { PROFILE } from '../constants';
 import { useTheme } from 'next-themes';
 
@@ -24,10 +25,10 @@ const AboutMe = () => {
         {/* Image Section */}
         <div className="w-full md:w-32 md:h-32 flex-shrink-0">
           <div className="w-full h-full aspect-square rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 relative">
-            <img
+            <ProgressiveImage
               src={profileImage}
               alt={PROFILE.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full"
             />
           </div>
         </div>
