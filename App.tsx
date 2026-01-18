@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import { Globe, Mail, GraduationCap, Calendar, MapPin, ArrowUp } from 'lucide-react';
 import { ProjectItem } from './types';
 import GitHubActivitySection from './components/GitHubActivitySection';
+import BirthdayCelebration from './components/BirthdayCelebration';
 
 
 const App: React.FC = () => {
@@ -285,6 +286,9 @@ const App: React.FC = () => {
           <ArrowUp size={24} />
         </button>
       )}
+
+      {/* Birthday Celebration Easter Egg */}
+      <BirthdayCelebration />
     </div>
   );
 };
