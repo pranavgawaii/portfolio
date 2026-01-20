@@ -256,6 +256,38 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(307, { 'Location': targetUrl });
         res.end();
 
+    } else if (url.pathname === '/api/leetcode') {
+        // LeetCode Endpoint
+        try {
+            const response = await fetch('https://leetcode-stats-api.herokuapp.com/pranavgawai', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`LeetCode API returned status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.status === 'error') {
+                console.error('LeetCode API returned error status:', data.message);
+                throw new Error(data.message || 'LeetCode API error');
+            }
+
+            // The new API returns submissionCalendar as an object, not a stringified JSON
+            const submissionCalendar = data.submissionCalendar;
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(submissionCalendar));
+
+        } catch (error) {
+            console.error('Error in /api/leetcode:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to fetch LeetCode data' }));
+        }
     } else {
         res.writeHead(404);
         res.end();

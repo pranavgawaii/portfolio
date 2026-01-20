@@ -53,10 +53,10 @@ export function ThemeSwitch({ className }: { className?: string }) {
 
   if (!mounted) {
     return (
-        <button className={`p-2 rounded-full bg-gray-200 dark:bg-gray-800 ${className}`}>
-            <span className="sr-only">Toggle theme</span>
-            <div className="w-6 h-6" />
-        </button>
+      <button className={`p-2 rounded-full bg-gray-200 dark:bg-gray-800 ${className}`}>
+        <span className="sr-only">Toggle theme</span>
+        <div className="w-6 h-6" />
+      </button>
     )
   }
 

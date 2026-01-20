@@ -2,8 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground;
+  transition-property: color, background-color, border-color;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
 }
 
 /* Custom Scrollbar */
@@ -128,4 +182,129 @@ html.dark::view-transition-old(root) {
 
 .dark .github-card-shadow {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Modern Mobile Menu Styles */
+:root {
+  --component-inactive-color: hsl(var(--muted-foreground));
+  --component-bg: hsl(var(--card));
+  --component-shadow: hsl(var(--border));
+  --component-active-bg: hsl(var(--secondary));
+  --component-line-inactive-color: hsl(var(--border));
+  --component-active-color-default: #3b82f6;
+  /* Blue accent */
+}
+
+.dark {
+  --component-inactive-color: hsl(var(--muted-foreground));
+  --component-bg: hsl(var(--card));
+  --component-shadow: hsl(var(--border));
+  --component-active-bg: hsl(var(--secondary));
+  --component-line-inactive-color: hsl(var(--muted-foreground));
+  --component-active-color-default: #60a5fa;
+  /* Lighter blue for dark mode */
+}
+
+@keyframes iconBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  20% {
+    transform: translateY(-0.3em);
+  }
+
+  40% {
+    transform: translateY(0);
+  }
+
+  60% {
+    transform: translateY(-0.1em);
+  }
+
+  80% {
+    transform: translateY(0);
+  }
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--component-bg);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--component-shadow);
+}
+
+.menu__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 0.5rem;
+}
+
+.menu__item:hover {
+  background: var(--component-active-bg);
+}
+
+.menu__item.active {
+  background: var(--component-active-bg);
+}
+
+.menu__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--component-inactive-color);
+  transition: all 0.3s ease;
+}
+
+.menu__item.active .menu__icon {
+  color: var(--component-active-color);
+  animation: iconBounce 0.6s ease;
+}
+
+.menu__icon .icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.menu__text {
+  display: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--component-inactive-color);
+  transition: all 0.3s ease;
+  position: relative;
+  text-transform: capitalize;
+}
+
+.menu__text.active {
+  display: none;
+  color: var(--component-active-color);
+}
+
+.menu__text.active::after {
+  display: none;
+  content: '';
+  position: absolute;
+  bottom: -0.25rem;
+  left: 0;
+  width: var(--lineWidth, 0);
+  height: 2px;
+  background: var(--component-active-color);
+  border-radius: 1px;
+  transition: width 0.3s ease;
 }

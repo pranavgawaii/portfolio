@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface ProgressiveImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     src: string;
@@ -8,15 +8,34 @@ interface ProgressiveImageProps extends React.ImgHTMLAttributes<HTMLImageElement
 
 const ProgressiveImage: React.FC<ProgressiveImageProps> = ({ src, className, alt, ...props }) => {
     const [loaded, setLoaded] = useState(false);
+    const divRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const img = new Image();
-        img.src = src;
-        img.onload = () => setLoaded(true);
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const img = new Image();
+                        img.src = src;
+                        img.onload = () => setLoaded(true);
+                        observer.disconnect();
+                    }
+                });
+            },
+            { threshold: 0.1 }
+        );
+
+        if (divRef.current) {
+            observer.observe(divRef.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
     }, [src]);
 
     return (
-        <div className={`relative overflow-hidden ${className}`}>
+        <div ref={divRef} className={`relative overflow-hidden ${className}`}>
             {/* Placeholder / Blur Effect */}
             <div
                 className={`absolute inset-0 bg-neutral-200 dark:bg-neutral-800 transition-opacity duration-700 ${loaded ? 'opacity-0' : 'opacity-100'

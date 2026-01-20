@@ -1,44 +1,68 @@
 import React from 'react';
-import { ThemeSwitch } from './ThemeSwitch';
+import { Home, User, Briefcase, Award, BookOpen, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { InteractiveMenu, InteractiveMenuItem } from './ui/modern-mobile-menu';
 
 const Navbar: React.FC = () => {
-  const scrollToSection = (id: string) => {
-    // Try to scroll, and if not found, retry after a short delay (for async rendering)
-    const tryScroll = (attempts = 0) => {
-      const element = document.getElementById(id);
-      if (element) {
-        const yOffset = -80;
-        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      } else if (attempts < 10) {
-        setTimeout(() => tryScroll(attempts + 1), 100);
-      }
-    };
-    tryScroll();
-  };
+    const { resolvedTheme, setTheme } = useTheme();
+    const [mounted, setMounted] = React.useState(false);
 
-  return (
-    <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-2xl grid grid-cols-3 items-center px-2 py-1.5 sm:px-4 sm:py-2 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl rounded-full border border-neutral-200 dark:border-neutral-800 shadow-lg transition-all duration-300">
-      
-      {/* Left: Empty */}
-      <div></div>
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
-      {/* Center: Navigation Links */}
-      <div className="flex items-center justify-center gap-3 sm:gap-6 text-[12px] sm:text-[14px] font-medium text-neutral-600 dark:text-neutral-400">
-        <button onClick={() => scrollToSection('home')} className="hover:text-black dark:hover:text-white transition-colors">Home</button>
-        <button onClick={() => scrollToSection('experience')} className="hover:text-black dark:hover:text-white transition-colors">Work</button>
-        <button onClick={() => scrollToSection('projects')} className="hover:text-black dark:hover:text-white transition-colors">Projects</button>
-        <button onClick={() => scrollToSection('about-me')} className="hover:text-black dark:hover:text-white transition-colors whitespace-nowrap">About Me</button>
-      </div>
+    const isDark = resolvedTheme === 'dark';
 
-      {/* Right: Theme Toggle */}
-      <div className="flex items-center justify-end">
-        <div className="bg-transparent rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-             <ThemeSwitch className="!static !shadow-none !bg-transparent !p-2" />
+    const menuItems: InteractiveMenuItem[] = [
+        {
+            label: 'Home',
+            icon: Home,
+            onClick: () => {
+                document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+        {
+            label: 'Experience',
+            icon: Briefcase,
+            onClick: () => {
+                document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+        {
+            label: 'Projects',
+            icon: Award,
+            onClick: () => {
+                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+        {
+            label: 'About',
+            icon: User,
+            onClick: () => {
+                document.getElementById('about-me')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+        {
+            label: 'Blogs',
+            icon: BookOpen,
+            onClick: () => {
+                document.getElementById('blogs')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+        {
+            label: 'Theme',
+            icon: mounted ? (isDark ? Sun : Moon) : Moon,
+            onClick: () => {
+                setTheme(isDark ? 'light' : 'dark');
+            }
+        },
+    ];
+
+    return (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
+            <InteractiveMenu items={menuItems} accentColor="#3b82f6" />
         </div>
-      </div>
-    </nav>
-  );
+    );
 };
 
 export default Navbar;

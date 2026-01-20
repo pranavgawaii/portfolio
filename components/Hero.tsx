@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { PROFILE, ICONS_MAP } from '../constants';
 import { Link as LinkIcon, FileText, Mail, Database, Server, Code, Cpu, Layers, X, Copy, Check, Download } from 'lucide-react';
+import { AnimatePresence, motion } from "motion/react";
 import SpotifyCard from './SpotifyCard';
 import ProgressiveImage from './ProgressiveImage';
 import ContactModal from './ContactModal';
@@ -59,7 +60,18 @@ const Hero: React.FC = () => {
   const [showResume, setShowResume] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [showProfileZoom, setShowProfileZoom] = useState(false);
+
   const [mounted, setMounted] = useState(false);
+
+  const titles = ["- Full Stack Developer", "- Open Source Contributor", "- UI/UX Designer", "- Tech Enthusiast"];
+  const [titleIndex, setTitleIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTitleIndex((prev) => (prev + 1) % titles.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -69,52 +81,55 @@ const Hero: React.FC = () => {
     <header className="pt-10 pb-16 sm:pt-12 sm:pb-20">
       <div className="flex flex-col items-center sm:items-start w-full px-3 sm:px-0">
 
-        {/* Profile Picture */}
-        <div className="relative mb-6 sm:mb-8 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
-          <div className="w-24 h-24 xs:w-28 xs:h-28 sm:w-32 sm:h-32 rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 shadow-xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
-            <ProgressiveImage
-              src={mounted && resolvedTheme === 'dark' ? "/cooldark.png" : "/coollight.png"}
-              alt={PROFILE.name}
-              className="absolute inset-0 w-full h-full"
-            />
+        {/* Profile Header Block */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 w-full">
 
+          {/* Profile Picture (Enlarged) */}
+          <div className="relative shrink-0 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] overflow-hidden border border-black/5 dark:border-white/10 shadow-md relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
+              <ProgressiveImage
+                src={mounted && resolvedTheme === 'dark' ? "/cooldark.png" : "/coollight.png"}
+                alt={PROFILE.name}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
           </div>
-          {/* Status Dot */}
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-white dark:bg-[#050505] rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-[#050505]"></div>
-          </div>
-        </div>
 
-        {/* Profile Zoom Modal */}
-        {showProfileZoom && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in" onClick={() => setShowProfileZoom(false)}>
-            <div className="relative w-full max-w-lg flex flex-col items-center" onClick={e => e.stopPropagation()}>
-              <button
-                onClick={() => setShowProfileZoom(false)}
-                className="absolute top-4 right-4 p-1 hover:bg-neutral-200 text-neutral-500 hover:text-black border border-transparent rounded-full z-20 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-400 shadow-sm"
-                aria-label="Close profile zoom"
-              >
-                <X size={22} strokeWidth={1.5} className="" />
-              </button>
-              <div className="w-72 h-72 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300">
-                <ProgressiveImage
-                  src={mounted && resolvedTheme === 'dark' ? "/cooldark.png" : "/coollight.png"}
-                  alt={PROFILE.name}
-                  className="absolute inset-0 w-full h-full"
-                />
-                {/* Status Dot removed */}
+          {/* Name & Title - Stacked Layout */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1 sm:mt-12">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white font-sans">
+                heyitspranav
+              </h1>
+              <div className="text-blue-500 flex items-center pt-1" title="Verified">
+                {/* High Quality Verified Badge */}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.5 12.5C22.5 12.9806 22.3622 13.4478 22.1064 13.8475L20.8976 15.7362C20.6698 16.0922 20.5513 16.5163 20.5638 16.9405L20.6302 19.1824C20.6443 19.658 20.4735 20.1218 20.1508 20.4851C19.8281 20.8484 19.381 21.0805 18.8953 21.1373L16.6585 21.399C16.2361 21.4484 15.8368 21.6423 15.5147 21.9546L13.8055 23.6122C13.4447 23.9622 12.9723 24.1377 12.5 24.1377C12.0277 24.1377 11.5553 23.9622 11.1945 23.6122L9.48529 21.9546C9.16324 21.6423 8.76387 21.4484 8.34151 21.399L6.10473 21.1373C5.61904 21.0805 5.17191 20.8484 4.84918 20.4851C4.52646 20.1218 4.35568 19.658 4.36976 19.1824L4.43618 16.9405C4.44872 16.5163 4.33017 16.0922 4.10239 15.7362L2.89356 13.8475C2.63777 13.4478 2.5 12.9806 2.5 12.5C2.5 12.0194 2.63777 11.5522 2.89356 11.1525L4.10239 9.26383C4.33017 8.90776 4.44872 8.48373 4.43618 8.05949L4.36976 5.81759C4.35568 5.342 4.52646 4.87817 4.84918 4.51487C5.17191 4.15157 5.61904 3.91953 6.10473 3.86273L8.34151 3.60105C8.76387 3.55163 9.16324 3.35773 9.48529 3.04535L11.1945 1.38779C11.5553 1.03784 12.0277 0.862305 12.5 0.862305C12.9723 0.862305 13.4447 1.03784 13.8055 1.38779L15.5147 3.04535C15.8368 3.35773 16.2361 3.55163 16.6585 3.60105L18.8953 3.86273C19.381 3.91953 19.8281 4.15157 20.1508 4.51487C20.4735 4.87817 20.6443 5.342 20.6302 5.81759L20.5638 8.05949C20.5513 8.48373 20.6698 8.90776 20.8976 9.26383L22.1064 11.1525C22.3622 11.5522 22.5 12.0194 22.5 12.5Z" />
+                  <path d="M10.0945 16.3201L6.68018 12.9056L8.09439 11.4913L10.0945 13.4915L16.9056 6.68042L18.3198 8.09463L10.0945 16.3201Z" fill="white" />
+                </svg>
               </div>
-              <div className="mt-6 text-center">
-                <h2 className="text-2xl font-bold text-white drop-shadow-lg">{PROFILE.name}</h2>
+            </div>
+
+            {/* Animated Subtitle - Stacked Under */}
+            <div className="flex items-center gap-2 text-lg sm:text-xl text-neutral-500 dark:text-neutral-400 font-medium tracking-wide h-6 sm:h-auto font-sans">
+              {/* <span className="hidden sm:inline">—</span> Removed the dash for stacked layout */}
+              <div className="relative w-80 sm:w-96 text-center sm:text-left h-7 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={titles[titleIndex]}
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -20, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="absolute inset-0 truncate flex items-center justify-center sm:justify-start"
+                  >
+                    {titles[titleIndex]}
+                  </motion.span>
+                </AnimatePresence>
               </div>
             </div>
           </div>
-        )}
-
-        {/* Headline */}
-        <h1 className="text-base xs:text-lg sm:text-xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-4 sm:mb-6 break-words whitespace-normal text-center sm:text-left w-full">
-          Hi, I'm {PROFILE.name.split(' ')[0]} <span className="text-neutral-500 dark:text-neutral-500">— A Full Stack web developer.</span>
-        </h1>
+        </div>
 
         {/* Bio with Badges */}
         <div className="text-base xs:text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-2xl sm:max-w-3xl mb-8 sm:mb-10 w-full">

@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Play, AudioLines } from 'lucide-react';
+import { BorderTrail } from './ui/border-trail';
 
 interface SpotifyTrack {
     albumImageUrl: string;
@@ -109,12 +110,18 @@ const SpotifyCard: React.FC = () => {
         <div className="w-full max-w-2xl mx-auto mb-8 md:mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <audio ref={audioRef} src={track.previewUrl || ''} onEnded={handleAudioEnded} />
 
+
+
             <a
                 href={track.songUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block group relative bg-white dark:bg-[#181818] hover:bg-neutral-50 dark:hover:bg-[#202020] transition-colors duration-300 border border-neutral-200 dark:border-[#282828] rounded-xl p-3 md:p-4 overflow-hidden shadow-sm dark:shadow-none"
             >
+                <BorderTrail
+                    className="bg-gradient-to-l from-green-200 via-green-500 to-green-200 dark:from-green-400 dark:via-green-500 dark:to-green-400"
+                    size={60}
+                />
                 <div className="flex items-center gap-4 z-10 relative">
                     {/* Album Art */}
                     <div className="relative shrink-0">

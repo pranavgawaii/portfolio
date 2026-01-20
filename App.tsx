@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { PROFILE, EXPERIENCE, PROJECTS, LEADERSHIP } from './constants';
 import Section from './components/Section';
 import Card from './components/Card';
@@ -6,17 +6,22 @@ import Badge from './components/Badge';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
 
-import Footer from './components/Footer';
-import AboutMe from './components/AboutMe';
-import FeaturedBlog from './components/FeaturedBlog';
-import ProjectModal from './components/ProjectModal';
-import ProjectCard from './components/ProjectCard';
-import ExperienceCard from './components/ExperienceCard';
-import LeadershipCard from './components/LeadershipCard';
+
+
+// Lazy load heavy/below-the-fold components
+const Footer = React.lazy(() => import('./components/Footer'));
+const AboutMe = React.lazy(() => import('./components/AboutMe'));
+const FeaturedBlog = React.lazy(() => import('./components/FeaturedBlog'));
+const ProjectModal = React.lazy(() => import('./components/ProjectModal'));
+const GitHubActivitySection = React.lazy(() => import('./components/GitHubActivitySection'));
+
+const ProjectCard = React.lazy(() => import('./components/ProjectCard'));
+const ExperienceCard = React.lazy(() => import('./components/ExperienceCard'));
+const LeadershipCard = React.lazy(() => import('./components/LeadershipCard'));
 import { useTheme } from 'next-themes';
 import { Globe, Mail, GraduationCap, Calendar, MapPin, ArrowUp } from 'lucide-react';
 import { ProjectItem } from './types';
-import GitHubActivitySection from './components/GitHubActivitySection';
+
 
 
 
@@ -103,16 +108,25 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-white dark:bg-[#050505] text-neutral-600 dark:text-neutral-400 selection:bg-neutral-200 dark:selection:bg-neutral-700 selection:text-black dark:selection:text-white font-sans relative overflow-x-hidden transition-colors duration-300">
 
       {/* Exact Grid Background */}
+      {/* Exact Grid Background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-white dark:bg-[#050505] transition-colors duration-300"></div>
+        {/* Light Mode Grid */}
         <div
-          className="absolute inset-0 transition-opacity duration-300"
+          className="absolute inset-0 transition-opacity duration-500 ease-in-out"
           style={{
-            backgroundImage: isDarkMode
-              ? `linear-gradient(#333333 1px, transparent 1px), linear-gradient(90deg, #333333 1px, transparent 1px)`
-              : `linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(#e5e5e5 1px, transparent 1px), linear-gradient(90deg, #e5e5e5 1px, transparent 1px)`,
             backgroundSize: '32px 32px',
-            opacity: isDarkMode ? 0.6 : 0.8
+            opacity: isDarkMode ? 0 : 0.8
+          }}
+        ></div>
+        {/* Dark Mode Grid */}
+        <div
+          className="absolute inset-0 transition-opacity duration-500 ease-in-out"
+          style={{
+            backgroundImage: `linear-gradient(#333333 1px, transparent 1px), linear-gradient(90deg, #333333 1px, transparent 1px)`,
+            backgroundSize: '32px 32px',
+            opacity: isDarkMode ? 0.6 : 0
           }}
         ></div>
 
@@ -130,6 +144,14 @@ const App: React.FC = () => {
         <div id="home" className="scroll-mt-28">
           <Hero />
         </div>
+
+        {/* Tech Stack & GitHub Activity (Placed after Spotify/Hero, before Experience) */}
+        <React.Suspense fallback={<div className="h-20 bg-neutral-100 dark:bg-neutral-900 animate-pulse rounded-xl mb-8" />}>
+          <div className="mb-12 space-y-8">
+
+            <GitHubActivitySection />
+          </div>
+        </React.Suspense>
 
         {/* Content Wrapper - The Timeline Line lives here */}
         <div ref={contentRef} className="relative">
@@ -157,9 +179,11 @@ const App: React.FC = () => {
             <div className={getCircleClass('experience')}></div>
 
             <div className="pl-2">
-              {EXPERIENCE.map((exp) => (
-                <ExperienceCard key={exp.id} experience={exp} />
-              ))}
+              <Suspense fallback={<div className="h-40 animate-pulse bg-neutral-100 dark:bg-neutral-900 rounded-lg"></div>}>
+                {EXPERIENCE.map((exp) => (
+                  <ExperienceCard key={exp.id} experience={exp} />
+                ))}
+              </Suspense>
             </div>
           </Section>
 
@@ -167,13 +191,15 @@ const App: React.FC = () => {
           <Section id="projects" title="Projects">
             <div className={getCircleClass('projects')}></div>
             <div className="grid grid-cols-1 gap-8">
-              {PROJECTS.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onClick={() => setSelectedProject(project)}
-                />
-              ))}
+              <Suspense fallback={<div className="h-60 animate-pulse bg-neutral-100 dark:bg-neutral-900 rounded-lg"></div>}>
+                {PROJECTS.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    onClick={() => setSelectedProject(project)}
+                  />
+                ))}
+              </Suspense>
             </div>
           </Section>
 
@@ -182,19 +208,23 @@ const App: React.FC = () => {
           <Section id="leadership" title="Leadership & Recognition" collapsible={false}>
             <div className={getCircleClass('leadership')}></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {LEADERSHIP.map((item) => (
-                <LeadershipCard key={item.id} item={item} />
-              ))}
+              <Suspense fallback={<div className="h-40 animate-pulse bg-neutral-100 dark:bg-neutral-900 rounded-lg"></div>}>
+                {LEADERSHIP.map((item) => (
+                  <LeadershipCard key={item.id} item={item} />
+                ))}
+              </Suspense>
             </div>
           </Section>
         </div>
 
         {/* About Me Section */}
-        <AboutMe />
-        <GitHubActivitySection />
+        <Suspense fallback={null}>
+          <AboutMe />
+          {/* GitHubActivitySection moved up */}
 
-        {/* Featured Blog Section */}
-        <FeaturedBlog />
+          {/* Featured Blog Section */}
+          <FeaturedBlog />
+        </Suspense>
 
         {/* Contact Section */}
         <section className="mt-24 mb-12 flex justify-center items-center">
@@ -265,16 +295,20 @@ const App: React.FC = () => {
 
 
 
-        <Footer />
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
 
       </div>
 
       {/* Project Modal */}
-      <ProjectModal
-        project={selectedProject}
-        isOpen={!!selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      <Suspense fallback={null}>
+        <ProjectModal
+          project={selectedProject}
+          isOpen={!!selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </Suspense>
 
       {/* Back to Top Button */}
       {showTop && (
