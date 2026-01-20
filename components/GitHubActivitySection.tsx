@@ -283,11 +283,17 @@ const GitHubActivitySection: React.FC = () => {
                 <span>Less</span>
                 <div className="flex items-center gap-[3px]">
                   {(() => {
-                    const leetcodeTheme = {
+                    const themeColors = {
+                      dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
+                      light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+                    };
+                    const leetcodeColors = {
                       dark: ['#161b22', '#6b4000', '#ab6600', '#e68a00', '#ffa116'],
                       light: ['#ebedf0', '#ffe4b5', '#ffcc80', '#ffa94d', '#ff8c00'],
                     };
-                    const colors = resolvedTheme === 'dark' ? leetcodeTheme.dark : leetcodeTheme.light;
+                    const activeTheme = activeTab === 'github' ? themeColors : leetcodeColors;
+                    const colors = resolvedTheme === 'dark' ? activeTheme.dark : activeTheme.light;
+
                     return colors.map((c, i) => (
                       <div
                         key={i}
