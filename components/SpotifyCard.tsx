@@ -118,10 +118,12 @@ const SpotifyCard: React.FC = () => {
                 rel="noopener noreferrer"
                 className="block group relative bg-white dark:bg-[#181818] hover:bg-neutral-50 dark:hover:bg-[#202020] transition-colors duration-300 border border-neutral-200 dark:border-[#282828] rounded-xl p-3 md:p-4 overflow-hidden shadow-sm dark:shadow-none"
             >
-                <BorderTrail
-                    className="bg-gradient-to-l from-green-200 via-green-500 to-green-200 dark:from-green-400 dark:via-green-500 dark:to-green-400"
-                    size={60}
-                />
+                {track.isPlaying && (
+                    <BorderTrail
+                        className="bg-gradient-to-l from-green-200 via-green-500 to-green-200 dark:from-green-400 dark:via-green-500 dark:to-green-400"
+                        size={60}
+                    />
+                )}
                 <div className="flex items-center gap-4 z-10 relative">
                     {/* Album Art */}
                     <div className="relative shrink-0">
