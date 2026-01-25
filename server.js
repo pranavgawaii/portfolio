@@ -257,13 +257,38 @@ const server = http.createServer(async (req, res) => {
         res.end();
 
     } else if (url.pathname === '/api/leetcode') {
-        // LeetCode Endpoint
+        // LeetCode Endpoint with Caching
+        // Simple in-memory cache
+        if (!global.leetcodeCache) global.leetcodeCache = { data: null, timestamp: 0 };
+        const CACHE_DURATION = 1000 * 60 * 60; // 1 Hour
+
+        const now = Date.now();
+        if (global.leetcodeCache.data && (now - global.leetcodeCache.timestamp < CACHE_DURATION)) {
+            console.log('Serving LeetCode data from cache');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(global.leetcodeCache.data));
+            return;
+        }
+
         try {
-            const response = await fetch('https://leetcode-stats-api.herokuapp.com/pranavgawai', {
-                method: 'GET',
+            console.log('Fetching fresh LeetCode data...');
+            const response = await fetch('https://leetcode.com/graphql', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Referer': 'https://leetcode.com/pranavgawai/'
+                },
+                body: JSON.stringify({
+                    query: `
+                        query getUserProfile($username: String!) {
+                            matchedUser(username: $username) {
+                                submissionCalendar
+                            }
+                        }
+                    `,
+                    variables: { username: "pranavgawai" }
+                })
             });
 
             if (!response.ok) {
@@ -272,21 +297,36 @@ const server = http.createServer(async (req, res) => {
 
             const data = await response.json();
 
-            if (data.status === 'error') {
-                console.error('LeetCode API returned error status:', data.message);
-                throw new Error(data.message || 'LeetCode API error');
+            if (data.errors) {
+                console.error('LeetCode GraphQL errors:', data.errors);
+                throw new Error('LeetCode GraphQL verification failed');
             }
 
-            // The new API returns submissionCalendar as an object, not a stringified JSON
-            const submissionCalendar = data.submissionCalendar;
+            if (!data.data || !data.data.matchedUser) {
+                throw new Error('User not found or invalid data structure');
+            }
+
+            // Parse the JSON string from LeetCode
+            const submissionCalendar = JSON.parse(data.data.matchedUser.submissionCalendar);
+
+            // Update Cache
+            global.leetcodeCache = { data: submissionCalendar, timestamp: now };
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(submissionCalendar));
 
         } catch (error) {
             console.error('Error in /api/leetcode:', error);
+            // Fallback to cache if available even if expired, otherwise error
+            if (global.leetcodeCache.data) {
+                console.log('Serving expired cache due to error');
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(global.leetcodeCache.data));
+                return;
+            }
+
             res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Failed to fetch LeetCode data' }));
+            res.end(JSON.stringify({ error: 'Failed to fetch LeetCode data', details: error.message }));
         }
     } else {
         res.writeHead(404);

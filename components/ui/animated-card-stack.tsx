@@ -132,10 +132,13 @@ function AnimatedCard({
     )
 }
 
+import BlogModal from "../BlogModal"
+
 export default function AnimatedCardStack() {
     const [cards, setCards] = useState(initialCards)
     const [isAnimating, setIsAnimating] = useState(false)
     const [nextId, setNextId] = useState(4)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const handleAnimate = () => {
         setIsAnimating(true)
@@ -157,14 +160,49 @@ export default function AnimatedCardStack() {
                 </AnimatePresence>
             </div>
 
-            <div className="relative z-10 -mt-px flex w-full items-center justify-center border-t border-border py-4">
+            <div className="relative z-10 -mt-px flex w-full items-center justify-center gap-4 border-t border-border py-4">
                 <button
                     onClick={handleAnimate}
-                    className="flex h-9 cursor-pointer select-none items-center justify-center gap-1 overflow-hidden rounded-lg border border-border bg-background px-3 font-medium text-secondary-foreground transition-all hover:bg-secondary/80 active:scale-[0.98]"
+                    className="flex h-[50px] cursor-pointer select-none items-center justify-center gap-1 overflow-hidden rounded-lg border border-border bg-background px-6 font-medium text-secondary-foreground transition-all hover:bg-secondary/80 active:scale-[0.98]"
                 >
-                    Next Post
+                    New Post
+                </button>
+
+                <button
+                    className="group flex min-w-[180px] decoration-0 transition-transform active:scale-95 cursor-pointer outline-none w-auto h-[50px] pr-6 pl-6 relative items-center justify-center"
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    style={{ backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "8px", border: "none" }}
+                >
+                    {/* Glow Layer */}
+                    <div className="pointer-events-none transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-0 opacity-100 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(15% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px", filter: "blur(15px)" }}></div>
+
+                    {/* Glow Hover Layer */}
+                    <div className="pointer-events-none transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-100 opacity-0 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(60.6% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px", filter: "blur(18px)" }}></div>
+
+                    {/* Stroke Layer */}
+                    <div className="pointer-events-none will-change-auto transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-0 opacity-100 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(10.7% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px" }}></div>
+
+                    {/* Stroke Hover Layer */}
+                    <div className="pointer-events-none will-change-auto transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-100 opacity-0 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(60.1% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px" }}></div>
+
+                    {/* Fill Layer */}
+                    <div className="rounded-[7px] absolute top-[1px] right-[1px] bottom-[1px] left-[1px] bg-black opacity-100"></div>
+
+                    {/* Content Layer */}
+                    <div className="relative z-20 flex items-center justify-center gap-2 opacity-100">
+                        <span className="m-0 p-0 font-sans text-[15px] font-medium text-white tracking-wide" style={{ WebkitFontSmoothing: "antialiased", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>
+                            Read More
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right transition-transform duration-300 group-hover:translate-x-1">
+                            <path d="M5 12h14"></path>
+                            <path d="m12 5 7 7-7 7"></path>
+                        </svg>
+                    </div>
                 </button>
             </div>
+
+            <BlogModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     )
 }

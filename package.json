@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node server.js & vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --port 3002"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

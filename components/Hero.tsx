@@ -78,15 +78,16 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <header className="pt-10 pb-16 sm:pt-12 sm:pb-20">
-      <div className="flex flex-col items-center sm:items-start w-full px-3 sm:px-0">
+    <header className="pb-16 sm:pb-20">
+
+      <div className="flex flex-col items-center sm:items-start w-full px-3 sm:px-0 relative z-10">
 
         {/* Profile Header Block */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 w-full">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8 w-full mt-8 sm:mt-12">
 
-          {/* Profile Picture (Enlarged) */}
+          {/* Profile Picture */}
           <div className="relative shrink-0 cursor-pointer group" onClick={() => setShowProfileZoom(true)}>
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] overflow-hidden border border-black/5 dark:border-white/10 shadow-md relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
+            <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-[2rem] overflow-hidden border-2 border-neutral-200 dark:border-neutral-800 shadow-xl relative bg-neutral-100 dark:bg-neutral-900 transition-transform duration-300 group-hover:scale-105">
               <ProgressiveImage
                 src={mounted && resolvedTheme === 'dark' ? "/cooldark.png" : "/coollight.png"}
                 alt={PROFILE.name}
@@ -96,7 +97,7 @@ const Hero: React.FC = () => {
           </div>
 
           {/* Name & Title - Stacked Layout */}
-          <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1 sm:mt-12">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1 sm:pt-14">
             <div className="flex items-center gap-1.5">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white font-sans">
                 heyitspranav
@@ -141,14 +142,36 @@ const Hero: React.FC = () => {
         {/* Buttons */}
         <div className="flex flex-wrap gap-3 sm:gap-4 mb-8 sm:mb-12 w-full justify-center sm:justify-start">
           <button
+            className="group flex min-w-[170px] decoration-0 transition-transform active:scale-95 cursor-pointer outline-none w-auto h-[44px] px-6 relative items-center justify-center"
+            type="button"
             onClick={() => {
               setShowResume(true);
               fetch('/api/track-resume?type=view').catch(console.error);
             }}
-            className="flex items-center gap-2 px-5 py-2.5 text-sm bg-white dark:bg-[#050505] text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors"
+            style={{ backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "8px", border: "none" }}
           >
-            <FileText size={16} />
-            <span>Resume / CV</span>
+            {/* Glow Layer */}
+            <div className="pointer-events-none transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-0 opacity-100 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(15% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px", filter: "blur(15px)" }}></div>
+
+            {/* Glow Hover Layer */}
+            <div className="pointer-events-none transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-100 opacity-0 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(60.6% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px", filter: "blur(18px)" }}></div>
+
+            {/* Stroke Layer */}
+            <div className="pointer-events-none will-change-auto transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-0 opacity-100 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(10.7% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px" }}></div>
+
+            {/* Stroke Hover Layer */}
+            <div className="pointer-events-none will-change-auto transition-opacity ease-in-out duration-[1200ms] group-hover:opacity-100 opacity-0 absolute top-0 right-0 bottom-0 left-0" style={{ background: "radial-gradient(60.1% 50% at 50% 100%, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%)", borderRadius: "8px" }}></div>
+
+            {/* Fill Layer */}
+            <div className="rounded-[7px] absolute top-[1px] right-[1px] bottom-[1px] left-[1px] bg-white dark:bg-black opacity-100"></div>
+
+            {/* Content Layer */}
+            <div className="relative z-20 flex items-center justify-center gap-2 opacity-100">
+              <FileText size={16} className="text-black dark:text-white" />
+              <span className="m-0 p-0 font-sans text-[14px] font-medium text-black dark:text-white tracking-wide" style={{ WebkitFontSmoothing: "antialiased", textShadow: "0 1px 2px rgba(0,0,0,0.1)" }}>
+                Resume / CV
+              </span>
+            </div>
           </button>
 
           <button
@@ -186,42 +209,44 @@ const Hero: React.FC = () => {
       <ContactModal isOpen={showContact} onClose={() => setShowContact(false)} />
 
       {/* Resume Modal */}
-      {showResume && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowResume(false)}>
-          <div className="relative w-full max-w-4xl h-[85vh] bg-white dark:bg-[#111] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-800 gap-2">
-              <h3 className="font-semibold text-neutral-900 dark:text-white">Resume Preview</h3>
-              <div className="flex items-center gap-2">
-                <a
-                  href="https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi"
-                  onClick={() => fetch('/api/track-resume?type=download').catch(console.error)}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center p-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#18181b] text-neutral-700 dark:text-neutral-200 rounded-full shadow-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white transition-all duration-200"
-                  title="Download Resume"
-                >
-                  <Download size={20} strokeWidth={2.2} />
-                </a>
-                <button
-                  onClick={() => setShowResume(false)}
-                  className="p-1 text-neutral-500 hover:text-black dark:hover:text-white transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                >
-                  <X size={20} />
-                </button>
+      {
+        showResume && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowResume(false)}>
+            <div className="relative w-full max-w-4xl h-[85vh] bg-white dark:bg-[#111] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-800 gap-2">
+                <h3 className="font-semibold text-neutral-900 dark:text-white">Resume Preview</h3>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi"
+                    onClick={() => fetch('/api/track-resume?type=download').catch(console.error)}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center p-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#18181b] text-neutral-700 dark:text-neutral-200 rounded-full shadow-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:text-black dark:hover:text-white transition-all duration-200"
+                    title="Download Resume"
+                  >
+                    <Download size={20} strokeWidth={2.2} />
+                  </a>
+                  <button
+                    onClick={() => setShowResume(false)}
+                    className="p-1 text-neutral-500 hover:text-black dark:hover:text-white transition-colors rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 bg-neutral-100 dark:bg-neutral-900">
+                <iframe
+                  src="https://drive.google.com/file/d/1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi/preview"
+                  className="w-full h-full border-0"
+                  title="Resume Preview"
+                />
               </div>
             </div>
-            <div className="flex-1 bg-neutral-100 dark:bg-neutral-900">
-              <iframe
-                src="https://drive.google.com/file/d/1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi/preview"
-                className="w-full h-full border-0"
-                title="Resume Preview"
-              />
-            </div>
           </div>
-        </div>
-      )}
-    </header>
+        )
+      }
+    </header >
   );
 };
 

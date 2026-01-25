@@ -5,6 +5,8 @@ import Card from './components/Card';
 import Badge from './components/Badge';
 import Hero from './components/Hero';
 import Navbar from './components/Navbar';
+import Preloader from './components/Preloader';
+import { AnimatePresence, motion } from 'motion/react';
 
 
 
@@ -28,10 +30,21 @@ import { ProjectItem } from './types';
 const App: React.FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [lineHeight, setLineHeight] = useState(0);
-  const [activeSection, setActiveSection] = useState<string>('experience');
+  const [activeSection, setActiveSection] = useState<string>('home');
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === 'dark';
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Wait for the preloader animation to finish
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+      window.scrollTo(0, 0);
+    }, 600);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   // Handle the timeline line drawing
   useEffect(() => {
@@ -60,27 +73,44 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle active section highlighting
+  // Handle active section highlighting with support for lazy-loaded sections
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: '-20% 0px -60% 0px', // Triggers when section is near the top-third of viewport
-        threshold: 0.1
-      }
-    );
+    let observer: IntersectionObserver;
 
-    const sections = document.querySelectorAll('section[id]');
-    sections.forEach((section) => observer.observe(section));
+    const setupObserver = () => {
+      if (observer) observer.disconnect();
 
-    return () => observer.disconnect();
-  }, []);
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target.id);
+            }
+          });
+        },
+        {
+          // Adjusted margins to trigger when the section is roughly centered
+          rootMargin: '-30% 0px -35% 0px',
+          threshold: 0.1
+        }
+      );
+
+      // Select all sections that have an ID
+      const sections = document.querySelectorAll('section[id]');
+      sections.forEach((section) => observer.observe(section));
+    };
+
+    // Initial setup
+    setupObserver();
+
+    // Re-setup after a delay to ensure lazy-loaded components (About, Blog) are caught
+    const timer = setTimeout(setupObserver, 1500);
+
+    return () => {
+      if (observer) observer.disconnect();
+      clearTimeout(timer);
+    };
+  }, [isLoading]);
 
   const getCircleClass = (sectionId: string) => {
     const baseClass = "absolute -left-[17px] md:-left-[44px] top-2 w-2.5 h-2.5 rounded-full bg-white dark:bg-[#050505] z-20 transition-all duration-300";
@@ -101,11 +131,16 @@ const App: React.FC = () => {
   }, []);
 
   const scrollToTop = () => {
+    setActiveSection('home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#050505] text-neutral-600 dark:text-neutral-400 selection:bg-neutral-200 dark:selection:bg-neutral-700 selection:text-black dark:selection:text-white font-sans relative overflow-x-hidden transition-colors duration-300">
+
+      <AnimatePresence mode='wait'>
+        {isLoading && <Preloader />}
+      </AnimatePresence>
 
       {/* Exact Grid Background */}
       {/* Exact Grid Background */}
@@ -133,17 +168,20 @@ const App: React.FC = () => {
         <div className={`absolute inset-0 bg-gradient-to-b from-transparent ${isDarkMode ? 'via-[#050505]/50 to-[#050505]' : 'via-white/50 to-white'} opacity-80 transition-colors duration-300`}></div>
       </div>
 
+      {/* Prevent flicker/hydration mismatch by rendering Navbar only after mount */}
+      {typeof window === 'undefined' ? null : <Navbar activeSection={activeSection} />}
 
-
-      <div className="max-w-2xl mx-auto px-6 py-28 relative z-10">
-
-        {/* Prevent flicker/hydration mismatch by rendering Navbar only after mount */}
-        {typeof window === 'undefined' ? null : <Navbar />}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
+        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.8, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }} // Cinematic easing
+        className="max-w-2xl mx-auto px-6 py-28 relative z-10"
+      >
 
         {/* Hero Section */}
-        <div id="home" className="scroll-mt-28">
+        <section id="home" className="scroll-mt-28">
           <Hero />
-        </div>
+        </section>
 
         {/* Tech Stack & GitHub Activity (Placed after Spotify/Hero, before Experience) */}
         <React.Suspense fallback={<div className="h-20 bg-neutral-100 dark:bg-neutral-900 animate-pulse rounded-xl mb-8" />}>
@@ -299,7 +337,7 @@ const App: React.FC = () => {
           <Footer />
         </Suspense>
 
-      </div>
+      </motion.div>
 
       {/* Project Modal */}
       <Suspense fallback={null}>
@@ -311,18 +349,20 @@ const App: React.FC = () => {
       </Suspense>
 
       {/* Back to Top Button */}
-      {showTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-neutral-900 dark:bg-neutral-800 text-white shadow-lg hover:bg-neutral-700 dark:hover:bg-neutral-700 transition-all duration-200 flex items-center justify-center"
-          aria-label="Back to top"
-        >
-          <ArrowUp size={24} />
-        </button>
-      )}
+      {
+        showTop && (
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-neutral-900 dark:bg-neutral-800 text-white shadow-lg hover:bg-neutral-700 dark:hover:bg-neutral-700 transition-all duration-200 flex items-center justify-center"
+            aria-label="Back to top"
+          >
+            <ArrowUp size={24} />
+          </button>
+        )
+      }
 
 
-    </div>
+    </div >
   );
 };
 

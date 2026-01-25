@@ -281,30 +281,224 @@ html.dark::view-transition-old(root) {
   height: 1.25rem;
 }
 
+/* Text Mode explicitly shows text, hides icon */
+.menu__item.text-mode .menu__text {
+  display: block;
+}
+
+.menu__item.text-mode .menu__icon {
+  display: none;
+}
+
+/* Icon Mode explicitly shows icon, hides text */
+.menu__item.icon-mode .menu__text {
+  display: none;
+}
+
+.menu__item.icon-mode .menu__icon {
+  display: flex !important;
+}
+
+/* Base styles for text */
 .menu__text {
   display: none;
-  font-size: 0.75rem;
+  /* Hidden by default (unless active or text-mode) */
+  font-size: 0.8rem;
+  /* Minimal size */
   font-weight: 500;
-  color: var(--component-inactive-color);
-  transition: all 0.3s ease;
+  color: var(--muted-foreground);
+  transition: color 0.3s ease;
   position: relative;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0;
+  /* No horizontal padding, just vertical spacing */
+  background: transparent;
+}
+
+.menu__text:hover {
+  color: var(--foreground);
+  background: transparent;
 }
 
 .menu__text.active {
-  display: none;
-  color: var(--component-active-color);
+  color: var(--foreground);
+  background: transparent;
 }
 
+/* Sleek Minimal Underline */
 .menu__text.active::after {
-  display: none;
   content: '';
   position: absolute;
-  bottom: -0.25rem;
+  bottom: 0;
   left: 0;
-  width: var(--lineWidth, 0);
-  height: 2px;
+  width: 100%;
+  height: 1px;
+  /* Very thin, elegant line */
   background: var(--component-active-color);
-  border-radius: 1px;
-  transition: width 0.3s ease;
+  transform-origin: left;
+  animation: underlineSlide 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes underlineSlide {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Enhanced High-Quality Toggle Icon */
+.menu__item.icon-mode .menu__icon {
+  display: flex !important;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  background: transparent;
+}
+
+.menu__item.icon-mode:hover .menu__icon {
+  background: var(--accent);
+  transform: scale(1.05);
+}
+
+.menu__item.icon-mode .menu__icon svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--foreground);
+}
+
+/* Rotate and morph effect on theme toggle */
+.menu__item.icon-mode:active .menu__icon svg {
+  transform: rotate(90deg) scale(0.9);
+}
+
+/* CPU Architecture Animations */
+.cpu-architecture {
+  offset-anchor: 10px 0px;
+  animation: animation-path;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.75, -0.01, 0, 0.99);
+}
+
+.cpu-line-1 {
+  offset-path: path("M 10 20 h 79.5 q 5 0 5 5 v 30");
+  animation-duration: 5s;
+  animation-delay: 1s;
+}
+
+.cpu-line-2 {
+  offset-path: path("M 180 10 h -69.7 q -5 0 -5 5 v 40");
+  animation-delay: 6s;
+  animation-duration: 2s;
+}
+
+.cpu-line-3 {
+  offset-path: path("M 130 20 v 21.8 q 0 5 -5 5 h -25");
+  animation-delay: 4s;
+  animation-duration: 6s;
+}
+
+.cpu-line-4 {
+  offset-path: path("M 170 80 v -21.8 q 0 -5 -5 -5 h -65");
+  animation-delay: 3s;
+  animation-duration: 3s;
+}
+
+.cpu-line-5 {
+  offset-path: path("M 135 65 h 15 q 5 0 5 5 v 10 q 0 5 -5 5 h -39.8 q -5 0 -5 -5 v -35");
+  animation-delay: 9s;
+  animation-duration: 4s;
+}
+
+.cpu-line-6 {
+  offset-path: path("M 94.8 95 v -46");
+  animation-delay: 3s;
+  animation-duration: 7s;
+}
+
+.cpu-line-7 {
+  offset-path: path("M 88 88 v -15 q 0 -5 -5 -5 h -10 q -5 0 -5 -5 v -5 q 0 -5 5 -5 h 28");
+  animation-delay: 4s;
+  animation-duration: 4s;
+}
+
+.cpu-line-8 {
+  offset-path: path("M 30 30 h 25 q 5 0 5 5 v 6.5 q 0 5 5 5 h 35");
+  animation-delay: 3s;
+  animation-duration: 3s;
+}
+
+@keyframes animation-path {
+  0% {
+    offset-distance: 0%;
+  }
+
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+/* CPU Architecture Animations */
+.cpu-architecture {
+  offset-anchor: 10px 0px;
+  animation: animation-path;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.75, -0.01, 0, 0.99);
+}
+
+.cpu-line-1 {
+  offset-path: path("M 10 20 h 79.5 q 5 0 5 5 v 30");
+  animation-duration: 5s;
+  animation-delay: 1s;
+}
+
+.cpu-line-2 {
+  offset-path: path("M 180 10 h -69.7 q -5 0 -5 5 v 40");
+  animation-delay: 6s;
+  animation-duration: 2s;
+}
+
+.cpu-line-3 {
+  offset-path: path("M 130 20 v 21.8 q 0 5 -5 5 h -25");
+  animation-delay: 4s;
+  animation-duration: 6s;
+}
+
+.cpu-line-4 {
+  offset-path: path("M 170 80 v -21.8 q 0 -5 -5 -5 h -65");
+  animation-delay: 3s;
+  animation-duration: 3s;
+}
+
+.cpu-line-5 {
+  offset-path: path("M 135 65 h 15 q 5 0 5 5 v 10 q 0 5 -5 5 h -39.8 q -5 0 -5 -5 v -35"
+    );
+  animation-delay: 9s;
+  animation-duration: 4s;
+}
+
+.cpu-line-6 {
+  offset-path: path("M 94.8 95 v -46");
+  animation-delay: 3s;
+  animation-duration: 7s;
+}
+
+.cpu-line-7 {
+  offset-path: path("M 88 88 v -15 q 0 -5 -5 -5 h -10 q -5 0 -5 -5 v -5 q 0 -5 5 -5 h 28"
+    );
+  animation-delay: 4s;
+  animation-duration: 4s;
+}
+
+.cpu-line-8 {
+  offset-path: path("M 30 30 h 25 q 5 0 5 5 v 6.5 q 0 5 5 5 h 35");
+  animation-delay: 3s;
+  animation-duration: 3s;
 }
