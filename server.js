@@ -272,24 +272,7 @@ const server = http.createServer(async (req, res) => {
 
         try {
             console.log('Fetching fresh LeetCode data...');
-            const response = await fetch('https://leetcode.com/graphql', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Referer': 'https://leetcode.com/pranavgawai/'
-                },
-                body: JSON.stringify({
-                    query: `
-                        query getUserProfile($username: String!) {
-                            matchedUser(username: $username) {
-                                submissionCalendar
-                            }
-                        }
-                    `,
-                    variables: { username: "pranavgawai" }
-                })
-            });
+            const response = await fetch('https://leetcode-stats-api.herokuapp.com/pranavgawai');
 
             if (!response.ok) {
                 throw new Error(`LeetCode API returned status: ${response.status}`);
@@ -297,17 +280,11 @@ const server = http.createServer(async (req, res) => {
 
             const data = await response.json();
 
-            if (data.errors) {
-                console.error('LeetCode GraphQL errors:', data.errors);
-                throw new Error('LeetCode GraphQL verification failed');
+            if (data.status === 'error' || !data.submissionCalendar) {
+                throw new Error(data.message || 'Invalid data from LeetCode Stats API');
             }
 
-            if (!data.data || !data.data.matchedUser) {
-                throw new Error('User not found or invalid data structure');
-            }
-
-            // Parse the JSON string from LeetCode
-            const submissionCalendar = JSON.parse(data.data.matchedUser.submissionCalendar);
+            const submissionCalendar = data.submissionCalendar;
 
             // Update Cache
             global.leetcodeCache = { data: submissionCalendar, timestamp: now };
