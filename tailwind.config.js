@@ -9,10 +9,18 @@ export default {
     ],
     theme: {
         extend: {
-            fontFamily: {
-                sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            },
+
             colors: {
+                primary: "#2563EB",
+                "background-light": "#ffffff",
+                "background-dark": "#0a0a0a",
+                "text-light": "#171717",
+                "text-dark": "#ededed",
+                "text-muted-light": "#525252",
+                "text-muted-dark": "#a3a3a3",
+                "border-light": "#e5e5e5",
+                "border-dark": "#262626",
+
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
@@ -46,9 +54,16 @@ export default {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-                // Keep existing custom colors if needed as fallbacks or specific overrides
                 surface: '#111111',
                 surfaceHighlight: '#1a1a1a',
+            },
+            fontFamily: {
+                display: ["'Instrument Serif'", "serif"],
+                sans: ["'Inter'", "sans-serif"],
+                mono: ["'JetBrains Mono'", "monospace"],
+            },
+            maxWidth: {
+                'content': '42rem',
             },
             borderRadius: {
                 lg: "var(--radius)",

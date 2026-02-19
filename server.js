@@ -4,7 +4,7 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// import { db } from './lib/firebase.js';           <-- REMOVED
+// import { db } from './src/lib/firebase.js';           <-- REMOVED
 // import { collection, addDoc } from 'firebase/firestore'; <-- REMOVED
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,7 +37,7 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN;
 
 // Initialize Firebase dynamically after env vars are loaded
-const { db } = await import('./lib/firebase.js');
+const { db } = await import('./src/lib/firebase.js');
 const { collection, addDoc } = await import('firebase/firestore');
 
 const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
