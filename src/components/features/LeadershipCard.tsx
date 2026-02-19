@@ -1,6 +1,6 @@
 import React from 'react';
-import { LeadershipItem } from '../types';
-import Card from './Card';
+import { LeadershipItem } from '../../types';
+
 import { Award, Star } from 'lucide-react';
 
 interface LeadershipCardProps {

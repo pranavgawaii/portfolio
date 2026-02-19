@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import { PROFILE, ICONS_MAP } from '../constants';
+import { PROFILE, ICONS_MAP } from '../../constants';
 import { Link as LinkIcon, FileText, Mail, X, Copy, Check, Download, MoreHorizontal, MessageCircle, Grid, Zap, MapPin } from 'lucide-react';
 import { AnimatePresence, motion } from "motion/react";
-import SpotifyCard from './SpotifyCard';
-import ProgressiveImage from './ProgressiveImage';
-import ContactModal from './ContactModal';
+import SpotifyCard from '../features/SpotifyCard';
+import ProgressiveImage from '../ui/ProgressiveImage';
+import ContactModal from '../modals/ContactModal';
 
 // --- Main Hero Component ---
 const Hero: React.FC = () => {

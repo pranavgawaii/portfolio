@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X, ExternalLink, Github, Youtube } from 'lucide-react';
-import { ProjectItem } from '../types';
-import Badge from './Badge';
+import { ProjectItem } from '../../types';
+import Badge from '../ui/Badge';
 
 interface ProjectModalProps {
   project: ProjectItem | null;

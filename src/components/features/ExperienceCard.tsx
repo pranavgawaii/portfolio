@@ -1,6 +1,6 @@
 import React from 'react';
-import { ExperienceItem } from '../types';
-import Card from './Card';
+import { ExperienceItem } from '../../types';
+
 import { Briefcase, Calendar, MapPin } from 'lucide-react';
 
 interface ExperienceCardProps {

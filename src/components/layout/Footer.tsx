@@ -1,5 +1,5 @@
 import React from 'react';
-import { PROFILE, ICONS_MAP } from '../constants';
+import { PROFILE, ICONS_MAP } from '../../constants';
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             className="text-center font-sans text-[15px] md:text-[16px] text-neutral-400 dark:text-neutral-500 font-normal leading-tight"
             style={{ fontFamily: 'Plus Jakarta Sans, Inter, system-ui, sans-serif', letterSpacing: '0.01em' }}
           >
-            Design &amp; Developed by <span className="font-bold text-black dark:text-white" style={{fontWeight:700}}>pranavgawai</span><br />
+            Design &amp; Developed by <span className="font-bold text-black dark:text-white" style={{ fontWeight: 700 }}>pranavgawai</span><br />
             <span className="text-[14px] md:text-[15px] text-neutral-400 dark:text-neutral-500">© 2025. All rights reserved.</span>
           </div>
         </div>

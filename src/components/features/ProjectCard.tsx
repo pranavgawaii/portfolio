@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ProjectItem } from '../types';
+import { ProjectItem } from '../../types';
 import { Github, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 

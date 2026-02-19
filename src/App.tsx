@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { PROFILE, EXPERIENCE, PROJECTS, LEADERSHIP, EDUCATION } from './constants';
-import Section from './components/Section';
-import Card from './components/Card';
-import Badge from './components/Badge';
-import Hero from './components/Hero';
-import Navbar from './components/Navbar';
-import Preloader from './components/Preloader';
+import Section from './components/ui/Section';
+import Card from './components/ui/Card';
+import Badge from './components/ui/Badge';
+import Hero from './components/sections/Hero';
+import Navbar from './components/layout/Navbar';
+import Preloader from './components/layout/Preloader';
 import { AnimatePresence, motion } from 'motion/react';
 
 
 
 // Lazy load heavy/below-the-fold components
-const Footer = React.lazy(() => import('./components/Footer'));
-const AboutMe = React.lazy(() => import('./components/AboutMe'));
-const FeaturedBlog = React.lazy(() => import('./components/FeaturedBlog'));
-const ProjectModal = React.lazy(() => import('./components/ProjectModal'));
-const GitHubActivitySection = React.lazy(() => import('./components/GitHubActivitySection'));
+const Footer = React.lazy(() => import('./components/layout/Footer'));
+const AboutMe = React.lazy(() => import('./components/sections/AboutMe'));
+const FeaturedBlog = React.lazy(() => import('./components/sections/FeaturedBlog'));
+const ProjectModal = React.lazy(() => import('./components/modals/ProjectModal'));
+const GitHubActivitySection = React.lazy(() => import('./components/sections/GitHubActivitySection'));
 
-const ProjectCard = React.lazy(() => import('./components/ProjectCard'));
-const ExperienceCard = React.lazy(() => import('./components/ExperienceCard'));
-const LeadershipCard = React.lazy(() => import('./components/LeadershipCard'));
+const ProjectCard = React.lazy(() => import('./components/features/ProjectCard'));
+const ExperienceCard = React.lazy(() => import('./components/features/ExperienceCard'));
+const LeadershipCard = React.lazy(() => import('./components/features/LeadershipCard'));
 import { useTheme } from 'next-themes';
 import { Link as LinkIcon, FileText, Mail, X, Copy, Check, Download, MoreHorizontal, MessageCircle, Grid, Zap, MapPin, ArrowUp } from 'lucide-react';
 import { ProjectItem } from './types';

@@ -3,7 +3,7 @@ import { GitHubCalendar } from 'react-github-calendar';
 import { ActivityCalendar } from 'react-activity-calendar';
 import { Github } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 import { motion } from 'motion/react';
 
 const LeetCodeIcon = ({ className }: { className?: string }) => (

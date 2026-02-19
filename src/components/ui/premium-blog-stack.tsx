@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import BlogModal from "../BlogModal"
+import BlogModal from "../modals/BlogModal"
 
 interface Card {
     id: number

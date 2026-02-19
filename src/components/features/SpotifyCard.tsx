@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Play, AudioLines } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BorderTrail } from './ui/border-trail';
+import { BorderTrail } from '../ui/border-trail';
 
 interface SpotifyTrack {
     albumImageUrl: string;
