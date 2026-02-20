@@ -79,17 +79,11 @@ const GitHubActivitySection: React.FC = () => {
     // Fetch LeetCode Data
     else if (activeTab === 'leetcode' && leetcodeData.length === 0) {
       setIsLoadingLeetcode(true);
-      fetch('https://leetcode.com/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: `query { matchedUser(username: "pranavgawai") { submissionCalendar } }`
-        })
-      })
+      fetch('https://leetcode-api-faisalshohag.vercel.app/pranavgawai')
         .then(res => res.json())
         .then(data => {
-          if (!data?.data?.matchedUser?.submissionCalendar) throw new Error('No data');
-          const rawCalendar = JSON.parse(data.data.matchedUser.submissionCalendar);
+          if (!data?.submissionCalendar) throw new Error('No data');
+          const rawCalendar = data.submissionCalendar;
 
           let maxCount = 0;
           const entries = Object.entries(rawCalendar).map(([timestamp, count]) => {
