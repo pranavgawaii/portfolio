@@ -69,8 +69,8 @@ const Navbar: React.FC = () => {
     if (!mounted) return null;
 
     return (
-        <nav className="w-full max-w-content px-6 py-8 flex justify-between items-center z-50 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-            <div className="flex space-x-6 text-sm font-medium text-text-muted-light dark:text-text-muted-dark relative">
+        <nav className="w-full max-w-content px-4 sm:px-6 py-6 sm:py-8 flex justify-between items-center z-50 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+            <div className="flex space-x-3 sm:space-x-6 text-xs sm:text-sm font-medium text-text-muted-light dark:text-text-muted-dark relative overflow-x-auto no-scrollbar items-center">
                 {navItems.map((item) => (
                     <button
                         key={item.id}

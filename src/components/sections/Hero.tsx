@@ -35,9 +35,9 @@ const Hero: React.FC = () => {
 
   return (
     <>
-      <header className="mt-12 mb-16">
-        <div className="flex items-start gap-8">
-          <div className="relative group">
+      <header className="mt-8 sm:mt-12 mb-16">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 text-center sm:text-left">
+          <div className="relative group mx-auto sm:mx-0">
             <div
               className="w-32 h-32 rounded-3xl overflow-hidden shadow-md border border-border-light dark:border-border-dark bg-gray-100 dark:bg-gray-800 cursor-pointer transition-all duration-500 hover:scale-105 active:scale-95"
               onClick={() => setShowProfileZoom(true)}
@@ -49,9 +49,9 @@ const Hero: React.FC = () => {
               />
             </div>
           </div>
-          <div className="flex flex-col justify-center pt-16">
-            <h1 className="font-mono text-4xl text-text-light dark:text-text-dark flex items-center flex-wrap gap-x-5 gap-y-2 tracking-tighter leading-none mb-3">
-              <div className="flex items-center gap-3 text-text-light dark:text-text-dark">
+          <div className="flex flex-col justify-center pt-2 sm:pt-16 items-center sm:items-start w-full">
+            <h1 className="font-mono text-3xl sm:text-4xl text-text-light dark:text-text-dark flex flex-col sm:flex-row items-center flex-wrap gap-x-5 gap-y-3 tracking-tighter leading-none mb-3">
+              <div className="flex items-center justify-center sm:justify-start gap-3 text-text-light dark:text-text-dark">
                 {PROFILE.name}
                 <div className="relative flex items-center justify-center">
                   <svg viewBox="0 0 24 24" className="w-5 h-5 text-blue-500 fill-current">
@@ -61,12 +61,12 @@ const Hero: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-text-muted-light dark:text-text-muted-dark font-mono text-[11px] uppercase tracking-[0.3em] opacity-40 shrink-0">
+              <div className="flex items-center justify-center sm:justify-start gap-2 text-text-muted-light dark:text-text-muted-dark font-mono text-[11px] uppercase tracking-[0.3em] opacity-40 shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-pulse" />
                 <span>Pune, IND</span>
               </div>
             </h1>
-            <div className="flex items-center gap-3 text-text-muted-light dark:text-text-muted-dark text-base font-mono opacity-70">
+            <div className="flex items-center justify-center sm:justify-start gap-3 text-text-muted-light dark:text-text-muted-dark text-base font-mono opacity-70">
               <div className="h-6 overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.span
@@ -85,15 +85,15 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 font-mono text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark max-w-xl">
+        <div className="mt-8 font-mono text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark max-w-xl text-center sm:text-left mx-auto sm:mx-0">
           <p>
             I build <span className="bg-blue-100/50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-1 rounded font-medium">production-ready web applications</span> from scratch, working across frontend and backend, with a strong focus on clean architecture, performance, and user experience.
           </p>
         </div>
 
-        <div className="mt-8 space-y-6">
+        <div className="mt-8 space-y-6 w-full">
           {/* Social Links Row */}
-          <div className="flex items-center gap-6 text-text-muted-light dark:text-text-muted-dark">
+          <div className="flex items-center justify-center sm:justify-start gap-6 text-text-muted-light dark:text-text-muted-dark">
             {PROFILE.socials.map((social) => {
               const Icon = ICONS_MAP[social.icon.toLowerCase()];
               return (
@@ -112,17 +112,17 @@ const Hero: React.FC = () => {
           </div>
 
           {/* Action Buttons Row */}
-          <div className="flex items-center gap-4 mt-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 mt-8 w-full">
             <button
               onClick={() => setShowResume(true)}
-              className="group/btn relative flex items-center gap-3 px-6 py-2 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold transition-all duration-300 hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:-translate-y-0.5"
+              className="group/btn relative flex justify-center items-center gap-3 px-6 py-3 sm:py-2 w-full sm:w-auto rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold transition-all duration-300 hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:-translate-y-0.5"
             >
               <FileText size={16} strokeWidth={2.5} />
               <span>View Resume</span>
             </button>
             <button
               onClick={() => setShowContact(true)}
-              className="group/btn relative flex items-center gap-3 px-6 py-2 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-neutral-900 dark:text-white text-sm font-semibold transition-all duration-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:-translate-y-0.5"
+              className="group/btn relative flex justify-center items-center gap-3 px-6 py-3 sm:py-2 w-full sm:w-auto rounded-xl border border-neutral-200 dark:border-neutral-800 bg-transparent text-neutral-900 dark:text-white text-sm font-semibold transition-all duration-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:-translate-y-0.5"
             >
               <Mail size={16} strokeWidth={2.5} className="text-primary" />
               <span>Contact Me</span>

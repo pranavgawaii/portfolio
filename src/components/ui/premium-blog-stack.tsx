@@ -68,7 +68,7 @@ export default function PremiumBlogStack() {
 
     return (
         <div className="flex w-full flex-col items-center justify-center py-10">
-            <div className="relative h-[420px] w-full max-w-[560px] perspective-1000">
+            <div className="relative h-[340px] sm:h-[420px] w-full max-w-[560px] perspective-1000">
                 <AnimatePresence initial={false}>
                     {cards.slice(0, 3).map((card, index) => {
                         const data = cardData[card.contentType]
@@ -112,9 +112,9 @@ export default function PremiumBlogStack() {
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 p-6 flex items-center justify-between">
+                                    <div className="flex-1 p-4 sm:p-6 flex items-center justify-between">
                                         <div className="flex-1">
-                                            <h3 className="font-display text-2xl text-text-light dark:text-text-dark leading-tight group-hover:text-primary transition-colors">{data.title}</h3>
+                                            <h3 className="font-display text-xl sm:text-2xl text-text-light dark:text-text-dark leading-tight group-hover:text-primary transition-colors">{data.title}</h3>
                                             <p className="text-xs text-text-muted-light dark:text-text-muted-dark font-mono line-clamp-1 mt-1 opacity-70">
                                                 {data.description}
                                             </p>
@@ -136,10 +136,10 @@ export default function PremiumBlogStack() {
                 </AnimatePresence>
             </div>
 
-            <div className="mt-12 flex items-center gap-4">
+            <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
                 <button
                     onClick={handleAnimate}
-                    className="flex h-12 items-center gap-2 rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-sm px-6 text-sm font-medium text-text-light dark:text-text-dark hover:border-primary/30 transition-all active:scale-95 shadow-sm"
+                    className="flex justify-center h-12 w-full sm:w-auto items-center gap-2 rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-sm px-6 text-sm font-medium text-text-light dark:text-text-dark hover:border-primary/30 transition-all active:scale-95 shadow-sm"
                 >
                     <span className="material-icons-outlined text-[18px]">refresh</span>
                     Next Article
@@ -147,7 +147,7 @@ export default function PremiumBlogStack() {
 
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="h-12 flex items-center gap-2 rounded-full bg-text-light dark:bg-text-dark px-8 text-sm font-semibold text-background-light dark:text-background-dark hover:scale-105 active:scale-95 transition-all shadow-xl"
+                    className="h-12 flex justify-center w-full sm:w-auto items-center gap-2 rounded-full bg-text-light dark:bg-text-dark px-8 text-sm font-semibold text-background-light dark:text-background-dark hover:scale-105 active:scale-95 transition-all shadow-xl"
                 >
                     View All Stories
                     <span className="material-icons-outlined text-[18px]">arrow_forward</span>

@@ -20,8 +20,8 @@ const AboutMe = () => {
                 biography <span className="text-text-muted-light dark:text-text-muted-dark opacity-40 font-mono text-lg">#</span>
             </h2>
 
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div className="w-full md:w-40 shrink-0">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
+                <div className="w-32 sm:w-40 md:w-40 shrink-0 mx-auto sm:mx-0">
                     <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50 dark:bg-white/5 border border-border-light dark:border-border-dark shadow-sm">
                         <ProgressiveImage
                             src={profileImage}
@@ -31,7 +31,7 @@ const AboutMe = () => {
                     </div>
                 </div>
 
-                <div className="flex-1 space-y-6 text-text-muted-light dark:text-text-muted-dark">
+                <div className="flex-1 space-y-4 sm:space-y-6 text-text-muted-light dark:text-text-muted-dark text-center sm:text-left">
                     <p className="text-base leading-relaxed font-sans first-letter:text-3xl first-letter:font-display first-letter:mr-1 first-letter:float-left">
                         {PROFILE.bio}
                     </p>

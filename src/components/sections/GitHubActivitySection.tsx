@@ -122,7 +122,7 @@ const GitHubActivitySection: React.FC = () => {
     <section className="w-full mb-0 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
 
       <div className="flex flex-col gap-4 mb-6">
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
           <div className="flex flex-col gap-1">
             <span className="text-xs font-mono text-slate-400 dark:text-neutral-600 uppercase tracking-[0.2em] lowercase">
               {activeTab === 'github' ? 'github contributions' : 'leetcode submissions'}
@@ -139,11 +139,11 @@ const GitHubActivitySection: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex border dark:border-neutral-800 rounded-lg p-1 bg-white dark:bg-neutral-900 shadow-sm">
+          <div className="flex border dark:border-neutral-800 rounded-lg p-1 bg-white dark:bg-neutral-900 shadow-sm self-start sm:self-auto w-full sm:w-auto">
             <button
               onClick={() => setActiveTab('github')}
               className={cn(
-                "px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded transition-all",
+                "flex-1 sm:flex-none px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded transition-all text-center",
                 activeTab === 'github'
                   ? "bg-slate-100 dark:bg-neutral-800 text-blue-500"
                   : "text-slate-400 dark:text-neutral-600 hover:text-slate-600 dark:hover:text-neutral-400"
@@ -154,7 +154,7 @@ const GitHubActivitySection: React.FC = () => {
             <button
               onClick={() => setActiveTab('leetcode')}
               className={cn(
-                "px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded transition-all",
+                "flex-1 sm:flex-none px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded transition-all text-center",
                 activeTab === 'leetcode'
                   ? "bg-slate-100 dark:bg-neutral-800 text-orange-500"
                   : "text-slate-400 dark:text-neutral-600 hover:text-slate-600 dark:hover:text-neutral-400"

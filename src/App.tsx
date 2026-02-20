@@ -65,7 +65,7 @@ const App: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="w-full max-w-content px-6 pb-20"
+        className="w-full max-w-content px-4 sm:px-6 pb-20"
       >
         <section id="home">
           <Hero />
@@ -154,27 +154,27 @@ const App: React.FC = () => {
         </Suspense>
 
         {/* Virat Kohli Quote Section */}
-        <div className="relative w-full min-h-[180px] my-24 overflow-hidden rounded-2xl border border-dashed border-border-light dark:border-border-dark p-8 group">
-          <div className="relative z-10 max-w-md">
-            <span className="font-display text-2xl italic text-text-light dark:text-text-dark leading-tight block mb-4">
+        <div className="relative w-full min-h-[160px] sm:min-h-[180px] my-16 sm:my-24 overflow-hidden rounded-2xl border border-dashed border-border-light dark:border-border-dark p-6 sm:p-8 group flex items-center">
+          <div className="relative z-10 max-w-sm sm:max-w-md">
+            <span className="font-display text-xl sm:text-2xl italic text-text-light dark:text-text-dark leading-tight block mb-3 sm:mb-4 pr-12 sm:pr-0">
               “You don’t get what you wish for, you get what you work for.”
             </span>
-            <div className="text-sm text-text-muted-light dark:text-text-muted-dark font-mono italic">
+            <div className="text-xs sm:text-sm text-text-muted-light dark:text-text-dark font-mono italic opacity-80 sm:opacity-100">
               — Virat Kohli
             </div>
           </div>
           <img
             src="/vkbg.png"
             alt="Virat Kohli"
-            className="absolute right-0 bottom-0 h-40 w-auto object-contain opacity-40 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none"
+            className="absolute right-[-10%] sm:right-0 bottom-0 h-32 sm:h-40 w-auto object-contain opacity-30 sm:opacity-40 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none"
           />
         </div>
 
         {/* Contact Section */}
-        <section id="contact" className="mt-24 mb-12 flex justify-center items-center">
-          <div className="w-full rounded-2xl border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-md px-6 py-16 text-center shadow-sm">
-            <h2 className="font-display text-4xl text-text-light dark:text-text-dark mb-4">Get In Touch</h2>
-            <p className="text-text-muted-light dark:text-text-muted-dark mb-8 max-w-sm mx-auto text-sm leading-relaxed">
+        <section id="contact" className="mt-16 sm:mt-24 mb-8 sm:mb-12 flex justify-center items-center">
+          <div className="w-full rounded-2xl border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-md px-4 sm:px-6 py-12 sm:py-16 text-center shadow-sm">
+            <h2 className="font-display text-3xl sm:text-4xl text-text-light dark:text-text-dark mb-3 sm:mb-4">Get In Touch</h2>
+            <p className="text-text-muted-light dark:text-text-muted-dark mb-6 sm:mb-8 max-w-sm mx-auto text-xs sm:text-sm leading-relaxed">
               If you’ve made it this far, we should talk :)<br />
               I’m open to Work, Collaborations, & Interesting problems.<br />
               Have a question or an idea? My inbox is always open.
@@ -183,7 +183,7 @@ const App: React.FC = () => {
               href="https://x.com/messages/compose?recipient_id=pranavgawai_"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-text-light dark:bg-text-dark text-background-light dark:text-background-dark rounded-full text-sm font-semibold hover:scale-105 transition-transform active:scale-95 shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
+              className="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-3 bg-text-light dark:bg-text-dark text-background-light dark:text-background-dark rounded-full text-sm font-semibold hover:scale-105 transition-transform active:scale-95 shadow-[0_8px_30px_rgb(0,0,0,0.12)]"
             >
               <Mail size={16} />
               Say Hello
@@ -207,7 +207,7 @@ const App: React.FC = () => {
       {showTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-6 z-50 p-3 rounded-full bg-text-light dark:bg-text-dark text-background-light dark:text-background-dark shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center border border-border-light dark:border-border-dark"
+          className="fixed bottom-6 right-4 sm:bottom-8 sm:right-6 z-50 p-3 rounded-full bg-text-light dark:bg-text-dark text-background-light dark:text-background-dark shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center border border-border-light dark:border-border-dark"
           aria-label="Back to top"
         >
           <ArrowUp size={24} />
