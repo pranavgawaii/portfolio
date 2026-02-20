@@ -272,7 +272,20 @@ const server = http.createServer(async (req, res) => {
 
         try {
             console.log('Fetching fresh LeetCode data...');
-            const response = await fetch('https://leetcode-stats-api.herokuapp.com/pranavgawai');
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 7000);
+
+            const response = await fetch('https://leetcode.com/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `query { matchedUser(username: "pranavgawai") { submissionCalendar } }`
+                }),
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
 
             if (!response.ok) {
                 throw new Error(`LeetCode API returned status: ${response.status}`);
@@ -280,13 +293,12 @@ const server = http.createServer(async (req, res) => {
 
             const data = await response.json();
 
-            if (data.status === 'error' || !data.submissionCalendar) {
-                throw new Error(data.message || 'Invalid data from LeetCode Stats API');
+            if (!data.data || !data.data.matchedUser) {
+                throw new Error('User not found or invalid data structure');
             }
 
-            const submissionCalendar = data.submissionCalendar;
+            const submissionCalendar = JSON.parse(data.data.matchedUser.submissionCalendar);
 
-            // Update Cache
             global.leetcodeCache = { data: submissionCalendar, timestamp: now };
 
             res.writeHead(200, { 'Content-Type': 'application/json' });

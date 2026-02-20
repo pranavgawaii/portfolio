@@ -79,51 +79,38 @@ const GitHubActivitySection: React.FC = () => {
     // Fetch LeetCode Data
     else if (activeTab === 'leetcode' && leetcodeData.length === 0) {
       setIsLoadingLeetcode(true);
-      fetch('/api/leetcode')
+      fetch('https://leetcode.com/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: `query { matchedUser(username: "pranavgawai") { submissionCalendar } }`
+        })
+      })
         .then(res => res.json())
         .then(data => {
-          if (data.error) throw new Error(data.error);
+          if (!data?.data?.matchedUser?.submissionCalendar) throw new Error('No data');
+          const rawCalendar = JSON.parse(data.data.matchedUser.submissionCalendar);
 
-          // Convert timestamp keys to ISO date strings and find max count
           let maxCount = 0;
-          if (!data || typeof data !== 'object') {
-            console.error("Invalid Leetcode Data:", data);
-            throw new Error('Invalid data format');
-          }
-          console.log("LeetCode Data Received:", data);
-
-          const entries = Object.entries(data).map(([timestamp, count]) => {
+          const entries = Object.entries(rawCalendar).map(([timestamp, count]) => {
             const c = Number(count);
             if (isNaN(c)) return null;
             if (c > maxCount) maxCount = c;
             return { timestamp, count: c };
-          }).filter(entry => entry !== null) as { timestamp: string; count: number }[];
+          }).filter(Boolean) as { timestamp: string; count: number }[];
 
           const transformedData = entries.map(({ timestamp, count }) => {
             const ts = parseInt(timestamp);
             if (isNaN(ts)) return null;
-            try {
-              const date = new Date(ts * 1000).toISOString().split('T')[0];
-              return {
-                date,
-                count,
-                level: calculateLevel(count, maxCount)
-              };
-            } catch (e) {
-              console.error("Calendar invalid date:", timestamp);
-              return null;
-            }
-          }).filter(item => item !== null) as { date: string; count: number; level: number }[];
+            const date = new Date(ts * 1000).toISOString().split('T')[0];
+            return { date, count, level: calculateLevel(count, maxCount) };
+          }).filter(Boolean) as { date: string; count: number; level: number }[];
 
           transformedData.sort((a, b) => a.date.localeCompare(b.date));
-
           setLeetcodeData(transformedData);
           setTotalLeetcodeContributions(transformedData.reduce((sum, item) => sum + item.count, 0));
         })
-        .catch(err => {
-          console.error("Failed to fetch LeetCode data", err);
-          setIsLoadingLeetcode(false);
-        })
+        .catch(err => console.error("Failed to fetch LeetCode data", err))
         .finally(() => setIsLoadingLeetcode(false));
     }
   }, [activeTab]);
