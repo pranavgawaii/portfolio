@@ -67,7 +67,7 @@ export default function PremiumBlogStack() {
     }
 
     return (
-        <div className="flex w-full flex-col items-center justify-center pb-8 -mt-4">
+        <div className="flex w-full flex-col items-center justify-center pb-8 -mt-10">
             <div className="relative h-[340px] sm:h-[420px] w-full max-w-[560px] perspective-1000">
                 <AnimatePresence initial={false}>
                     {cards.slice(0, 3).map((card, index) => {
