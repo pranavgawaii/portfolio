@@ -83,31 +83,22 @@ const Navbar: React.FC = () => {
                 ))}
             </div>
 
-            <div className="flex items-center border border-border-light dark:border-border-dark rounded-full p-1 bg-white/50 dark:bg-white/5 backdrop-blur-sm relative isolate shadow-sm">
-                {['light', 'dark'].map((mode) => (
-                    <button
-                        key={mode}
-                        className={`relative z-10 w-9 h-8 flex items-center justify-center rounded-full transition-all duration-500 ${theme === mode ? 'text-text-light dark:text-text-dark' : 'text-text-muted-light dark:text-text-muted-dark hover:text-text-light/70 dark:hover:text-text-dark/70'}`}
-                        onClick={(e) => toggleTheme(mode, e)}
+            <div className="flex items-center">
+                <button
+                    className="relative w-10 h-10 flex items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md active:scale-95"
+                    onClick={(e) => toggleTheme(theme === 'dark' ? 'light' : 'dark', e)}
+                    aria-label="Toggle theme"
+                >
+                    <motion.span
+                        key={theme}
+                        initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                        animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                        className="material-icons-outlined text-[20px] absolute text-text-light dark:text-text-dark"
                     >
-                        <span className="material-icons-outlined text-[18px]">
-                            {mode === 'system' ? 'computer' : mode === 'light' ? 'light_mode' : 'dark_mode'}
-                        </span>
-
-                        {theme === mode && (
-                            <motion.div
-                                layoutId="premium-active-pill"
-                                className="absolute inset-0 bg-white dark:bg-neutral-800 rounded-full -z-10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] border border-border-light/50 dark:border-white/5"
-                                transition={{
-                                    type: "spring",
-                                    stiffness: 380,
-                                    damping: 30,
-                                    mass: 1
-                                }}
-                            />
-                        )}
-                    </button>
-                ))}
+                        {theme === 'dark' ? 'dark_mode' : 'light_mode'}
+                    </motion.span>
+                </button>
             </div>
         </nav>
     );
