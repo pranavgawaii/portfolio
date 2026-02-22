@@ -67,7 +67,7 @@ export default function PremiumBlogStack() {
     }
 
     return (
-        <div className="flex w-full flex-col items-center justify-center py-10">
+        <div className="flex w-full flex-col items-center justify-center pb-10 pt-2">
             <div className="relative h-[340px] sm:h-[420px] w-full max-w-[560px] perspective-1000">
                 <AnimatePresence initial={false}>
                     {cards.slice(0, 3).map((card, index) => {
@@ -97,10 +97,10 @@ export default function PremiumBlogStack() {
                                     stiffness: 260,
                                     damping: 25
                                 }}
-                                className="absolute inset-x-0 bottom-0 mx-auto w-full aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-3xl border border-border-light dark:border-white/10 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] origin-bottom p-2 group"
+                                className="absolute inset-x-0 bottom-0 mx-auto w-full aspect-[16/10] sm:aspect-[16/9] overflow-hidden rounded-3xl border border-white/40 dark:border-white/10 bg-white/60 dark:bg-neutral-900/60 backdrop-blur-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] origin-bottom p-2 group ring-1 ring-black/5 dark:ring-white/10"
                             >
-                                <div className="relative h-full w-full overflow-hidden rounded-2xl flex flex-col">
-                                    <div className="relative h-[65%] w-full overflow-hidden">
+                                <div className="relative h-full w-full overflow-hidden rounded-[20px] flex flex-col bg-white/40 dark:bg-white/5">
+                                    <div className="relative h-[65%] w-full overflow-hidden rounded-xl">
                                         <img
                                             src={data.image}
                                             className="h-full w-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
@@ -114,8 +114,8 @@ export default function PremiumBlogStack() {
 
                                     <div className="flex-1 p-4 sm:p-6 flex items-center justify-between">
                                         <div className="flex-1">
-                                            <h3 className="font-display text-xl sm:text-2xl text-text-light dark:text-text-dark leading-tight group-hover:text-primary transition-colors">{data.title}</h3>
-                                            <p className="text-xs text-text-muted-light dark:text-text-muted-dark font-mono line-clamp-1 mt-1 opacity-70">
+                                            <h3 className="font-display text-xl sm:text-2xl text-text-light dark:text-text-dark leading-tight group-hover:text-primary transition-colors tracking-tight">{data.title}</h3>
+                                            <p className="text-xs text-text-muted-light dark:text-text-muted-dark font-sans line-clamp-1 mt-1.5 opacity-80">
                                                 {data.description}
                                             </p>
                                         </div>
@@ -124,9 +124,9 @@ export default function PremiumBlogStack() {
                                             href={data.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="ml-4 w-12 h-12 rounded-full bg-text-light dark:bg-text-dark text-background-light dark:text-background-dark flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                                            className="ml-4 w-11 h-11 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md group-hover:shadow-lg group-hover:bg-primary group-hover:text-white"
                                         >
-                                            <span className="material-icons-outlined text-[20px]">call_made</span>
+                                            <span className="material-icons-outlined text-[18px]">arrow_outward</span>
                                         </a>
                                     </div>
                                 </div>
@@ -136,10 +136,10 @@ export default function PremiumBlogStack() {
                 </AnimatePresence>
             </div>
 
-            <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto z-20">
                 <button
                     onClick={handleAnimate}
-                    className="flex justify-center h-12 w-full sm:w-auto items-center gap-2 rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-sm px-6 text-sm font-medium text-text-light dark:text-text-dark hover:border-primary/30 transition-all active:scale-95 shadow-sm"
+                    className="flex justify-center h-11 w-full sm:w-auto items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-white/50 dark:bg-neutral-800/50 backdrop-blur-md px-6 text-sm font-medium text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10 transition-all active:scale-95 shadow-sm"
                 >
                     <span className="material-icons-outlined text-[18px]">refresh</span>
                     Next Article
@@ -147,7 +147,7 @@ export default function PremiumBlogStack() {
 
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="h-12 flex justify-center w-full sm:w-auto items-center gap-2 rounded-full bg-text-light dark:bg-text-dark px-8 text-sm font-semibold text-background-light dark:text-background-dark hover:scale-105 active:scale-95 transition-all shadow-xl"
+                    className="h-11 flex justify-center w-full sm:w-auto items-center gap-2 rounded-full bg-black dark:bg-white px-8 text-sm font-medium text-white dark:text-black hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-white/20"
                 >
                     View All Stories
                     <span className="material-icons-outlined text-[18px]">arrow_forward</span>

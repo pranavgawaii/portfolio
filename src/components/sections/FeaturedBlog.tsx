@@ -4,7 +4,7 @@ import PremiumBlogStack from '../ui/premium-blog-stack';
 
 const FeaturedBlog = () => {
   return (
-    <Section id="blogs" title="Thought Leadership">
+    <Section id="blogs" title="Blog">
       <PremiumBlogStack />
     </Section>
   );
