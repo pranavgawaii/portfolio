@@ -100,7 +100,7 @@ export const PROJECTS: ProjectItem[] = [
     link: "https://youtu.be/Q7ZKzBrLb5E",
     youtube: "https://youtu.be/Q7ZKzBrLb5E",
     status: "1st Place in 24hr Cybersecurity Hackathon",
-    image: "/medsecure24 preview.png"
+    image: "/medsecure24_preview.jpg"
   },
   {
     id: "proj-2",
@@ -111,7 +111,7 @@ export const PROJECTS: ProjectItem[] = [
     link: "https://github.com/pranavgawaii/sahara-main",
     youtube: "https://youtu.be/YhirH5UDh-4",
     status: "Secure Top 10 among 800+ teams",
-    image: "/sahara preview.png"
+    image: "/sahara_preview.jpg"
   },
   {
     id: "proj-3",
@@ -120,7 +120,7 @@ export const PROJECTS: ProjectItem[] = [
     techStack: ["Django", "React", "PostgreSQL", "Graph APIs"],
     github: "https://github.com/pranavgawaii/PostGenius-main",
     link: "#",
-    image: "/postgenius preview.png"
+    image: "/postgenius_preview.jpg"
   }
 ];
 

@@ -164,7 +164,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <img
-            src="/vkbg.png"
+            src="/vkbg.jpg"
             alt="Virat Kohli"
             className="absolute right-[-10%] sm:right-0 bottom-0 h-32 sm:h-40 w-auto object-contain opacity-30 sm:opacity-40 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none"
           />

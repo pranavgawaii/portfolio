@@ -23,7 +23,7 @@ const ALL_BLOGS: Blog[] = [
     {
         title: "SIH 2024 Experience",
         description: "From Ideas to Impact: My detailed journey through the Smart India Hackathon, challenges faced, and lessons learned.",
-        image: "/blogsih2024.png",
+        image: "/blogsih2024.jpg",
         link: "https://medium.com/@pranavgawai1518/from-ideas-to-impact-my-experience-at-the-smart-india-hackathon-34831673024d",
         date: "Sep 20, 2024",
         tags: ["Hackathon", "Experience"]

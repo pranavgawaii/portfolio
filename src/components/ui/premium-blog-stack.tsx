@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import BlogModal from "../modals/BlogModal"
+import { RefreshCcw, ArrowRight, ArrowUpRight } from "lucide-react"
 
 interface Card {
     id: number
@@ -20,7 +21,7 @@ const cardData = {
     2: {
         title: "SIH 2024 Experience",
         description: "From Ideas to Impact: My Smart India Hackathon Journey",
-        image: "/blogsih2024.png",
+        image: "/blogsih2024.jpg",
         link: "https://medium.com/@pranavgawai1518/from-ideas-to-impact-my-experience-at-the-smart-india-hackathon-34831673024d",
         date: "DEC 2023"
     },
@@ -126,7 +127,7 @@ export default function PremiumBlogStack() {
                                             rel="noopener noreferrer"
                                             className="ml-4 w-11 h-11 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md group-hover:shadow-lg group-hover:bg-primary group-hover:text-white"
                                         >
-                                            <span className="material-icons-outlined text-[18px]">arrow_outward</span>
+                                            <ArrowUpRight size={18} />
                                         </a>
                                     </div>
                                 </div>
@@ -141,7 +142,7 @@ export default function PremiumBlogStack() {
                     onClick={handleAnimate}
                     className="flex justify-center h-11 w-full sm:w-auto items-center gap-2 rounded-full border border-black/5 dark:border-white/10 bg-white/50 dark:bg-neutral-800/50 backdrop-blur-md px-6 text-sm font-medium text-text-light dark:text-text-dark hover:bg-black/5 dark:hover:bg-white/10 transition-all active:scale-95 shadow-sm"
                 >
-                    <span className="material-icons-outlined text-[18px]">refresh</span>
+                    <RefreshCcw size={18} className={isAnimating ? "animate-spin" : ""} />
                     Next Article
                 </button>
 
@@ -150,7 +151,7 @@ export default function PremiumBlogStack() {
                     className="h-11 flex justify-center w-full sm:w-auto items-center gap-2 rounded-full bg-black dark:bg-white px-8 text-sm font-medium text-white dark:text-black hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-white/20"
                 >
                     View All Stories
-                    <span className="material-icons-outlined text-[18px]">arrow_forward</span>
+                    <ArrowRight size={18} />
                 </button>
             </div>
 

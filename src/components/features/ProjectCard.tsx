@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ProjectItem } from '../../types';
-import { Github, Globe } from 'lucide-react';
+import { Github, Globe, ChevronDown, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface ProjectCardProps {
@@ -24,7 +24,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                         onClick={toggleExpand}
                         className={`w-8 h-8 flex items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 text-text-muted-light dark:text-text-muted-dark hover:text-primary transition-all duration-300 ${isExpanded ? 'rotate-180 bg-primary/10 border-primary/20 text-primary' : ''}`}
                     >
-                        <span className="material-icons-outlined text-[18px]">expand_more</span>
+                        <ChevronDown size={18} />
                     </button>
 
                     <div className="flex flex-col flex-1">
@@ -33,7 +33,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                             className="font-display text-lg text-text-light dark:text-text-dark cursor-pointer hover:text-primary transition-colors inline-flex items-center gap-2 group/title"
                         >
                             {project.title}
-                            <span className="material-icons-outlined text-[14px] opacity-0 group-hover/title:opacity-100 transition-opacity text-primary">call_made</span>
+                            <ArrowUpRight size={14} className="opacity-0 group-hover/title:opacity-100 transition-opacity text-primary" />
                         </h4>
                         <p className="text-xs text-text-muted-light dark:text-text-muted-dark line-clamp-1 opacity-70">
                             {project.techStack?.join(" • ")}

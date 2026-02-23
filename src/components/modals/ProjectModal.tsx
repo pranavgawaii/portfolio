@@ -61,7 +61,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose })
             <div className="mb-6 flex flex-col items-center">
               <div className="w-full max-w-md aspect-video rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 mb-2">
                 <img
-                  src={project.title === 'Sahara' ? '/saharaar.png' : '/medcare24ar.png'}
+                  src={project.title === 'Sahara' ? '/saharaar.jpg' : '/medcare24ar.jpg'}
                   alt={project.title + ' Preview'}
                   className="w-full h-full object-contain"
                 />

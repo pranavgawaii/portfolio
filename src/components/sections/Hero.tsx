@@ -45,7 +45,7 @@ const Hero: React.FC = () => {
               <ProgressiveImage
                 alt={PROFILE.name}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                src="/avatar.png"
+                src="/avatar.jpg"
               />
             </div>
           </div>
@@ -230,7 +230,7 @@ const Hero: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src="/avatar.png"
+                src="/avatar.jpg"
                 alt={PROFILE.name}
                 className="w-full h-full object-cover"
               />

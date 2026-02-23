@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
+import { Sun, Moon, Laptop } from 'lucide-react';
 
 const Navbar: React.FC = () => {
     const { theme, setTheme } = useTheme();
@@ -94,9 +95,9 @@ const Navbar: React.FC = () => {
                         initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
                         animate={{ opacity: 1, rotate: 0, scale: 1 }}
                         transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                        className="material-icons-outlined text-[20px] absolute text-text-light dark:text-text-dark"
+                        className="absolute text-text-light dark:text-text-dark"
                     >
-                        {theme === 'dark' ? 'dark_mode' : 'light_mode'}
+                        {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
                     </motion.span>
                 </button>
             </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 
 interface BlogCardProps {
     title: string;
@@ -24,7 +25,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ title, description, link, date }) =
                     </div>
                     <h4 className="font-display text-2xl text-text-light dark:text-text-dark group-hover:text-primary transition-colors inline-flex items-center gap-2">
                         {title}
-                        <span className="material-icons-outlined text-[18px] opacity-0 group-hover:opacity-100 transition-all transform translate-y-1 group-hover:translate-y-0 text-primary">call_made</span>
+                        <ArrowUpRight size={18} className="opacity-0 group-hover:opacity-100 transition-all transform translate-y-1 group-hover:translate-y-0 text-primary" />
                     </h4>
                     <p className="text-sm text-text-muted-light dark:text-text-muted-dark line-clamp-2 opacity-70 max-w-xl">
                         {description}
@@ -33,7 +34,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ title, description, link, date }) =
 
                 <div className="shrink-0 ml-4 hidden sm:block">
                     <div className="w-12 h-12 rounded-full border border-border-light dark:border-border-dark flex items-center justify-center group-hover:border-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                        <span className="material-icons-outlined text-[24px]">arrow_forward</span>
+                        <ArrowRight size={24} />
                     </div>
                 </div>
             </div>

@@ -12,8 +12,7 @@ const AboutMe = () => {
         setMounted(true);
     }, []);
 
-    const profileImage = "/avatar.png";
-
+    const profileImage = "/avatar.jpg";
     return (
         <section id="about" className="mb-20 scroll-mt-28">
             <h2 className="font-display text-2xl mb-8 text-text-light dark:text-text-dark flex items-center gap-2">
@@ -24,8 +23,8 @@ const AboutMe = () => {
                 <div className="w-32 sm:w-40 md:w-40 shrink-0 mx-auto sm:mx-0">
                     <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gray-50 dark:bg-white/5 border border-border-light dark:border-border-dark shadow-sm">
                         <ProgressiveImage
-                            src={profileImage}
-                            alt={PROFILE.name}
+                            src="/avatar.jpg"
+                            alt="Pranav Gawai"
                             className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                         />
                     </div>
