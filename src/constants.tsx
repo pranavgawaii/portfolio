@@ -129,37 +129,43 @@ export const LEADERSHIP: LeadershipItem[] = [
     id: "lead-1",
     title: "1st Place Winner",
     role: "24-Hour Cybersecurity Hackathon 2025 (MedSecure24)",
-    description: "Built and presented a cybersecurity-focused solution under a 24-hour deadline, competing against multiple teams and securing first place through technical execution and problem clarity."
+    description: "Built and presented a cybersecurity-focused solution under a 24-hour deadline, competing against multiple teams and securing first place through technical execution and problem clarity.",
+    category: "award"
   },
   {
     id: "lead-2",
     title: "Placement Coordinator - Core Team",
     role: "MIT-ADT University",
-    description: "Part of the core placement team, coordinating campus recruitment with 50+ companies and organizing large-scale training and placement activities for 1200+ students."
+    description: "Part of the core placement team, coordinating campus recruitment with 50+ companies and organizing large-scale training and placement activities for 1200+ students.",
+    category: "role"
   },
   {
     id: "lead-3",
     title: "Top 10 Finalist",
     role: "Smart India Hackathon 2025 among 800+ teams (Sahara)",
-    description: "Selected among the top 10 teams nationwide out of 800+ entries by building a scalable, problem-driven solution evaluated by industry and government mentors."
+    description: "Selected among the top 10 teams nationwide out of 800+ entries by building a scalable, problem-driven solution evaluated by industry and government mentors.",
+    category: "award"
   },
   {
     id: "lead-4",
     title: "GitHub Foundations Certification",
     role: "Score: 83/100",
-    description: "Demonstrated strong understanding of version control, Git workflows, collaboration practices, and open-source fundamentals."
+    description: "Demonstrated strong understanding of version control, Git workflows, collaboration practices, and open-source fundamentals.",
+    category: "certification"
   },
   {
     id: "lead-5",
     title: "NPTEL Certification",
     role: "Design and Analysis of Algorithms",
-    description: "Completed an academically rigorous course covering algorithm design, complexity analysis, and problem-solving techniques."
+    description: "Completed an academically rigorous course covering algorithm design, complexity analysis, and problem-solving techniques.",
+    category: "certification"
   },
   {
     id: "lead-6",
     title: "LinkedIn Learning",
     role: "React.js Development Path Certificate",
-    description: "Completed a structured learning path covering React fundamentals, component-driven development, and modern frontend practices."
+    description: "Completed a structured learning path covering React fundamentals, component-driven development, and modern frontend practices.",
+    category: "certification"
   }
 ];
 

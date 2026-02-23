@@ -42,6 +42,7 @@ export interface LeadershipItem {
   title: string;
   role?: string;
   description?: string;
+  category: 'award' | 'role' | 'certification';
 }
 
 export interface SkillCategory {
