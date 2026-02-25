@@ -1,6 +1,6 @@
 # Pranav Gawai – Portfolio
 
-A minimal, modern, and dark-themed personal portfolio website built with React, Vite, and Tailwind CSS. This portfolio showcases my education, experience, projects, and skills in a clean, responsive interface.
+A minimal, modern, and dark-themed personal portfolio website built with React, Vite, and Tailwind CSS. This portfolio showcases my education, experience, projects, and skills in a clean, responsive interface
 
 
 
