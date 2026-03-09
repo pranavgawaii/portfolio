@@ -163,11 +163,11 @@ const App: React.FC = () => {
               — Virat Kohli
             </div>
           </div>
-          <div className="absolute right-0 bottom-0 h-full w-1/2 flex items-end justify-end pointer-events-none overflow-hidden rounded-r-2xl">
+          <div className="absolute right-0 bottom-0 h-full w-1/2 flex items-end justify-end pointer-events-none rounded-r-2xl">
             <img
               src="/vk_isolated.png"
               alt="Virat Kohli"
-              className="h-[120%] w-auto object-contain opacity-50 sm:opacity-60 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 mix-blend-lighten object-right-bottom"
+              className="h-full w-auto object-contain opacity-50 sm:opacity-60 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 mix-blend-lighten object-right-bottom"
               style={{
                 maskImage: 'linear-gradient(to top, black 80%, transparent 100%), linear-gradient(to left, black 80%, transparent 100%)',
                 WebkitMaskImage: 'linear-gradient(to top, black 80%, transparent 100%), linear-gradient(to left, black 80%, transparent 100%)',
