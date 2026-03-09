@@ -155,23 +155,27 @@ const App: React.FC = () => {
 
         {/* Virat Kohli Quote Section */}
         <div className="relative w-full min-h-[160px] sm:min-h-[180px] my-16 sm:my-24 overflow-hidden rounded-2xl border border-dashed border-border-light dark:border-border-dark p-6 sm:p-8 group flex items-center">
-          <div className="relative z-10 max-w-sm sm:max-w-md">
-            <span className="font-display text-xl sm:text-2xl italic text-text-light dark:text-text-dark leading-tight block mb-3 sm:mb-4 pr-12 sm:pr-0">
+          <div className="relative z-10 max-w-sm sm:max-w-lg pr-20 sm:pr-32">
+            <span className="font-display text-xl sm:text-2xl italic text-text-light dark:text-text-dark leading-tight block mb-3 sm:mb-4">
               “You don’t get what you wish for, you get what you work for.”
             </span>
             <div className="text-xs sm:text-sm text-text-muted-light dark:text-text-dark font-mono italic opacity-80 sm:opacity-100">
               — Virat Kohli
             </div>
           </div>
-          <img
-            src="/vk_isolated.png"
-            alt="Virat Kohli"
-            className="absolute right-[-10%] sm:right-0 bottom-0 h-44 sm:h-56 w-auto object-contain opacity-50 sm:opacity-60 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none mix-blend-lighten"
-            style={{
-              maskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)',
-              WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)'
-            }}
-          />
+          <div className="absolute right-0 bottom-0 h-full w-1/2 flex items-end justify-end pointer-events-none overflow-hidden rounded-r-2xl">
+            <img
+              src="/vk_isolated.png"
+              alt="Virat Kohli"
+              className="h-[120%] w-auto object-contain opacity-50 sm:opacity-60 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 mix-blend-lighten object-right-bottom"
+              style={{
+                maskImage: 'linear-gradient(to top, black 80%, transparent 100%), linear-gradient(to left, black 80%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to top, black 80%, transparent 100%), linear-gradient(to left, black 80%, transparent 100%)',
+                maskComposite: 'intersect',
+                WebkitMaskComposite: 'source-in'
+              }}
+            />
+          </div>
         </div>
 
         {/* Contact Section */}
