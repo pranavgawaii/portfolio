@@ -164,9 +164,13 @@ const App: React.FC = () => {
             </div>
           </div>
           <img
-            src="/vk_clean.png"
+            src="/vk_isolated.png"
             alt="Virat Kohli"
-            className="absolute right-[-10%] sm:right-0 bottom-0 h-40 sm:h-52 w-auto object-contain opacity-40 sm:opacity-50 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none mix-blend-screen"
+            className="absolute right-[-10%] sm:right-0 bottom-0 h-44 sm:h-56 w-auto object-contain opacity-50 sm:opacity-60 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 pointer-events-none mix-blend-lighten"
+            style={{
+              maskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)',
+              WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)'
+            }}
           />
         </div>
 
