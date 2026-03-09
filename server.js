@@ -46,6 +46,37 @@ const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`;
 
 const RECENTLY_PLAYED_ENDPOINT = `https://api.spotify.com/v1/me/player/recently-played?limit=1`;
 
+// Fallback tracks for when Spotify API is restricted (e.g. Premium required)
+const FALLBACK_TRACKS = [
+    {
+        title: "Starboy",
+        artist: "The Weeknd, Daft Punk",
+        albumImageUrl: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=300&auto=format&fit=crop",
+        songUrl: "https://open.spotify.com/track/7MXVBY9wcG4I4McZJZ9IuG",
+        previewUrl: "https://p.scdn.co/mp3-preview/a22533ca9c1626f634f19b674828f731110f0f4a"
+    },
+    {
+        title: "Blinding Lights",
+        artist: "The Weeknd",
+        albumImageUrl: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=300&auto=format&fit=crop",
+        songUrl: "https://open.spotify.com/track/0VjIj9n9tPewoUMfCq2B7v",
+        previewUrl: "https://p.scdn.co/mp3-preview/63378c4d924db0a59a7f34032d1f1f7cf8402db2"
+    },
+    {
+        title: "Nightcall",
+        artist: "Kavinsky",
+        albumImageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=300&auto=format&fit=crop",
+        songUrl: "https://open.spotify.com/track/0U0ldTjRlZMcpxp9tAsT3F",
+        previewUrl: "https://p.scdn.co/mp3-preview/421fc360829871587d4653a06f3e1b730596ba31"
+    }
+];
+
+function getFallbackTrack() {
+    // Pick based on minute to make it feel "live" and changing
+    const index = new Date().getMinutes() % FALLBACK_TRACKS.length;
+    return { ...FALLBACK_TRACKS[index], isPlaying: false, isFallback: true };
+}
+
 const getAccessToken = async () => {
     return new Promise((resolve, reject) => {
         const data = new URLSearchParams({
@@ -87,6 +118,18 @@ const getNowPlaying = async (access_token) => {
             },
         }, (res) => {
             if (res.statusCode === 204 || res.statusCode > 400) {
+                if (res.statusCode > 400) {
+                    console.error(`Now Playing Status: ${res.statusCode}`);
+                    // We don't read body here because we resolve early, 
+                    // let's read it to see the error message.
+                    let body = '';
+                    res.on('data', (chunk) => body += chunk);
+                    res.on('end', () => {
+                        console.error(`Now Playing Body: ${body}`);
+                        resolve({ status: res.statusCode, data: null });
+                    });
+                    return;
+                }
                 resolve({ status: res.statusCode, data: null });
                 return;
             }
@@ -119,9 +162,18 @@ const getRecentlyPlayed = async (access_token) => {
             res.on('data', (chunk) => body += chunk);
             res.on('end', () => {
                 try {
+                    if (res.statusCode >= 400) {
+                        console.error(`Recently Played Status: ${res.statusCode}`);
+                        console.error(`Recently Played Body: ${body}`);
+                        resolve({ status: res.statusCode, data: null });
+                        return;
+                    }
                     const json = JSON.parse(body);
                     resolve({ status: res.statusCode, data: json });
                 } catch (e) {
+                    console.error('JSON Parse Error in getRecentlyPlayed');
+                    console.error('Status:', res.statusCode);
+                    console.error('Body:', body);
                     reject(e);
                 }
             });
@@ -186,9 +238,13 @@ const server = http.createServer(async (req, res) => {
             }
 
             if (!item) {
-                // No current or recent (rare, but possible for new accounts)
+                // FALLBACK: If Spotify is restricted (403), use a curated list
+                const fallback = getFallbackTrack();
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ isPlaying: false }));
+                res.end(JSON.stringify({
+                    ...fallback,
+                    message: 'Spotify API Restricted: Upgrade to Premium or use Last.fm'
+                }));
                 return;
             }
 
