@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node server/index.js & vite",
+    "dev": "node gateway/index.js & vite",
     "build": "vite build",
-    "preview": "vite preview --port 3002"
+    "preview": "vite preview --port 3002 --outDir build"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

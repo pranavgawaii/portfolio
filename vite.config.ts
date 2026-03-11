@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
+    publicDir: 'static',
     preview: {
       port: 3002,
       host: '0.0.0.0',
@@ -34,10 +35,11 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'src'),
+        '@': path.resolve(__dirname, 'web'),
       }
     },
     build: {
+      outDir: 'build',
       rollupOptions: {
         output: {
           manualChunks: {

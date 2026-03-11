@@ -1,0 +1,14 @@
+{
+    "functions": {
+        "core/**/*.js": {
+            "runtime": "nodejs20.x"
+        }
+    },
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/core/$1"
+        }
+    ],
+    "outputDirectory": "build"
+}
