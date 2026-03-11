@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import { PROFILE, ICONS_MAP } from '../../constants';
+import { PROFILE, ICONS_MAP } from '../../config/constants';
 import { Link as LinkIcon, FileText, Mail, X, Copy, Check, Download, MoreHorizontal, MessageCircle, Grid, Zap, MapPin } from 'lucide-react';
 import { AnimatePresence, motion } from "motion/react";
 import SpotifyCard from '../features/SpotifyCard';

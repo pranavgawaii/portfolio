@@ -1,5 +1,5 @@
 import React from 'react';
-import { LeadershipItem } from '../../types';
+import { LeadershipItem } from '../../types/index';
 import { Award, Briefcase, GraduationCap, Medal, Star } from 'lucide-react';
 
 interface LeadershipCardProps {

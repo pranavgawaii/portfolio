@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExperienceItem } from '../../types';
+import { ExperienceItem } from '../../types/index';
 
 import { Briefcase, Calendar, MapPin } from 'lucide-react';
 
