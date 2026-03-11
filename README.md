@@ -28,10 +28,10 @@ A premium, modern personal portfolio engineered with **React 19**, **TypeScript*
 ## 📂 Project Structure
 
 ```text
-├── api/                # Production Serverless Functions (Vercel)
-├── public/             # Static assets (images, fonts, resume)
-├── server/             # Local Development API Proxy
-├── src/
+├── core/               # Production Serverless Functions (Vercel)
+├── static/             # Static assets (images, fonts, resume)
+├── gateway/            # Local Development API Proxy
+├── web/
 │   ├── components/
 │   │   ├── features/   # Logic-heavy components (Spotify, Projects)
 │   │   ├── icons/      # Custom SVG components
