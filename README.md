@@ -1,78 +1,90 @@
-# Pranav Gawai – Portfolio
+# 🚀 Portfolio - Pranav Gawai
 
-A minimal, modern, and dark-themed personal portfolio website built with React, Vite, and Tailwind CSS. This portfolio showcases my education, experience, projects, and skills in a clean, responsive interface
+A premium, modern personal portfolio engineered with **React 19**, **TypeScript**, and **Tailwind CSS**. Designed for performance, accessibility, and visual excellence.
 
+![License](https://img.shields.io/github/license/pranavgawaii/portfolio?style=flat-square)
+![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite)
 
+## ✨ key Features
 
-## 🚀 Features
+- **Live Integrations**: Real-time Spotify "Now Playing" tracking and LeetCode activity visualizations.
+- **Dynamic UX**: Responsive design with liquid transitions, motion-enhanced interactions, and adaptive dark mode.
+- **Modular Architecture**: Component-driven development with a clear separation of concerns.
+- **Micro-Services**: Lightweight Node.js proxy server for API orchestration and secure state management.
+- **Optimized Performance**: Lazy loading, asset optimization, and minimal bundle size.
 
-- **Beautiful Hero Section**: Eye-catching introduction with profile, social links, and a live Spotify "Now Playing" card.
-- **Experience Timeline**: Modern, interactive timeline for work and internship experience.
-- **Projects Gallery**: Highlighted projects with tech stack icons, status badges, and quick links.
-- **Education Cards**: Elegant cards for academic background.
-- **Skills Cloud**: Categorized badges for languages, frameworks, databases, and tools.
-- **Leadership & Recognition**: Stylish cards for awards and leadership roles.
-- **Contact Modal**: Easy-to-use modal for reaching out.
-- **Dark/Light Theme**: Seamless theme switching with system preference support.
-- **Mobile Responsive**: Fully responsive and touch-friendly design.
+## 🛠️ Technology Stack
 
-## 🛠️ Tech Stack
+| Category | Tools |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, motion/react (formerly Framer Motion) |
+| **Styling** | Tailwind CSS, Lucide Icons, Glassmorphism UI |
+| **Backend** | Node.js (Proxy Server), Vercel Serverless Functions |
+| **Services** | Spotify Web API, LeetCode GraphQL API, Firebase Firestore |
+| **Tooling** | Vite, PostCSS, ESLint, npm |
 
-- **Frontend**: React 19, TypeScript, Vite
-- **Styling**: Tailwind CSS, custom CSS animations
-- **Icons**: Lucide React, custom SVGs
-- **Integrations**: Spotify API (live music card), EmailJS (contact form)
+## 📂 Project Structure
 
-## 📦 Getting Started
+```text
+├── api/                # Production Serverless Functions (Vercel)
+├── public/             # Static assets (images, fonts, resume)
+├── server/             # Local Development API Proxy
+├── src/
+│   ├── components/
+│   │   ├── features/   # Logic-heavy components (Spotify, Projects)
+│   │   ├── icons/      # Custom SVG components
+│   │   ├── layout/     # Structural components (Navbar, Footer, Preloader)
+│   │   ├── sections/   # Page-level section components (Hero, About, Contact)
+│   │   └── ui/         # Reusable design primitives (Buttons, Cards, Badges)
+│   ├── config/         # App configuration and constants
+│   ├── lib/            # Third-party service initializations (Firebase)
+│   ├── types/          # TypeScript definitions and global interfaces
+│   ├── App.tsx         # Main Application Orchestrator
+│   └── globals.css     # Global Design System and Tailwind Directives
+└── vite.config.ts      # Build and Dev Server Configuration
+```
 
-1. **Clone the repository:**
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v20 or higher)
+- npm or pnpm
+
+### Installation
+
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/pranavgawaii/pranav-gawai-portfolio.git
-   cd pranav-gawai-portfolio
+   git clone https://github.com/pranavgawaii/portfolio.git
+   cd portfolio
    ```
-2. **Install dependencies:**
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
-3. **Set up environment variables:**
-   - Copy `.env.example` to `.env` and fill in your Spotify API credentials (see the Spotify integration section below).
-4. **Run the development server:**
+
+3. **Configure Environment Variables**
+   Create a `.env` file in the root directory:
+   ```env
+   SPOTIFY_CLIENT_ID=your_id
+   SPOTIFY_CLIENT_SECRET=your_secret
+   SPOTIFY_REFRESH_TOKEN=your_token
+   # Add Firebase and other service keys as required
+   ```
+
+4. **Launch Development Environment**
    ```bash
    npm run dev
    ```
-5. **Open in your browser:**
-   - Visit [http://localhost:3000](http://localhost:3000) (or the port shown in your terminal).
-
-## 🎵 Spotify Integration
-
-- Displays your currently playing or last played track from Spotify.
-- Requires a Spotify Developer App and refresh token. See the code comments for setup instructions.
-
-## 📁 Folder Structure
-
-```
-├── components/         # Reusable React components
-├── public/             # Static assets (images, logos, etc.)
-├── src/                # Providers, types, and utilities
-├── App.tsx             # Main app entry
-├── constants.tsx       # Data for experience, education, projects, etc.
-├── globals.css         # Global styles
-├── index.html          # HTML template
-├── package.json        # Project metadata and scripts
-└── ...
-```
-
-## ✨ Customization
-
-- **Profile & Socials**: Edit your info in `constants.tsx`.
-- **Experience, Projects, Education**: Add or update entries in `constants.tsx`.
-- **Theme**: Tweak colors and styles in `globals.css` or Tailwind config.
-- **Images**: Replace images in the `public/` folder.
+   *This starts the API Proxy on port 3001 and the Frontend on port 3000.*
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-> Designed and developed by Pranav Gawai. Built for performance, clarity, and a great user experience.
+> Built with 🖤 by **[Pranav Gawai](https://github.com/pranavgawaii)**

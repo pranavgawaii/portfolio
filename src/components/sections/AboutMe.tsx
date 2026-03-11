@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProgressiveImage from '../ui/ProgressiveImage';
-import { PROFILE } from '../../constants';
+import { PROFILE } from '../../config/constants';
 import { useTheme } from 'next-themes';
 import { motion } from 'motion/react';
 

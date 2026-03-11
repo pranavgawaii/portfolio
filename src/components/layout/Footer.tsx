@@ -1,5 +1,5 @@
 import React from 'react';
-import { PROFILE, ICONS_MAP } from '../../constants';
+import { PROFILE, ICONS_MAP } from '../../config/constants';
 
 const Footer: React.FC = () => {
   const scrollToTop = () => {
