@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Sun, Moon, Laptop } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-    const { theme, setTheme } = useTheme();
+    const { theme, setTheme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -69,9 +69,11 @@ const Navbar: React.FC = () => {
 
     if (!mounted) return null;
 
+    const currentTheme = resolvedTheme || theme;
+
     return (
-        <nav className="w-full max-w-content px-4 sm:px-6 py-6 sm:py-8 flex justify-between items-center z-50 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
-            <div className="flex space-x-3 sm:space-x-6 text-xs sm:text-sm font-medium text-text-muted-light dark:text-text-muted-dark relative overflow-x-auto no-scrollbar items-center">
+        <nav className="w-full max-w-content px-4 sm:px-6 py-4 sm:py-6 flex justify-between items-center z-50 sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+            <div className="flex space-x-3 sm:space-x-6 text-xs sm:text-sm font-medium text-text-muted-light dark:text-text-muted-dark relative items-center">
                 {navItems.map((item) => (
                     <button
                         key={item.id}
@@ -86,19 +88,25 @@ const Navbar: React.FC = () => {
 
             <div className="flex items-center">
                 <button
-                    className="relative w-10 h-10 flex items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md active:scale-95"
-                    onClick={(e) => toggleTheme(theme === 'dark' ? 'light' : 'dark', e)}
+                    className="relative w-9 h-9 flex items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 outline-none shadow-sm transition-all duration-300 hover:shadow-md active:scale-95 overflow-hidden"
+                    style={{ viewTransitionName: 'none' }}
+                    onClick={(e) => toggleTheme(currentTheme === 'dark' ? 'light' : 'dark', e)}
                     aria-label="Toggle theme"
                 >
-                    <motion.span
-                        key={theme}
-                        initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                        animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                        className="absolute text-text-light dark:text-text-dark"
+                    <span
+                        className={`absolute flex transition-all duration-500 transform text-text-light dark:text-text-dark ${
+                            currentTheme === 'dark' ? 'rotate-0 opacity-100 scale-100' : 'rotate-90 opacity-0 scale-50'
+                        }`}
                     >
-                        {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
-                    </motion.span>
+                        <Moon size={18} />
+                    </span>
+                    <span
+                        className={`absolute flex transition-all duration-500 transform text-text-light dark:text-text-dark ${
+                            currentTheme === 'light' ? 'rotate-0 opacity-100 scale-100' : '-rotate-90 opacity-0 scale-50'
+                        }`}
+                    >
+                        <Sun size={18} />
+                    </span>
                 </button>
             </div>
         </nav>
