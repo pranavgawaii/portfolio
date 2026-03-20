@@ -1,14 +1,9 @@
 {
-    "functions": {
-        "core/**/*.js": {
-            "runtime": "nodejs20.x"
-        }
-    },
+    "outputDirectory": "build",
     "rewrites": [
         {
-            "source": "/api/(.*)",
-            "destination": "/core/$1"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
-    ],
-    "outputDirectory": "build"
+    ]
 }
