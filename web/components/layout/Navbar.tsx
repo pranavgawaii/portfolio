@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
 import { Sun, Moon, Laptop } from 'lucide-react';
+import AiCallFeature from '../ui/AiCallFeature';
 
 const Navbar: React.FC = () => {
     const { theme, setTheme, resolvedTheme } = useTheme();
@@ -86,7 +87,8 @@ const Navbar: React.FC = () => {
                 ))}
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+                <AiCallFeature />
                 <button
                     className="relative w-9 h-9 flex items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 outline-none shadow-sm transition-all duration-300 hover:shadow-md active:scale-95 overflow-hidden"
                     style={{ viewTransitionName: 'none' }}
