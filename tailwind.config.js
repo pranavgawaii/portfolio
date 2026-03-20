@@ -70,6 +70,11 @@ export default {
             },
             animation: {
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'ripple': 'ripple 2s cubic-bezier(0.0, 0, 0.2, 1) infinite',
+                'shimmer': 'shimmer 2.5s ease-in-out infinite',
+                'wave': 'wave 1.2s ease-in-out infinite',
+                'wavePremium': 'wavePremium 1.2s ease-in-out infinite',
+                'fadeUp': 'fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards'
             }
         }
     },
