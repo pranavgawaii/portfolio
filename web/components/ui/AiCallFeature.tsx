@@ -1,32 +1,49 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Phone, PhoneOff, Mic, MicOff, X, Sparkles } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, X, Sparkles, MessageCircle, Send, Plus } from 'lucide-react';
 
-type CallState = 'idle' | 'incoming' | 'active' | 'ended';
+type CallState = 'idle' | 'choice' | 'activeCall' | 'activeChat';
+type ChatMessage = { id: number; sender: 'ai' | 'user'; text: string };
 
-const INITIAL_TRANSCRIPT = "Hey! I'm Pranav. I'm a full-stack developer from Pune, India. You're on my portfolio — ask me anything about my work, projects, or tech stack. Let's go!";
+const INITIAL_TRANSCRIPT = "Hey! I'm Pranav's AI. I'm a full-stack developer from Pune, India. You're on my portfolio — ask me anything about my work, projects, or tech stack. Let's go!";
 
 const AiCallFeature: React.FC = () => {
   const [callState, setCallState] = useState<CallState>('idle');
+  
+  // Call State
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [transcript, setTranscript] = useState('');
+  const [callTranscript, setCallTranscript] = useState('');
   const [fullTranscript, setFullTranscript] = useState(INITIAL_TRANSCRIPT);
+  
+  // Chat State
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isAiTypingChat, setIsAiTypingChat] = useState(false);
+
   const [mounted, setMounted] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Timer effect
+  // Scroll to bottom of chat
+  useEffect(() => {
+    if (callState === 'activeChat') {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages, isAiTypingChat, callState]);
+
+  // Handle Call Timer
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (callState === 'active') {
+    if (callState === 'activeCall') {
       interval = setInterval(() => {
         setElapsedSeconds(prev => {
           if (prev >= 300) {
-            setCallState('ended');
+            setCallState('idle'); // or 'ended'
             return 300;
           }
           return prev + 1;
@@ -38,18 +55,18 @@ const AiCallFeature: React.FC = () => {
     return () => clearInterval(interval);
   }, [callState]);
 
-  // Typewriter effect
+  // Handle Call AI speaking effect
   useEffect(() => {
     let typeInterval: ReturnType<typeof setInterval>;
-    if (callState === 'active') {
+    if (callState === 'activeCall') {
       setIsSpeaking(true);
-      setTranscript('');
+      setCallTranscript('');
       const words = fullTranscript.split(' ');
       let currentWord = 0;
       
       typeInterval = setInterval(() => {
         if (currentWord < words.length) {
-          setTranscript(prev => prev + (prev ? ' ' : '') + words[currentWord]);
+          setCallTranscript(prev => prev + (prev ? ' ' : '') + words[currentWord]);
           currentWord++;
         } else {
           setIsSpeaking(false);
@@ -60,7 +77,19 @@ const AiCallFeature: React.FC = () => {
     return () => clearInterval(typeInterval);
   }, [callState, fullTranscript]);
 
-  // Handle Escape
+  // Handle initial Chat AI message
+  useEffect(() => {
+    if (callState === 'activeChat' && chatMessages.length === 0) {
+      setIsAiTypingChat(true);
+      const timer = setTimeout(() => {
+        setChatMessages([{ id: 1, sender: 'ai', text: "Hey! I'm Pranav's AI assistant. You can ask me about his skills, experience, or projects." }]);
+        setIsAiTypingChat(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [callState, chatMessages.length]);
+
+  // Handle Escape to close modals
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && callState !== 'idle') {
@@ -71,14 +100,25 @@ const AiCallFeature: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [callState]);
 
-  const handleStartCall = () => setCallState('incoming');
-  const handeAnswer = () => setCallState('active');
-  const handleEnd = () => setCallState('idle');
+  const handleSendChat = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const newMsg: ChatMessage = { id: Date.now(), sender: 'user', text: chatInput };
+    setChatMessages(prev => [...prev, newMsg]);
+    setChatInput('');
+    setIsAiTypingChat(true);
+
+    setTimeout(() => {
+      const reply: ChatMessage = { id: Date.now(), sender: 'ai', text: "Thanks for chatting! This is a simulated response for now. Pranav is actively working on the AI backend integration!" };
+      setChatMessages(prev => [...prev, reply]);
+      setIsAiTypingChat(false);
+    }, 1500);
+  };
 
   const handleChipClick = (text: string) => {
     setFullTranscript(text);
-    setCallState('active'); 
-    // TODO: send chip text to STT/LLM pipeline
+    setCallState('activeCall'); 
   };
 
   const formatTime = (seconds: number) => {
@@ -87,68 +127,63 @@ const AiCallFeature: React.FC = () => {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const isIdleLong = callState === 'active' && !isSpeaking && elapsedSeconds > 0 && elapsedSeconds % 10 === 0;
+  const isIdleLong = callState === 'activeCall' && !isSpeaking && elapsedSeconds > 0 && elapsedSeconds % 10 === 0;
+
+  const avatarUrl = "/avatar.jpg";
 
   const modalContent = callState !== 'idle' ? (
     <div 
-      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-md animate-[fadeUp_400ms_ease] p-4 m-0"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 m-0 bg-background/60 backdrop-blur-md animate-fadeUp"
       style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
-      {callState === 'incoming' && (
-        <div className="relative w-full max-w-[480px] bg-[#0a0a0a] border border-[#222] rounded-[32px] p-12 flex flex-col items-center shadow-2xl overflow-hidden">
-          {/* Close Button */}
-          <button onClick={handleEnd} className="absolute top-6 right-6 text-[#666] hover:text-white transition-colors z-20">
-            <X size={20} />
+      
+      {/* ---------------- CHOICE MENU ---------------- */}
+      {callState === 'choice' && (
+        <div className="relative w-full max-w-[420px] bg-background border border-border rounded-[32px] p-8 flex flex-col items-center shadow-2xl overflow-hidden">
+          <button onClick={() => setCallState('idle')} className="absolute top-5 right-5 p-2 text-muted-foreground hover:text-foreground transition-colors bg-secondary/30 rounded-full">
+            <X size={18} />
           </button>
 
-          {/* Neutral subtle glow instead of heavy purple */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] pointer-events-none"></div>
-
-          <div className="lowercase tracking-[0.2em] text-[#666] text-[11px] font-mono mb-10 z-10">
-            incoming call
+          <div className="w-24 h-24 mb-5 relative">
+             <div className="absolute inset-0 rounded-full border border-border animate-ping opacity-20" />
+             <img src={avatarUrl} alt="Pranav" className="w-full h-full rounded-full object-cover border-4 border-background shadow-xl relative z-10" />
           </div>
 
-           {/* Avatar section */}
-          <div className="relative flex justify-center items-center mb-10 h-[180px] w-[180px]">
-            {/* White/Grey Rings */}
-            <div className="absolute w-[180px] h-[180px] rounded-full border border-white/5 animate-[ripple_2s_infinite]"></div>
-            <div className="absolute w-[140px] h-[140px] rounded-full border border-white/10 animate-[ripple_2s_infinite_0.5s]"></div>
-            <div className="absolute w-[100px] h-[100px] rounded-full border border-white/20 animate-[ripple_2s_infinite_1s]"></div>
-            
-            <img 
-              src="https://avatars.githubusercontent.com/u/105650178" 
-              alt="Pranav Gawai" 
-              className="w-[88px] h-[88px] rounded-full border border-[#444] object-cover z-10 bg-[#111] shadow-2xl"
-            />
-          </div>
+          <h2 className="text-xl font-bold text-foreground mb-1 tracking-tight">Talk to Pranav</h2>
+          <p className="text-sm text-muted-foreground mb-8">Choose how you'd like to interact</p>
 
-          <div className="flex flex-col items-center gap-1.5 mb-14 z-10">
-            <h2 className="text-white text-[24px] font-semibold tracking-tight">Pranav Gawai</h2>
-            <p className="text-[#666] text-[13px] font-mono text-center">AI · Full-stack Developer · Pune</p>
-            <div className="mt-3 flex items-center gap-2 bg-[#111] border border-[#222] rounded-full px-3 py-1 shadow-inner">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-[pulse_2s_infinite]"></span>
-              <span className="text-[#888] text-[11px] font-mono lowercase tracking-wide">ready to talk</span>
-            </div>
-          </div>
+          <div className="flex flex-col gap-4 w-full">
+            <button 
+              onClick={() => { setCallState('activeCall'); setFullTranscript(INITIAL_TRANSCRIPT); }} 
+              className="flex items-center gap-5 p-4 rounded-2xl bg-secondary hover:bg-muted border border-transparent hover:border-border transition-all group shadow-sm text-left"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                <Mic size={20} />
+              </div>
+              <div>
+                <div className="font-semibold text-foreground text-[15px]">Chat with me</div>
+                <div className="text-[13px] text-muted-foreground mt-0.5">Live audio conversation</div>
+              </div>
+            </button>
 
-          {/* Slide to answer */}
-          <div className="relative w-[80%] h-[64px] bg-[#111] border border-[#2a2a2a] rounded-[32px] p-[6px] flex items-center overflow-hidden z-10 cursor-pointer shadow-lg" onClick={handeAnswer}>
-             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent flex translate-x-[-100%] animate-[shimmer_2.5s_infinite]"></div>
-             <button className="relative z-10 w-[50px] h-[50px] bg-[#22c55e] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:scale-105 transition-transform" onClick={(e) => { e.stopPropagation(); handeAnswer(); }}>
-               <Phone size={22} className="text-white fill-white" />
-             </button>
-             <span className="absolute inset-0 flex items-center justify-center text-[#666] text-[12px] font-mono pointer-events-none pl-[50px] tracking-wide">
-               slide to answer →
-             </span>
-          </div>
-
-          <div className="mt-8 text-[#444] text-[10px] font-mono z-10">
-            press esc to decline
+            <button 
+              onClick={() => setCallState('activeChat')} 
+              className="flex items-center gap-5 p-4 rounded-2xl bg-secondary hover:bg-muted border border-transparent hover:border-border transition-all group shadow-sm text-left"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                <MessageCircle size={20} />
+              </div>
+              <div>
+                <div className="font-semibold text-foreground text-[15px]">Ask question via AI</div>
+                <div className="text-[13px] text-muted-foreground mt-0.5">Get answers instantly</div>
+              </div>
+            </button>
           </div>
         </div>
       )}
 
-      {callState === 'active' && (
+      {/* ---------------- ACTIVE VOICE CALL (Old Landscape Version) ---------------- */}
+      {callState === 'activeCall' && (
         <div className="relative w-full max-w-[760px] bg-[#0a0a0a] border border-[#222] rounded-[32px] overflow-hidden flex flex-col shadow-2xl h-[85vh] max-h-[640px]">
           
           {/* Top Bar */}
@@ -166,7 +201,7 @@ const AiCallFeature: React.FC = () => {
                <span className="w-12">{formatTime(300 - elapsedSeconds)}</span>
              </div>
 
-             <button onClick={handleEnd} className="text-[#666] hover:text-white transition-colors bg-[#1a1a1a] p-1.5 rounded-full border border-[#2a2a2a]">
+             <button onClick={() => setCallState('idle')} className="text-[#666] hover:text-white transition-colors bg-[#1a1a1a] p-1.5 rounded-full border border-[#2a2a2a]">
                 <X size={16} />
              </button>
           </div>
@@ -175,7 +210,7 @@ const AiCallFeature: React.FC = () => {
             {/* Left Column */}
             <div className="w-[240px] p-8 border-r border-[#1f1f1f] flex flex-col items-start bg-[#0d0d0d]">
               <img 
-                src="https://avatars.githubusercontent.com/u/105650178"
+                src={avatarUrl}
                 alt="Pranav Gawai" 
                 className="w-[64px] h-[64px] rounded-full border border-[#333] object-cover mb-5 bg-[#111] shadow-xl"
               />
@@ -194,7 +229,7 @@ const AiCallFeature: React.FC = () => {
             {/* Right Column Transcript */}
             <div className="flex-1 p-10 overflow-y-auto bg-[#0a0a0a] flex flex-col justify-end">
                <p className="text-white/90 text-[22px] leading-[1.6] font-sans font-light tracking-wide mix-blend-plus-lighter">
-                 {transcript}
+                 {callTranscript}
                  {isSpeaking && <span className="inline-block w-1.5 h-[22px] bg-white ml-1 align-middle animate-pulse"></span>}
                </p>
             </div>
@@ -259,7 +294,7 @@ const AiCallFeature: React.FC = () => {
                  {isMuted ? 'Muted' : 'Mute Voice'}
                </button>
                <button 
-                 onClick={handleEnd}
+                 onClick={() => setCallState('idle')}
                  className="flex items-center justify-center gap-2.5 px-8 py-3 rounded-full bg-[#ef4444] hover:bg-[#dc2626] active:scale-95 transition-all font-mono text-[12px] text-white tracking-wide shadow-[0_4px_14px_0_rgba(239,68,68,0.39)]"
                >
                  <PhoneOff size={16} />
@@ -268,46 +303,103 @@ const AiCallFeature: React.FC = () => {
             </div>
 
           </div>
+        </div>
+      )}
+
+      {/* ---------------- ACTIVE TEXT CHAT ---------------- */}
+      {callState === 'activeChat' && (
+        <div className="relative w-full max-w-[500px] h-[70vh] min-h-[500px] bg-background border border-border shadow-2xl rounded-[28px] flex flex-col overflow-hidden">
           
-        </div>
-      )}
-      
-      {callState === 'ended' && (
-        <div className="bg-[#0a0a0a] border border-[#222] rounded-[32px] p-10 flex flex-col items-center shadow-2xl animate-[fadeUp_400ms_ease]">
-          <div className="w-16 h-16 rounded-full bg-[#111] flex items-center justify-center mb-6">
-             <PhoneOff size={24} className="text-[#666]" />
+          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-secondary/30">
+             <div className="flex items-center gap-3">
+                <div className="relative">
+                  <img src={avatarUrl} className="w-10 h-10 rounded-full border border-border object-cover" alt="Pranav" />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+                </div>
+                <div>
+                   <h3 className="text-[15px] font-bold text-foreground leading-tight">Pranav's AI</h3>
+                   <p className="text-[12px] text-muted-foreground font-medium">Always Online</p>
+                </div>
+             </div>
+             <button onClick={() => { setCallState('idle'); setChatMessages([]); }} className="w-8 h-8 flex items-center justify-center bg-secondary hover:bg-muted border border-border rounded-full transition-colors text-foreground">
+                <X size={14} />
+             </button>
           </div>
-          <p className="text-white font-sans text-[16px] mb-8 font-light">Session ended.</p>
-          <button 
-            onClick={() => setCallState('idle')}
-            className="px-8 py-3 bg-white hover:bg-[#f0f0f0] text-black font-mono text-[12px] rounded-full transition-colors font-medium tracking-wide"
-          >
-            Close
-          </button>
+
+          <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6 custom-scrollbar">
+            {chatMessages.map((msg) => (
+              <div key={msg.id} className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
+                {msg.sender === 'ai' && (
+                  <img src={avatarUrl} className="w-8 h-8 rounded-full border border-border object-cover flex-shrink-0" alt="Pranav" />
+                )}
+                <div className={`p-3.5 px-5 rounded-2xl text-[14px] leading-relaxed shadow-sm ${
+                  msg.sender === 'user' 
+                  ? 'bg-primary text-primary-foreground rounded-tr-sm' 
+                  : 'bg-secondary text-foreground rounded-tl-sm border border-border'
+                }`}>
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isAiTypingChat && (
+               <div className="flex gap-3 max-w-[85%] self-start animate-fadeUp">
+                  <img src={avatarUrl} className="w-8 h-8 rounded-full border border-border object-cover flex-shrink-0" alt="Pranav" />
+                  <div className="p-3.5 px-5 rounded-2xl bg-secondary rounded-tl-sm border border-border flex items-center justify-center gap-1.5 h-[46px]">
+                     <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                     <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                     <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+               </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          <div className="p-4 border-t border-border bg-secondary/30">
+            <form onSubmit={handleSendChat} className="flex items-center gap-2">
+               <button type="button" className="p-2.5 text-muted-foreground hover:text-foreground transition-colors bg-background border border-border rounded-full hover:bg-secondary">
+                 <Plus size={18} />
+               </button>
+               <input 
+                 type="text" 
+                 value={chatInput}
+                 onChange={(e) => setChatInput(e.target.value)}
+                 placeholder="Message Pranav's AI..." 
+                 className="flex-1 bg-background border border-border text-foreground placeholder:text-muted-foreground rounded-full px-5 py-3 text-[14px] focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
+               />
+               <button 
+                 type="submit" 
+                 disabled={!chatInput.trim()}
+                 className="p-3 bg-primary text-primary-foreground rounded-full shadow-md hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all flex items-center justify-center"
+               >
+                 <Send size={16} className="ml-0.5" />
+               </button>
+            </form>
+          </div>
         </div>
       )}
+
     </div>
   ) : null;
 
   return (
     <>
       <button 
-        onClick={handleStartCall}
-        className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-[#333] bg-[#0a0a0a]/50 hover:bg-[#111] hover:border-[#666] transition-all font-mono text-[11px] text-[#aaa] hover:text-white"
+        onClick={() => setCallState('choice')}
+        className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-border bg-background hover:bg-secondary transition-all font-mono text-[11px] text-muted-foreground hover:text-foreground group"
       >
         {callState !== 'idle' ? (
           <>
-            <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-[pulse_2s_infinite] shadow-[0_0_8px_rgba(34,197,94,0.4)]"></span>
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-[pulse_2s_infinite] shadow-[0_0_8px_rgba(34,197,94,0.4)]"></span>
             On call...
           </>
         ) : (
           <>
-            Talk to my AI <Sparkles size={12} className="text-white/60" />
+            Talk to my AI <Sparkles size={12} className="text-muted-foreground/60 group-hover:text-primary transition-colors" />
           </>
         )}
       </button>
 
-      {/* Render modal directly into the document root via Portal to avoid CSS filter clipping bugs */}
+      {/* Render modal directly into the document root via Portal */}
       {mounted && typeof document !== 'undefined' && createPortal(modalContent, document.body)}
     </>
   );
