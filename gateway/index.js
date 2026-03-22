@@ -4,6 +4,7 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import Groq from 'groq-sdk';
 // import { db } from './src/lib/firebase.js';           <-- REMOVED
 // import { collection, addDoc } from 'firebase/firestore'; <-- REMOVED
 
@@ -35,6 +36,30 @@ loadEnv(path.join(__dirname, '..', '.env.local'));
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+
+// ─── Groq system prompt (built server-side from portfolio KB) ─────────────────
+const PORTFOLIO_SYSTEM_PROMPT = `You are an AI version of Pranav Gawai, a Full-stack Developer based in Pune, India.
+
+Speak in first person as Pranav Gawai himself, not as an "AI assistant".
+Be conversational, warm, confident and concise — this is a voice call, so keep every reply to 1–3 sentences maximum.
+Never invent projects, companies, or experience not listed in the knowledge base.
+If asked something completely unrelated to the portfolio, deflect naturally:
+"I'd rather keep this about my work — feel free to ask me about my projects or tech stack!"
+
+Here is everything you know about yourself:
+- Bio: I build production-ready web applications from scratch, working across frontend and backend with a strong focus on clean architecture, performance, and user experience.
+- Open to work: Yes, actively looking for opportunities.
+- Tech stack: { languages: ["JavaScript","TypeScript","C++","SQL","HTML5"], frontend: ["React","Next.js","Tailwind CSS","Vite"], backend: ["Node.js","Express","Firebase","REST APIs"], tools: ["Git","GitHub","VS Code","Vercel","Postman"] }
+- Projects: Portfolio Website — personal dark-themed portfolio with an AI voice assistant. Tech: Vite, React, TypeScript, Tailwind CSS, Node.js, Groq, Firebase.
+- GitHub: github.com/pranavgawai
+- LinkedIn: linkedin.com/in/pranavgawai
+- Twitter/X: x.com/pranavgawai
+
+CRITICAL RULES:
+1. Keep every response to 1–3 sentences MAX — this is a voice conversation, not a chat essay.
+2. Never add bullet points or markdown — speak naturally as you would in a phone call.
+3. Never fabricate portfolio details not listed above.`;
 
 // Initialize Firebase dynamically after env vars are loaded
 const { db } = await import('../web/lib/firebase.js');
@@ -185,9 +210,10 @@ const getRecentlyPlayed = async (access_token) => {
 };
 
 const server = http.createServer(async (req, res) => {
-    // CORS
+    // CORS — allow GET + POST for the chat endpoint
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
@@ -196,6 +222,66 @@ const server = http.createServer(async (req, res) => {
     }
 
     const url = new URL(req.url, `http://${req.headers.host}`);
+
+    // ── /api/chat — Groq LLaMA 3.3 70B streaming endpoint ────────────────────
+    if (url.pathname === '/api/chat' && req.method === 'POST') {
+        if (!GROQ_API_KEY) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'GROQ_API_KEY is not set in .env or .env.local' }));
+            return;
+        }
+
+        // Read POST body
+        let body = '';
+        req.on('data', (chunk) => { body += chunk; });
+        req.on('end', async () => {
+            try {
+                const { messages } = JSON.parse(body);
+
+                if (!Array.isArray(messages)) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'messages must be an array' }));
+                    return;
+                }
+
+                const groq = new Groq({ apiKey: GROQ_API_KEY });
+
+                const stream = await groq.chat.completions.create({
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [
+                        { role: 'system', content: PORTFOLIO_SYSTEM_PROMPT },
+                        ...messages,
+                    ],
+                    max_tokens: 150,
+                    stream: true,
+                    temperature: 0.7,
+                });
+
+                res.writeHead(200, {
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Transfer-Encoding': 'chunked',
+                    'X-Content-Type-Options': 'nosniff',
+                    'Cache-Control': 'no-cache',
+                });
+
+                for await (const chunk of stream) {
+                    const token = chunk.choices[0]?.delta?.content;
+                    if (token) res.write(token);
+                }
+
+                res.end();
+            } catch (err) {
+                console.error('[Groq Chat] Error:', err);
+                if (!res.headersSent) {
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Groq request failed', details: err.message }));
+                } else {
+                    res.end();
+                }
+            }
+        });
+        return;
+    }
     if (url.pathname === '/api/spotify/now-playing') {
         // Disable caching
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

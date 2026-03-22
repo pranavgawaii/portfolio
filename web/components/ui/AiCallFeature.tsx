@@ -2,29 +2,30 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { PhoneOff, Mic, MicOff, X, Sparkles, MessageCircle, Send, Plus } from 'lucide-react';
 import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
+import { useGroqChat } from '../../hooks/useGroqChat';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type CallState = 'idle' | 'choice' | 'activeCall' | 'activeChat';
-type ChatMessage = { id: number; sender: 'ai' | 'user'; text: string };
+type TextChatMessage = { id: number; sender: 'ai' | 'user'; text: string };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const INITIAL_TRANSCRIPT =
+const GREETING =
   "Hey! I'm Pranav's AI. I'm a full-stack developer from Pune, India. You're on my portfolio — ask me anything about my work, projects, or tech stack. Let's go!";
 
 const avatarUrl = '/avatar.jpg';
 
-// ─── Waveform bar state helpers ───────────────────────────────────────────────
+// ─── Waveform helpers ─────────────────────────────────────────────────────────
 type WaveMode = 'idle' | 'ai' | 'user';
 
-function getBarStyle(mode: WaveMode, idx: number) {
-  const delay = (idx * 0.06) - 4; // continuous phase-shifted wave
+function getBarStyle(mode: WaveMode, idx: number): React.CSSProperties {
+  const delay = idx * 0.06 - 4;
   if (mode === 'user') {
     return {
       height: '4px',
       animation: `wavePremium 1.0s infinite ease-in-out ${delay}s`,
       background: '#8b5cf6',
       boxShadow: '0 0 10px rgba(139,92,246,0.5)',
-    } as React.CSSProperties;
+    };
   }
   if (mode === 'ai') {
     return {
@@ -32,10 +33,9 @@ function getBarStyle(mode: WaveMode, idx: number) {
       animation: `wavePremium 1.2s infinite ease-in-out ${delay}s`,
       background: 'rgba(255,255,255,0.85)',
       boxShadow: '0 0 12px rgba(255,255,255,0.4)',
-    } as React.CSSProperties;
+    };
   }
-  // idle
-  return { height: '4px', background: '#2a2a2a' } as React.CSSProperties;
+  return { height: '4px', background: '#2a2a2a' };
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -44,10 +44,12 @@ const AiCallFeature: React.FC = () => {
 
   // ── Voice-call UI state ───────────────────────────────────────────────────
   const [isMuted, setIsMuted] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);      // AI typing words
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [aiTranscript, setAiTranscript] = useState('');     // words shown in white
-  const [aiFullText, setAiFullText] = useState(INITIAL_TRANSCRIPT);
+
+  // ── Greeting typewriter (shown before first real Groq response) ───────────
+  const [greetingText, setGreetingText] = useState('');
+  const [isGreeting, setIsGreeting] = useState(false);
+  const [greetingDone, setGreetingDone] = useState(false);
 
   // ── Speech recognition ────────────────────────────────────────────────────
   const {
@@ -61,21 +63,31 @@ const AiCallFeature: React.FC = () => {
     resetTranscript,
   } = useSpeechRecognition();
 
-  // ── Chat state ────────────────────────────────────────────────────────────
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  // ── Groq chat ─────────────────────────────────────────────────────────────
+  const {
+    sendMessage,
+    aiResponse,
+    isThinking,
+    isStreaming,
+    clearHistory,
+  } = useGroqChat();
+
+  // ── Text-chat panel state (separate from voice call) ──────────────────────
+  const [chatMessages, setChatMessages] = useState<TextChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [isAiTypingChat, setIsAiTypingChat] = useState(false);
 
   const [mounted, setMounted] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const transcriptRef = useRef('');  // accumulates during a speech turn
 
   useEffect(() => { setMounted(true); }, []);
 
-  // ── Determine waveform mode ───────────────────────────────────────────────
+  // ── Waveform mode ─────────────────────────────────────────────────────────
   const waveMode: WaveMode =
     isMuted ? 'idle' :
     isListening ? 'user' :
-    isSpeaking ? 'ai' :
+    (isGreeting || isThinking || isStreaming) ? 'ai' :
     'idle';
 
   // ── Chat auto-scroll ──────────────────────────────────────────────────────
@@ -90,10 +102,7 @@ const AiCallFeature: React.FC = () => {
     let interval: ReturnType<typeof setInterval>;
     if (callState === 'activeCall') {
       interval = setInterval(() => {
-        setElapsedSeconds(prev => {
-          if (prev >= 300) { handleEndCall(); return 300; }
-          return prev + 1;
-        });
+        setElapsedSeconds(prev => { if (prev >= 300) { handleEndCall(); return 300; } return prev + 1; });
       }, 1000);
     } else {
       setElapsedSeconds(0);
@@ -102,76 +111,116 @@ const AiCallFeature: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [callState]);
 
-  // ── AI text typewriter ────────────────────────────────────────────────────
+  // ── Greeting typewriter on call open ─────────────────────────────────────
   useEffect(() => {
-    let typeInterval: ReturnType<typeof setInterval>;
-    if (callState === 'activeCall') {
-      setIsSpeaking(true);
-      setAiTranscript('');
-      const words = aiFullText.split(' ');
-      let i = 0;
-      typeInterval = setInterval(() => {
-        if (i < words.length) {
-          setAiTranscript(prev => prev + (prev ? ' ' : '') + words[i]);
-          i++;
-        } else {
-          setIsSpeaking(false);
-          clearInterval(typeInterval);
-        }
-      }, 150);
-    }
-    return () => clearInterval(typeInterval);
-  }, [callState, aiFullText]);
+    if (callState !== 'activeCall') return;
+    setGreetingText('');
+    setGreetingDone(false);
+    setIsGreeting(true);
 
-  // ── Start mic when call opens; stop when it closes ───────────────────────
+    const words = GREETING.split(' ');
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < words.length) {
+        setGreetingText(prev => prev + (prev ? ' ' : '') + words[i]);
+        i++;
+      } else {
+        clearInterval(interval);
+        setIsGreeting(false);
+        setGreetingDone(true);
+      }
+    }, 130);
+
+    return () => clearInterval(interval);
+  }, [callState]);
+
+  // ── Auto-start mic after greeting finishes ────────────────────────────────
   useEffect(() => {
-    if (callState === 'activeCall') {
+    if (greetingDone && callState === 'activeCall' && !isMuted) {
       resetTranscript();
-      // Start listening only after AI finishes speaking
-      // (handled by isSpeaking → false transition below)
-    } else {
-      stopListening();
-    }
-  }, [callState]); // eslint-disable-line
-
-  // ── Auto-start listening after AI finishes its greeting ──────────────────
-  useEffect(() => {
-    if (!isSpeaking && callState === 'activeCall' && !isMuted) {
+      transcriptRef.current = '';
       startListening();
     }
-    if (isSpeaking && isListening) {
-      stopListening();
-    }
-  }, [isSpeaking]); // eslint-disable-line
+  }, [greetingDone]); // eslint-disable-line
 
-  // ── Mute toggle wires into start/stop ────────────────────────────────────
+  // ── Re-start listening after AI finishes streaming ────────────────────────
+  useEffect(() => {
+    if (!isStreaming && !isThinking && callState === 'activeCall' && greetingDone && !isMuted) {
+      resetTranscript();
+      transcriptRef.current = '';
+      startListening();
+    }
+  }, [isStreaming]); // eslint-disable-line
+
+  // ── Track accumulated speech transcript ──────────────────────────────────
+  useEffect(() => {
+    if (userTranscript) {
+      transcriptRef.current = userTranscript;
+    }
+  }, [userTranscript]);
+
+  // ── Wire silence callback → Groq ─────────────────────────────────────────
+  // useSpeechRecognition stops after silence; we watch isListening→false transition
+  const prevListeningRef = useRef(false);
+  useEffect(() => {
+    const wasListening = prevListeningRef.current;
+    prevListeningRef.current = isListening;
+
+    // Detect falling edge: was listening → now stopped (silence triggered)
+    if (wasListening && !isListening && callState === 'activeCall' && !isMuted) {
+      const captured = transcriptRef.current.trim();
+      if (captured) {
+        // Send to Groq
+        sendMessage(captured);
+        resetTranscript();
+        transcriptRef.current = '';
+      }
+    }
+  }, [isListening]); // eslint-disable-line
+
+  // ── Mute toggle ───────────────────────────────────────────────────────────
   const handleMuteToggle = useCallback(() => {
     if (!isMuted) {
       stopListening();
       setIsMuted(true);
     } else {
       setIsMuted(false);
-      if (!isSpeaking) startListening();
+      if (!isThinking && !isStreaming && !isGreeting) {
+        resetTranscript();
+        transcriptRef.current = '';
+        startListening();
+      }
     }
-  }, [isMuted, isSpeaking, startListening, stopListening]);
+  }, [isMuted, isThinking, isStreaming, isGreeting, startListening, stopListening, resetTranscript]);
 
-  // ── End call cleanly ──────────────────────────────────────────────────────
+  // ── End call ─────────────────────────────────────────────────────────────
   const handleEndCall = useCallback(() => {
     stopListening();
+    clearHistory();
     setIsMuted(false);
+    setGreetingText('');
+    setGreetingDone(false);
+    setIsGreeting(false);
     resetTranscript();
+    transcriptRef.current = '';
     setCallState('idle');
-  }, [stopListening, resetTranscript]);
+  }, [stopListening, clearHistory, resetTranscript]);
 
-  // ── Chip click — re-trigger AI typewriter with a new question ─────────────
-  const handleChipClick = useCallback((text: string) => {
-    stopListening();
-    resetTranscript();
-    setAiFullText(text);
-    setCallState('activeCall');
-  }, [stopListening, resetTranscript]);
+  // ── Escape closes ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && callState !== 'idle') handleEndCall();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [callState, handleEndCall]);
 
-  // ── Chat initial greeting ─────────────────────────────────────────────────
+  // ── Cleanup on unmount ────────────────────────────────────────────────────
+  useEffect(() => {
+    return () => { stopListening(); };
+  }, [stopListening]);
+
+  // ── Text chat: initial greeting ───────────────────────────────────────────
   useEffect(() => {
     if (callState === 'activeChat' && chatMessages.length === 0) {
       setIsAiTypingChat(true);
@@ -183,54 +232,30 @@ const AiCallFeature: React.FC = () => {
     }
   }, [callState, chatMessages.length]);
 
-  // ── Escape always closes ──────────────────────────────────────────────────
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && callState !== 'idle') handleEndCall();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [callState, handleEndCall]);
-
-  // ── Chat send ─────────────────────────────────────────────────────────────
+  // ── Text chat: send ───────────────────────────────────────────────────────
   const handleSendChat = (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
-    const newMsg: ChatMessage = { id: Date.now(), sender: 'user', text: chatInput };
+    const newMsg: TextChatMessage = { id: Date.now(), sender: 'user', text: chatInput };
     setChatMessages(prev => [...prev, newMsg]);
     setChatInput('');
     setIsAiTypingChat(true);
     setTimeout(() => {
-      const reply: ChatMessage = {
+      setChatMessages(prev => [...prev, {
         id: Date.now(), sender: 'ai',
-        text: "Thanks for chatting! This is a simulated response — AI backend coming soon.",
-      };
-      setChatMessages(prev => [...prev, reply]);
+        text: "Thanks for chatting! AI backend is live — but this panel is a separate flow. Use the voice call for real AI responses!",
+      }]);
       setIsAiTypingChat(false);
     }, 1500);
   };
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
   const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
-  const isIdleLong = callState === 'activeCall' && !isSpeaking && elapsedSeconds > 0 && elapsedSeconds % 10 === 0;
 
-  // ── Mic permission badge ──────────────────────────────────────────────────
-  const MicPermissionBadge = () => {
-    if (micPermission === 'granted' || micPermission === 'prompt') return null;
-    if (micPermission === 'unsupported') {
-      return (
-        <div className="flex items-center gap-2 text-[#aaa] font-mono text-[11px]">
-          <MicOff size={13} /> Use Chrome for voice features
-        </div>
-      );
-    }
-    // denied
-    return (
-      <div className="flex items-center gap-2 font-mono text-[11px]" style={{ color: '#dc2626' }}>
-        <MicOff size={13} /> Please allow mic access in browser settings
-      </div>
-    );
-  };
+  // ── Determine what to show in the transcript area ─────────────────────────
+  // Priority: AI streaming > greeting > user speech
+  const showAiStreaming = isThinking || isStreaming || (aiResponse && !isListening);
+  const showGreeting = !showAiStreaming && (greetingText || isGreeting);
+  const showUserSpeech = !showAiStreaming && !showGreeting && (userTranscript || interimTranscript);
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // MODAL CONTENT
@@ -260,12 +285,8 @@ const AiCallFeature: React.FC = () => {
           <p className="text-sm text-muted-foreground mb-8">Choose how you'd like to interact</p>
 
           <div className="flex flex-col gap-4 w-full">
-            {/* Voice option */}
             <button
-              onClick={() => {
-                setAiFullText(INITIAL_TRANSCRIPT);
-                setCallState('activeCall');
-              }}
+              onClick={() => setCallState('activeCall')}
               className="flex items-center gap-5 p-4 rounded-2xl bg-secondary hover:bg-muted border border-transparent hover:border-border transition-all group shadow-sm text-left"
             >
               <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
@@ -273,11 +294,10 @@ const AiCallFeature: React.FC = () => {
               </div>
               <div>
                 <div className="font-semibold text-foreground text-[15px]">Chat with me</div>
-                <div className="text-[13px] text-muted-foreground mt-0.5">Live audio conversation</div>
+                <div className="text-[13px] text-muted-foreground mt-0.5">Live audio + AI conversation</div>
               </div>
             </button>
 
-            {/* Text chat option */}
             <button
               onClick={() => setCallState('activeChat')}
               className="flex items-center gap-5 p-4 rounded-2xl bg-secondary hover:bg-muted border border-transparent hover:border-border transition-all group shadow-sm text-left"
@@ -308,18 +328,12 @@ const AiCallFeature: React.FC = () => {
             <div className="flex items-center gap-4 text-[#666] font-mono text-[11px]">
               <span className="text-white w-8 text-right">{formatTime(elapsedSeconds)}</span>
               <div className="w-32 h-[2px] bg-[#222] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-white/80 transition-all duration-1000 ease-linear"
-                  style={{ width: `${(elapsedSeconds / 300) * 100}%` }}
-                />
+                <div className="h-full bg-white/80 transition-all duration-1000 ease-linear" style={{ width: `${(elapsedSeconds / 300) * 100}%` }} />
               </div>
               <span className="w-12">{formatTime(300 - elapsedSeconds)}</span>
             </div>
 
-            <button
-              onClick={handleEndCall}
-              className="text-[#666] hover:text-white transition-colors bg-[#1a1a1a] p-1.5 rounded-full border border-[#2a2a2a]"
-            >
+            <button onClick={handleEndCall} className="text-[#666] hover:text-white transition-colors bg-[#1a1a1a] p-1.5 rounded-full border border-[#2a2a2a]">
               <X size={16} />
             </button>
           </div>
@@ -329,59 +343,52 @@ const AiCallFeature: React.FC = () => {
 
             {/* Left column */}
             <div className="w-[240px] p-8 border-r border-[#1f1f1f] flex flex-col items-start bg-[#0d0d0d]">
-              <img
-                src={avatarUrl}
-                alt="Pranav Gawai"
-                className="w-[64px] h-[64px] rounded-full border border-[#333] object-cover mb-5 bg-[#111] shadow-xl"
-              />
+              <img src={avatarUrl} alt="Pranav Gawai" className="w-[64px] h-[64px] rounded-full border border-[#333] object-cover mb-5 bg-[#111] shadow-xl" />
               <h3 className="text-white text-[16px] font-semibold tracking-tight">Pranav Gawai</h3>
               <p className="text-[#888] text-[13px] mb-8 font-mono">Developer</p>
 
               <div className="w-full h-[1px] bg-[#1a1a1a] mb-8" />
 
               <div className="space-y-3">
-                <p className="text-[#555] text-[11px] leading-relaxed font-mono">» powered by ai</p>
-                <p className="text-[#555] text-[11px] leading-relaxed font-mono">» responses may vary</p>
+                <p className="text-[#555] text-[11px] leading-relaxed font-mono">» powered by groq ai</p>
+                <p className="text-[#555] text-[11px] leading-relaxed font-mono">» llama 3.3 70b</p>
                 <p className="text-[#555] text-[11px] leading-relaxed font-mono">» built by pranav</p>
               </div>
             </div>
 
             {/* Right column — transcript area */}
-            <div className="flex-1 p-10 overflow-y-auto bg-[#0a0a0a] flex flex-col justify-end gap-4">
+            <div className="flex-1 p-10 overflow-y-auto bg-[#0a0a0a] flex flex-col justify-end gap-6">
 
-              {/* Mic permission warning (shown until granted) */}
-              {micPermission === 'prompt' && !isListening && !isSpeaking && (
-                <div className="flex items-center gap-2 text-[#666] font-mono text-[11px] animate-fadeUp">
-                  <Mic size={13} className="text-[#555]" />
-                  Microphone access needed
+              {/* "Thinking…" dots while waiting for first token */}
+              {isThinking && (
+                <div className="flex items-center gap-2 animate-fadeUp">
+                  <span className="text-[#555] font-mono text-[14px]">...</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#555] animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#555] animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#555] animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               )}
 
-              {/* Mic denied / unsupported error */}
-              {(micPermission === 'denied' || micPermission === 'unsupported') && (
-                <div className="flex items-center gap-2 font-mono text-[11px] animate-fadeUp" style={{ color: micPermission === 'unsupported' ? '#aaa' : '#dc2626' }}>
-                  <MicOff size={13} />
-                  {micError}
-                </div>
+              {/* AI streaming response OR static greeting */}
+              {showAiStreaming && aiResponse && (
+                <p className="text-white/90 text-[22px] leading-[1.6] font-sans font-light tracking-wide animate-fadeUp">
+                  {aiResponse}
+                  {isStreaming && <span className="inline-block w-1.5 h-[22px] bg-white ml-1 align-middle animate-pulse" />}
+                </p>
               )}
 
-              {/* AI transcript (white) */}
-              {aiTranscript && (
+              {showGreeting && (
                 <p className="text-white/90 text-[22px] leading-[1.6] font-sans font-light tracking-wide">
-                  {aiTranscript}
-                  {isSpeaking && (
-                    <span className="inline-block w-1.5 h-[22px] bg-white ml-1 align-middle animate-pulse" />
-                  )}
+                  {greetingText}
+                  {isGreeting && <span className="inline-block w-1.5 h-[22px] bg-white ml-1 align-middle animate-pulse" />}
                 </p>
               )}
 
               {/* User live transcript */}
-              {(userTranscript || interimTranscript) && (
+              {showUserSpeech && (
                 <div className="border-t border-[#1f1f1f] pt-4 animate-fadeUp">
                   {userTranscript && (
-                    <p className="text-white/70 text-[16px] leading-[1.6] font-mono font-light">
-                      {userTranscript}
-                    </p>
+                    <p className="text-white/70 text-[16px] leading-[1.6] font-mono font-light">{userTranscript}</p>
                   )}
                   {interimTranscript && (
                     <p className="text-[#666] text-[16px] leading-[1.6] font-mono italic">
@@ -391,13 +398,25 @@ const AiCallFeature: React.FC = () => {
                   )}
                 </div>
               )}
+
+              {/* Mic permission hint */}
+              {micPermission === 'denied' && (
+                <div className="flex items-center gap-2 font-mono text-[11px] text-[#dc2626] animate-fadeUp">
+                  <MicOff size={13} /> {micError}
+                </div>
+              )}
+              {micPermission === 'unsupported' && (
+                <div className="flex items-center gap-2 font-mono text-[11px] text-[#aaa]">
+                  <MicOff size={13} /> Use Chrome for voice features
+                </div>
+              )}
             </div>
           </div>
 
           {/* Bottom section */}
-          <div className="border-t border-[#1f1f1f] bg-[#0d0d0d] p-6 px-8 flex flex-col gap-6 relative">
+          <div className="border-t border-[#1f1f1f] bg-[#0d0d0d] p-6 px-8 flex flex-col gap-4 relative">
 
-            {/* Glow backing */}
+            {/* Glow */}
             {waveMode !== 'idle' && (
               <div
                 className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[40px] blur-[30px] rounded-full pointer-events-none transition-colors duration-500"
@@ -405,55 +424,31 @@ const AiCallFeature: React.FC = () => {
               />
             )}
 
-            {/* Waveform */}
+            {/* Waveform + status labels */}
             <div className="relative flex items-center justify-center h-[56px] w-full">
               <div className="flex justify-center items-center gap-[3px] h-full absolute inset-0">
                 {[...Array(50)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-[3px] rounded-full transition-all duration-300"
-                    style={getBarStyle(waveMode, i)}
-                  />
+                  <div key={i} className="w-[3px] rounded-full transition-all duration-300" style={getBarStyle(waveMode, i)} />
                 ))}
               </div>
 
-              {/* "Thinking…" label when AI is idle long */}
-              <div className={`absolute right-4 text-[#555] font-mono text-[11px] transition-opacity duration-1000 ${isIdleLong ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-                Thinking...
-              </div>
-
-              {/* Listening indicator */}
               {isListening && !isMuted && (
                 <div className="absolute left-4 flex items-center gap-1.5 text-[#8b5cf6] font-mono text-[11px]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-pulse" />
                   Listening
                 </div>
               )}
-            </div>
 
-            {/* Suggested chips */}
-            <div
-              className="flex items-center gap-2 overflow-x-auto pb-2"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {['Tell me about yourself', "What projects have you built?", "What's your tech stack?", 'Are you open to work?'].map((q, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleChipClick(q)}
-                  className="whitespace-nowrap border border-[#2a2a2a] text-[#aaa] text-[12px] font-sans rounded-full px-4 py-2 hover:bg-[#1a1a1a] hover:text-white hover:border-[#444] transition-all"
-                >
-                  {q}
-                </button>
-              ))}
+              {(isThinking || isStreaming) && (
+                <div className="absolute left-4 flex items-center gap-1.5 text-[#aaa] font-mono text-[11px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#aaa] animate-pulse" />
+                  {isThinking ? 'Thinking...' : 'Responding...'}
+                </div>
+              )}
             </div>
 
             {/* Action row */}
-            <div className="flex items-center justify-between pt-2">
-
-              {/* Mic permission badge shown here only when denied/unsupported */}
-              <MicPermissionBadge />
-
-              {/* Mute button (only when permission is ok) */}
+            <div className="flex items-center justify-between">
               {(micPermission === 'granted' || micPermission === 'prompt') && (
                 <button
                   onClick={handleMuteToggle}
@@ -464,7 +459,6 @@ const AiCallFeature: React.FC = () => {
                 </button>
               )}
 
-              {/* End call */}
               <button
                 onClick={handleEndCall}
                 className="flex items-center justify-center gap-2.5 px-8 py-3 rounded-full bg-[#ef4444] hover:bg-[#dc2626] active:scale-95 transition-all font-mono text-[12px] text-white tracking-wide shadow-[0_4px_14px_0_rgba(239,68,68,0.39)]"
@@ -481,7 +475,6 @@ const AiCallFeature: React.FC = () => {
       {callState === 'activeChat' && (
         <div className="relative w-full max-w-[500px] h-[70vh] min-h-[500px] bg-background border border-border shadow-2xl rounded-[28px] flex flex-col overflow-hidden">
 
-          {/* Header */}
           <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-secondary/30">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -501,13 +494,9 @@ const AiCallFeature: React.FC = () => {
             </button>
           </div>
 
-          {/* Messages */}
           <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
             {chatMessages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
-              >
+              <div key={msg.id} className={`flex gap-3 max-w-[85%] ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
                 {msg.sender === 'ai' && (
                   <img src={avatarUrl} className="w-8 h-8 rounded-full border border-border object-cover flex-shrink-0" alt="Pranav" />
                 )}
@@ -533,13 +522,9 @@ const AiCallFeature: React.FC = () => {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Input */}
           <div className="p-4 border-t border-border bg-secondary/30">
             <form onSubmit={handleSendChat} className="flex items-center gap-2">
-              <button
-                type="button"
-                className="p-2.5 text-muted-foreground hover:text-foreground transition-colors bg-background border border-border rounded-full hover:bg-secondary"
-              >
+              <button type="button" className="p-2.5 text-muted-foreground hover:text-foreground transition-colors bg-background border border-border rounded-full hover:bg-secondary">
                 <Plus size={18} />
               </button>
               <input
@@ -565,7 +550,7 @@ const AiCallFeature: React.FC = () => {
   ) : null;
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  // NAVBAR TRIGGER BUTTON
+  // NAVBAR BUTTON
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   return (
     <>
