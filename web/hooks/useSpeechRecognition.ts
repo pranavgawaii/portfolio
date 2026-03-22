@@ -63,6 +63,15 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 
 export type MicPermission = 'prompt' | 'granted' | 'denied' | 'unsupported';
 
+export interface SpeechRecognitionOptions {
+  /** How long (ms) of silence before auto-stopping. Default: 1500 */
+  silenceTimeoutMs?: number;
+  /** Safety cap (ms) — force-stop after this duration. Default: 60_000 (1 min) */
+  maxSpeechDurationMs?: number;
+  /** BCP-47 language tag. Default: 'en-US' */
+  lang?: string;
+}
+
 export interface UseSpeechRecognitionReturn {
   /** Accumulated final (confirmed) transcript for the current session */
   transcript: string;
@@ -71,22 +80,32 @@ export interface UseSpeechRecognitionReturn {
   isListening: boolean;
   micPermission: MicPermission;
   error: string | null;
+  /** Confidence score (0–1) of the most recent final segment */
+  lastConfidence: number | null;
   startListening: () => void;
   stopListening: () => void;
   resetTranscript: () => void;
 }
 
-const SILENCE_TIMEOUT_MS = 1500;
+const DEFAULT_SILENCE_MS = 1500;
+const DEFAULT_MAX_DURATION_MS = 60_000;
 
-export function useSpeechRecognition(): UseSpeechRecognitionReturn {
+export function useSpeechRecognition(options: SpeechRecognitionOptions = {}): UseSpeechRecognitionReturn {
+  const {
+    silenceTimeoutMs = DEFAULT_SILENCE_MS,
+    maxSpeechDurationMs = DEFAULT_MAX_DURATION_MS,
+    lang = 'en-US',
+  } = options;
   const [transcript, setTranscript] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [micPermission, setMicPermission] = useState<MicPermission>('prompt');
   const [error, setError] = useState<string | null>(null);
+  const [lastConfidence, setLastConfidence] = useState<number | null>(null);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxDurationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isListeningRef = useRef(false); // stable ref for closures
 
   // ── Browser support check ──────────────────────────────────────────────────
@@ -106,9 +125,9 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
   const resetSilenceTimer = useCallback(
     (onSilence: () => void) => {
       clearSilenceTimer();
-      silenceTimerRef.current = setTimeout(onSilence, SILENCE_TIMEOUT_MS);
+      silenceTimerRef.current = setTimeout(onSilence, silenceTimeoutMs);
     },
-    [clearSilenceTimer]
+    [clearSilenceTimer, silenceTimeoutMs]
   );
 
   // ── Stop listening (exported) ──────────────────────────────────────────────
@@ -253,6 +272,7 @@ export function useSpeechRecognition(): UseSpeechRecognitionReturn {
     isListening,
     micPermission,
     error,
+    lastConfidence,
     startListening,
     stopListening,
     resetTranscript,
