@@ -5,7 +5,7 @@ const Contact: React.FC = () => {
     return (
         <section id="contact" className="mt-16 sm:mt-24 mb-8 sm:mb-12 flex justify-center items-center">
             <div className="w-full rounded-2xl border border-border-light dark:border-border-dark bg-white/50 dark:bg-white/5 backdrop-blur-md px-4 sm:px-6 py-12 sm:py-16 text-center shadow-sm">
-                <h2 className="font-display text-3xl sm:text-4xl text-text-light dark:text-text-dark mb-3 sm:mb-4">Get In Touch</h2>
+                <div className="flex justify-center w-full"><h2 className="font-display text-3xl sm:text-4xl text-text-light dark:text-text-dark mb-6 sm:mb-8 premium-underline inline-block pb-1 w-fit">Get In Touch</h2></div>
                 <p className="text-text-muted-light dark:text-text-muted-dark mb-6 sm:mb-8 max-w-sm mx-auto text-xs sm:text-sm leading-relaxed">
                     If you’ve made it this far, we should talk :)<br />
                     I’m open to Work, Collaborations, & Interesting problems.<br />

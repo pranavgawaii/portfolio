@@ -43,8 +43,8 @@ const Section: React.FC<SectionProps> = ({ title, children, className = "", id }
       className={`mb-16 scroll-mt-28 relative transition-all duration-700 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         } ${className}`}
     >
-      <h2 className="font-display text-2xl mb-6 text-text-light dark:text-text-dark flex items-center gap-2">
-        {title} <span className="text-text-muted-light dark:text-text-muted-dark opacity-40 font-mono text-lg">#</span>
+      <h2 className="font-display text-2xl mb-8 text-text-light dark:text-text-dark premium-underline inline-block w-fit">
+        {title}
       </h2>
       <div className="space-y-4">
         {children}

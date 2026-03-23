@@ -15,8 +15,8 @@ const AboutMe = () => {
     const profileImage = "/avatar.jpg";
     return (
         <section id="about" className="mb-20 scroll-mt-28">
-            <h2 className="font-display text-2xl mb-8 text-text-light dark:text-text-dark flex items-center gap-2">
-                biography <span className="text-text-muted-light dark:text-text-muted-dark opacity-40 font-mono text-lg">#</span>
+            <h2 className="font-display text-2xl mb-8 text-text-light dark:text-text-dark premium-underline inline-block pb-1 w-fit">
+                biography
             </h2>
 
             <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
