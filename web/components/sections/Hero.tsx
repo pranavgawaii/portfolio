@@ -85,9 +85,32 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 font-mono text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark max-w-xl text-center sm:text-left mx-auto sm:mx-0">
-          <p>
-            I build <span className="bg-blue-100/50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-1 rounded font-medium">production-ready web applications</span> from scratch, working across frontend and backend, with a strong focus on clean architecture, performance, and user experience.
+        <div className="mt-8 font-mono text-sm leading-relaxed max-w-xl text-center sm:text-left mx-auto sm:mx-0">
+          {/* Premium shining bio */}
+          <p className="relative inline-block w-full">
+            {/* Base text */}
+            <span className="relative z-10 text-text-muted-light dark:text-text-muted-dark">
+              I build{' '}
+              <span className="relative inline-block">
+                <span className="bg-blue-100/50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-1 rounded font-semibold">
+                  production-ready web applications
+                </span>
+              </span>
+              {' '}from scratch, working across{' '}
+              <span className="text-text-light dark:text-text-dark font-medium">frontend and backend</span>
+              , with a strong focus on{' '}
+              <span className="text-text-light dark:text-text-dark font-medium">clean architecture</span>
+              ,{' '}
+              <span className="text-text-light dark:text-text-dark font-medium">performance</span>
+              , and{' '}
+              <span className="text-text-light dark:text-text-dark font-medium">user experience</span>
+              .
+            </span>
+            {/* Shine overlay — travels across the text */}
+            <span
+              aria-hidden="true"
+              className="premium-shine pointer-events-none absolute inset-0 z-20 mix-blend-overlay select-none"
+            />
           </p>
         </div>
 
