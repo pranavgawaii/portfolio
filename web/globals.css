@@ -466,17 +466,11 @@ html::before {
   animation: shine-sweep 3.5s linear infinite;
 }
 
-/* Premium Animated Underline */
-@keyframes underline-sweep {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
+/* Premium Hover Underline */
 .premium-underline {
   position: relative;
   display: inline-block;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
 }
 
 .premium-underline::after {
@@ -484,15 +478,12 @@ html::before {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
-  background-size: 300% 100%;
-  border-radius: 2px;
-  animation: underline-sweep 4s linear infinite;
+  width: 0;
+  height: 1px;
+  @apply bg-primary;
+  transition: width 300ms ease-in-out;
 }
 
-.dark .premium-underline::after {
-  background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6, #60a5fa);
-  background-size: 300% 100%;
+.premium-underline:hover::after {
+  width: 100%;
 }
