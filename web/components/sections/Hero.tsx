@@ -158,8 +158,8 @@ const Hero: React.FC = () => {
         </div>
 
         <div className="mt-16 space-y-6 overflow-hidden">
-          <h4 className="text-[10px] font-mono uppercase tracking-[0.2em] text-text-muted-light/50 dark:text-text-muted-dark/50 px-2 flex items-center gap-2">
-            <span className="h-px w-4 bg-border-light dark:bg-border-dark opacity-30"></span>
+          <h4 className="text-sm font-mono uppercase tracking-[0.2em] text-text-light/90 dark:text-text-dark/90 px-2 flex items-center gap-2 w-fit premium-underline mb-2">
+            <span className="h-px w-4 bg-text-light/50 dark:bg-text-dark/50"></span>
             Technical Expertise
           </h4>
 

@@ -118,7 +118,7 @@ const GitHubActivitySection: React.FC = () => {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-mono text-slate-400 dark:text-neutral-600 uppercase tracking-[0.2em] lowercase">
+            <span className="text-sm font-mono text-neutral-800 dark:text-neutral-200 uppercase tracking-[0.1em] premium-underline w-fit mb-1">
               {activeTab === 'github' ? 'github contributions' : 'leetcode submissions'}
             </span>
             <div className="flex items-baseline gap-2">
