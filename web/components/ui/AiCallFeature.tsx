@@ -268,54 +268,46 @@ const AiCallFeature: React.FC = () => {
 
       {/* ─────────────── CHOICE MENU ─────────────── */}
       {callState === 'choice' && (
-        <div className="relative w-full max-w-[420px] bg-neutral-950/80 backdrop-blur-2xl border border-white/10 rounded-[32px] p-8 flex flex-col items-center shadow-[0_0_50px_rgba(0,0,0,0.6)] overflow-hidden">
-          {/* Subtle gradient glow behind the content */}
-          <div className="absolute -top-24 -left-24 w-64 h-64 bg-primary/20 rounded-full blur-[80px] pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-500/20 rounded-full blur-[80px] pointer-events-none" />
-
+        <div className="relative w-full max-w-[400px] bg-neutral-950 border border-white/5 rounded-[40px] p-10 flex flex-col items-center shadow-2xl overflow-hidden">
           <button
             onClick={() => setCallState('idle')}
-            className="absolute top-5 right-5 p-2.5 text-white/50 hover:text-white hover:bg-white/10 transition-all rounded-full z-10"
+            className="absolute top-6 right-6 p-2 text-white/30 hover:text-white transition-colors z-10"
           >
             <X size={18} />
           </button>
 
-          <div className="w-24 h-24 mb-6 relative">
-            <div className="absolute inset-[-4px] rounded-full bg-gradient-to-tr from-primary/50 to-purple-500/50 blur-md opacity-40 animate-pulse" />
-            <div className="absolute inset-0 rounded-full border border-primary/30 animate-[ping_3s_ease-in-out_infinite] opacity-30" />
-            <img src={avatarUrl} alt="Pranav" className="w-full h-full rounded-full object-cover border-[3px] border-neutral-950 shadow-2xl relative z-10" />
-            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-neutral-950 z-20 shadow-[0_0_12px_rgba(34,197,94,0.6)]" />
+          <div className="w-20 h-20 mb-8 relative">
+            <img src={avatarUrl} alt="Pranav" className="w-full h-full rounded-full object-cover border border-white/10 relative z-10 grayscale-[0.2]" />
+            <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-neutral-950 z-20" />
           </div>
 
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60 mb-1.5 tracking-tight">Talk to Pranav</h2>
-          <p className="text-[14px] text-white/50 mb-8 font-light tracking-wide text-center">Choose how you'd like to interact</p>
+          <h2 className="text-[22px] font-medium text-white mb-2 tracking-tight">Talk to Pranav</h2>
+          <p className="text-[14px] text-white/40 mb-10 font-normal tracking-wide text-center uppercase tracking-[0.1em]">Select Interface</p>
 
           <div className="flex flex-col gap-3 w-full z-10">
             <button
               onClick={() => setCallState('activeCall')}
-              className="relative flex items-center gap-5 p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] hover:border-white/20 transition-all duration-300 group text-left overflow-hidden"
+              className="flex items-center gap-5 p-5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 transition-all duration-200 group text-left"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 text-white flex items-center justify-center shadow-[0_0_15px_rgba(139,92,246,0.3)] group-hover:scale-105 group-hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] transition-all z-10 flex-shrink-0">
-                <Mic size={20} className="drop-shadow-md" />
+              <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Mic size={18} strokeWidth={2.5} />
               </div>
-              <div className="z-10">
-                <div className="font-semibold text-white/90 text-[15px] group-hover:text-white transition-colors">Live Voice Call</div>
-                <div className="text-[13px] text-white/50 mt-0.5 group-hover:text-white/70 transition-colors">Real-time AI conversation</div>
+              <div>
+                <div className="font-medium text-white text-[15px]">Live Voice Call</div>
+                <div className="text-[13px] text-white/30 mt-0.5">Direct audio conversation</div>
               </div>
             </button>
 
             <button
               onClick={() => setCallState('activeChat')}
-              className="relative flex items-center gap-5 p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] hover:border-white/20 transition-all duration-300 group text-left overflow-hidden"
+              className="flex items-center gap-5 p-5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 transition-all duration-200 group text-left"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1e293b] to-[#334155] border border-white/10 text-white flex items-center justify-center shadow-lg group-hover:scale-105 group-hover:border-white/20 transition-all z-10 flex-shrink-0">
-                <MessageCircle size={20} className="drop-shadow-md" />
+              <div className="w-10 h-10 rounded-full bg-neutral-800 text-white flex items-center justify-center group-hover:scale-105 transition-transform">
+                <MessageCircle size={18} strokeWidth={2.5} />
               </div>
-              <div className="z-10">
-                <div className="font-semibold text-white/90 text-[15px] group-hover:text-white transition-colors">Text Chat</div>
-                <div className="text-[13px] text-white/50 mt-0.5 group-hover:text-white/70 transition-colors">Ask questions instantly</div>
+              <div>
+                <div className="font-medium text-white text-[15px]">Text Interface</div>
+                <div className="text-[13px] text-white/30 mt-0.5">Instant message exchange</div>
               </div>
             </button>
           </div>
