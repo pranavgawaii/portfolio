@@ -6,37 +6,216 @@ import { ShareModal } from './BlogPage';
 
 import { useUser, useClerk } from '@clerk/clerk-react';
 
+// ─── Comment ──────────────────────────────────────────────────────────────────
+interface Comment {
+  id: string;
+  author: string;
+  avatar?: string;
+  text: string;
+  timestamp: string;
+  replies?: Comment[];
+}
+
 // ─── Comment Section ──────────────────────────────────────────────────────────
 const CommentSection: React.FC<{ slug: string }> = ({ slug }) => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const hasClerk = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-  React.useEffect(() => {
-    if (!containerRef.current) return;
-    containerRef.current.innerHTML = '';
-    const script = document.createElement('script');
-    script.src = 'https://utteranc.es/client.js';
-    script.async = true;
-    script.crossOrigin = 'anonymous';
-    script.setAttribute('repo', 'pranavgawaii/portfolio');
-    script.setAttribute('issue-term', `blog-post-${slug}`);
-    script.setAttribute('label', 'blog-comment');
-    script.setAttribute('theme', 'github-dark');
-    containerRef.current.appendChild(script);
-  }, [slug]);
+  if (!hasClerk) {
+    return (
+      <div className="mt-16 pt-10 border-t border-neutral-100 dark:border-neutral-800">
+        <div className="flex items-center gap-2 mb-6">
+          <MessageCircle size={16} className="text-neutral-400" />
+          <h3 className="font-sans font-semibold text-[15px] text-neutral-800 dark:text-neutral-200">Discussion</h3>
+        </div>
+        <div className="rounded-2xl border border-dashed border-neutral-200 dark:border-neutral-800 px-6 py-8 text-center">
+          <p className="text-[13px] text-neutral-400">Comments coming soon.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <AuthCommentSection slug={slug} />;
+};
+
+// ─── Authenticated Comment Section ───────────────────────────────────────────
+const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
+  const { isSignedIn, user } = useUser();
+  const { openSignIn } = useClerk();
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [text, setText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === 'pranavgawaii@gmail.com';
+
+  const handleSubmit = async () => {
+    if (!text.trim() || !isSignedIn) return;
+    setSubmitting(true);
+    await new Promise(r => setTimeout(r, 400)); // simulate network delay
+    const newComment: Comment = {
+      id: Date.now().toString(),
+      author: user?.fullName || user?.firstName || 'Anonymous',
+      avatar: user?.imageUrl,
+      text: text.trim(),
+      timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    };
+
+    if (replyingTo) {
+      setComments(prev => prev.map(c => c.id === replyingTo ? { ...c, replies: [...(c.replies || []), newComment] } : c));
+      setReplyingTo(null);
+    } else {
+      setComments(prev => [...prev, newComment]);
+    }
+    setText('');
+    setSubmitting(false);
+  };
+
+  const handleDelete = (id: string, parentId?: string) => {
+    if (parentId) {
+      setComments(prev => prev.map(c => c.id === parentId ? { ...c, replies: c.replies?.filter(r => r.id !== id) } : c));
+    } else {
+      setComments(prev => prev.filter(c => c.id !== id));
+      if (replyingTo === id) setReplyingTo(null);
+    }
+  };
+
+  const CommentAvatar = ({ c }: { c: Comment }) => (
+    c.avatar
+      ? <img src={c.avatar} alt={c.author} className="w-7 h-7 rounded-full shrink-0 object-cover ring-1 ring-neutral-200 dark:ring-neutral-700" />
+      : <div className="w-7 h-7 rounded-full shrink-0 bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-[11px] font-bold text-neutral-600 dark:text-neutral-300">{c.author[0]}</div>
+  );
 
   return (
     <div className="mt-16 pt-10 border-t border-neutral-100 dark:border-neutral-800">
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-8">
         <MessageCircle size={16} className="text-neutral-400" />
-        <h3 className="font-sans font-semibold text-[15px] text-neutral-800 dark:text-neutral-200">Discussion</h3>
+        <h3 className="font-sans font-semibold text-[15px] text-neutral-800 dark:text-neutral-200">
+          Discussion
+        </h3>
+        {comments.length > 0 && (
+          <span className="text-[11px] font-mono text-neutral-400 dark:text-neutral-600 bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded-full">
+            {comments.reduce((acc, c) => acc + 1 + (c.replies?.length || 0), 0)}
+          </span>
+        )}
       </div>
-      <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-        Sign in with GitHub to join the conversation.
-      </p>
-      <div ref={containerRef} className="w-full min-h-[300px]" />
+
+      {/* Comment input */}
+      {isSignedIn ? (
+        <div className="mb-8">
+          {replyingTo && (
+            <div className="flex items-center justify-between mb-3 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700 w-fit">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                Replying to <span className="font-semibold text-neutral-700 dark:text-neutral-200">{comments.find(c => c.id === replyingTo)?.author}</span>
+              </span>
+              <button onClick={() => setReplyingTo(null)} className="ml-3 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"><X size={12} /></button>
+            </div>
+          )}
+          <div className="flex gap-3">
+            <img
+              src={user?.imageUrl}
+              alt={user?.firstName}
+              className="w-8 h-8 rounded-full shrink-0 object-cover ring-1 ring-neutral-200 dark:ring-neutral-700"
+            />
+            <div className="flex-1">
+              <textarea
+                value={text}
+                onChange={e => setText(e.target.value)}
+                placeholder={replyingTo ? "Write a reply..." : "Share a thought..."}
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-[13px] text-neutral-800 dark:text-neutral-200 placeholder-neutral-400 dark:placeholder-neutral-600 resize-none focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-600 transition-all"
+              />
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={handleSubmit}
+                  disabled={!text.trim() || submitting}
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[12px] font-medium disabled:opacity-40 hover:opacity-85 transition-opacity"
+                >
+                  {submitting ? (
+                    <span className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send size={11} />
+                  )}
+                  {replyingTo ? 'Reply' : 'Post'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          onClick={() => openSignIn({ afterSignInUrl: window.location.href })}
+          className="w-full mb-8 flex items-center justify-center gap-2.5 px-4 py-4 rounded-2xl border border-dashed border-neutral-200 dark:border-neutral-700 text-[13px] text-neutral-500 dark:text-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all group"
+        >
+          <LogIn size={14} className="group-hover:translate-x-0.5 transition-transform" />
+          Sign in to join the discussion
+        </motion.button>
+      )}
+
+      {/* Comments list */}
+      <AnimatePresence>
+        {comments.length === 0 && (
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="text-[13px] text-neutral-300 dark:text-neutral-700 italic"
+          >
+            No comments yet. Be the first.
+          </motion.p>
+        )}
+        {comments.map(c => (
+          <motion.div
+            key={c.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex gap-3 mb-6"
+          >
+            <CommentAvatar c={c} />
+            <div className="flex-1">
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="text-[12px] font-semibold text-neutral-800 dark:text-neutral-200">{c.author}</span>
+                <span className="text-[10px] text-neutral-400 dark:text-neutral-600">{c.timestamp}</span>
+              </div>
+              <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">{c.text}</p>
+              
+              <div className="flex items-center gap-3">
+                <button onClick={() => setReplyingTo(c.id)} className="text-[11px] font-medium text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors">Reply</button>
+                {(isAdmin || user?.fullName === c.author || user?.firstName === c.author) && (
+                  <button onClick={() => handleDelete(c.id)} className="text-[11px] font-medium text-red-400 hover:text-red-500 transition-colors">Delete</button>
+                )}
+              </div>
+
+              {/* Nested Replies */}
+              {c.replies && c.replies.length > 0 && (
+                <div className="mt-4 space-y-4">
+                  {c.replies.map(r => (
+                    <motion.div key={r.id} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                      <CommentAvatar c={r} />
+                      <div className="flex-1">
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <span className="text-[12px] font-semibold text-neutral-800 dark:text-neutral-200">{r.author}</span>
+                          <span className="text-[10px] text-neutral-400 dark:text-neutral-600">{r.timestamp}</span>
+                        </div>
+                        <p className="text-[13px] text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">{r.text}</p>
+                        
+                        {(isAdmin || user?.fullName === r.author || user?.firstName === r.author) && (
+                          <div className="flex items-center gap-3">
+                            <button onClick={() => handleDelete(r.id, c.id)} className="text-[11px] font-medium text-red-400 hover:text-red-500 transition-colors">Delete</button>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 };
+
 
 // ─── Blog Post Page ───────────────────────────────────────────────────────────
 interface Props {
