@@ -53,7 +53,7 @@ const server = http.createServer(async (req, res) => {
     if (allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
@@ -268,6 +268,86 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Failed to fetch LeetCode data', details: error.message }));
         }
+    // ── /api/comments/:slug GET — fetch all comments for a post ────────────────
+    } else if (url.pathname.startsWith('/api/comments/') && req.method === 'GET') {
+        const slug = url.pathname.replace('/api/comments/', '').split('/')[0];
+        if (!slug) { res.writeHead(400); res.end(); return; }
+        try {
+            const raw = fs.readFileSync(path.join(__dirname, 'comments.json'), 'utf-8');
+            const store = JSON.parse(raw);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(store[slug] || []));
+        } catch {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify([]));
+        }
+
+    // ── /api/comments/:slug POST — add a new comment ────────────────────────
+    } else if (url.pathname.startsWith('/api/comments/') && req.method === 'POST') {
+        const slug = url.pathname.replace('/api/comments/', '').split('/')[0];
+        if (!slug) { res.writeHead(400); res.end(); return; }
+        let body = '';
+        req.on('data', c => body += c);
+        req.on('end', () => {
+            try {
+                const { author, avatar, text, clerkUserId, parentId } = JSON.parse(body);
+                if (!author || !text || !clerkUserId) { res.writeHead(400); res.end(JSON.stringify({ error: 'Missing fields' })); return; }
+                const raw = fs.readFileSync(path.join(__dirname, 'comments.json'), 'utf-8');
+                const store = JSON.parse(raw);
+                if (!store[slug]) store[slug] = [];
+                const newComment = {
+                    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                    author, avatar: avatar || null, text: text.trim(),
+                    clerkUserId,
+                    timestamp: new Date().toISOString(),
+                    replies: []
+                };
+                if (parentId) {
+                    const parent = store[slug].find(c => c.id === parentId);
+                    if (parent) parent.replies.push(newComment);
+                } else {
+                    store[slug].push(newComment);
+                }
+                fs.writeFileSync(path.join(__dirname, 'comments.json'), JSON.stringify(store, null, 2));
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(newComment));
+            } catch (e) {
+                res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
+            }
+        });
+
+    // ── /api/comments/:slug/delete POST — delete a comment (admin or owner) ──
+    } else if (url.pathname.match(/^\/api\/comments\/[^/]+\/delete$/) && req.method === 'POST') {
+        const slug = url.pathname.split('/')[3];
+        let body = '';
+        req.on('data', c => body += c);
+        req.on('end', () => {
+            try {
+                const { commentId, parentId, clerkUserId, isAdmin } = JSON.parse(body);
+                const raw = fs.readFileSync(path.join(__dirname, 'comments.json'), 'utf-8');
+                const store = JSON.parse(raw);
+                if (!store[slug]) { res.writeHead(404); res.end(); return; }
+
+                const canDelete = (c) => isAdmin || c.clerkUserId === clerkUserId;
+
+                if (parentId) {
+                    const parent = store[slug].find(c => c.id === parentId);
+                    if (parent) {
+                        const reply = parent.replies.find(r => r.id === commentId);
+                        if (reply && canDelete(reply)) parent.replies = parent.replies.filter(r => r.id !== commentId);
+                    }
+                } else {
+                    const comment = store[slug].find(c => c.id === commentId);
+                    if (comment && canDelete(comment)) store[slug] = store[slug].filter(c => c.id !== commentId);
+                }
+                fs.writeFileSync(path.join(__dirname, 'comments.json'), JSON.stringify(store, null, 2));
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: true }));
+            } catch (e) {
+                res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
+            }
+        });
+
     } else {
         res.writeHead(404);
         res.end();
