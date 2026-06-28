@@ -46,7 +46,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const [submitting, setSubmitting] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
-  const isAdmin = user?.primaryEmailAddress?.emailAddress === 'pranavgawaii@gmail.com';
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === 'pranvgg@gmail.com' || user?.primaryEmailAddress?.emailAddress === 'pranavgawaii@gmail.com';
 
   const handleSubmit = async () => {
     if (!text.trim() || !isSignedIn) return;
