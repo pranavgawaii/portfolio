@@ -1,5 +1,5 @@
 {
-    "outputDirectory": "build",
+    "outputDirectory": "frontend/build",
     "rewrites": [
         {
             "source": "/(.*)",
