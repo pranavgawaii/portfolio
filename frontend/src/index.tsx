@@ -15,10 +15,20 @@ if (!rootElement) {
 
 const root = ReactDOM.createRoot(rootElement);
 
-root.render(
-  <React.StrictMode>
+const app = PUBLISHABLE_KEY ? (
+  <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <App />
     </ThemeProvider>
+  </ClerkProvider>
+) : (
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <App />
+  </ThemeProvider>
+);
+
+root.render(
+  <React.StrictMode>
+    {app}
   </React.StrictMode>
 );
