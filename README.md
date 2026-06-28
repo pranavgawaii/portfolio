@@ -9,7 +9,7 @@ A premium, modern personal portfolio engineered with **React 19**, **TypeScript*
 
 ## ✨ key Features
 
-- **Live Integrations**: Real-time Spotify "Now Playing" tracking and LeetCode activity visualizations.
+- **Live Integrations**: Real-time LeetCode activity visualizations.
 - **Dynamic UX**: Responsive design with liquid transitions, motion-enhanced interactions, and adaptive dark mode.
 - **Modular Architecture**: Component-driven development with a clear separation of concerns.
 - **Micro-Services**: Lightweight Node.js proxy server for API orchestration and secure state management.
@@ -22,7 +22,7 @@ A premium, modern personal portfolio engineered with **React 19**, **TypeScript*
 | **Frontend** | React 19, TypeScript, motion/react (formerly Framer Motion) |
 | **Styling** | Tailwind CSS, Lucide Icons, Glassmorphism UI |
 | **Backend** | Node.js (Proxy Server), Vercel Serverless Functions |
-| **Services** | Spotify Web API, LeetCode GraphQL API, Firebase Firestore |
+| **Services** | LeetCode GraphQL API, Firebase Firestore |
 | **Tooling** | Vite, PostCSS, ESLint, npm |
 
 ## 📂 Project Structure
@@ -33,7 +33,7 @@ A premium, modern personal portfolio engineered with **React 19**, **TypeScript*
 ├── gateway/            # Local Development API Proxy
 ├── web/
 │   ├── components/
-│   │   ├── features/   # Logic-heavy components (Spotify, Projects)
+│   │   ├── features/   # Logic-heavy components (Projects)
 │   │   ├── icons/      # Custom SVG components
 │   │   ├── layout/     # Structural components (Navbar, Footer, Preloader)
 │   │   ├── sections/   # Page-level section components (Hero, About, Contact)
@@ -69,9 +69,6 @@ A premium, modern personal portfolio engineered with **React 19**, **TypeScript*
 3. **Configure Environment Variables**
    Create a `.env` file in the root directory:
    ```env
-   SPOTIFY_CLIENT_ID=your_id
-   SPOTIFY_CLIENT_SECRET=your_secret
-   SPOTIFY_REFRESH_TOKEN=your_token
    # Add Firebase and other service keys as required
    ```
 
