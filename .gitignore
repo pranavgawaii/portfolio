@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Production builds
+build/
+dist/
+dist-ssr/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+debug_*.js
+
+# Live comment data
+backend/comments.json

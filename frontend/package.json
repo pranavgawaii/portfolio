@@ -12,6 +12,7 @@
     "@clerk/clerk-react": "^5.61.8",
     "@clerk/themes": "^2.4.57",
     "@emailjs/browser": "^4.4.1",
+    "@giscus/react": "^3.1.0",
     "@vercel/analytics": "^1.6.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
