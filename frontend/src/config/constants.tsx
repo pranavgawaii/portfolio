@@ -1,0 +1,468 @@
+import { ProfileData, ExperienceItem, ProjectItem, EducationItem, LeadershipItem } from '../types/index';
+import { Github, Linkedin, Mail, ExternalLink, Twitter, Youtube, Instagram } from 'lucide-react';
+import { XIcon, MediumIcon } from '../components/icons/CustomIcons';
+
+export const PROFILE: ProfileData = {
+  name: "Pranav Gawai",
+  title: "Full Stack Engineer",
+  location: "Pune, MH",
+  bio: "Pre-final year B.Tech CSE (AI/ML) student targeting AI-first startups and product companies. Building in public, shipping AI-native SaaS products, and competing in national-level hackathons.",
+  socials: [
+    { name: "X", url: "https://x.com/pranavgawai_", icon: "x" },
+    { name: "LinkedIn", url: "https://linkedin.com/in/pranavgawai", icon: "linkedin" },
+    { name: "GitHub", url: "https://github.com/pranavgawaii", icon: "github" },
+    { name: "Medium", url: "https://medium.com/@pranavgawai1518", icon: "medium" },
+    { name: "Instagram", url: "https://www.instagram.com/pranavgawai_/", icon: "instagram" },
+    { name: "Email", url: "mailto:pranavgawai1518@gmail.com", icon: "mail" },
+  ],
+  skills: [
+    { name: "Languages", skills: ["Python", "TypeScript", "JavaScript", "SQL"] },
+    { name: "Frameworks", skills: ["Next.js", "React", "FastAPI", "Node.js", "Tailwind CSS"] },
+    { name: "Databases", skills: ["PostgreSQL", "Supabase", "MongoDB", "Redis"] },
+    { name: "AI & ML", skills: ["Claude Haiku", "OpenRouter", "Groq", "pgvector", "MCP"] },
+    { name: "Infrastructure", skills: ["Vercel", "Railway", "Cloudflare R2", "Upstash", "Docker"] },
+    { name: "Tools", skills: ["Git", "GitHub", "Prisma", "BullMQ", "Figma", "Clerk"] },
+  ]
+};
+
+export const EDUCATION: EducationItem[] = [
+  {
+    id: "edu-1",
+    institution: "MIT-ADT University",
+    degree: "B.Tech in Computer Science and Engineering (AI/ML)",
+    period: "2023 to 2027",
+    location: "Pune, Maharashtra",
+    details: [
+      "Specialisation: Artificial Intelligence & Machine Learning",
+      "Active member of the Technical Council",
+      "Placement Coordinator helping peers prep for interviews, build profiles, and secure engineering roles",
+    ]
+  },
+];
+
+export const EXPERIENCE: ExperienceItem[] = [
+  {
+    id: "exp-3",
+    role: "Software Developer",
+    company: "CraftaStudio",
+    period: "Jan 2026 to Present",
+    type: "Current",
+    location: "Remote",
+    logo: undefined,
+    description: [
+      "Built an AI-native SaaS platform with architecture-first parallel code generation using a SharedContext object.",
+      "Designed a block dependency graph (DAG) on ReactFlow canvas with Monaco Editor integration.",
+      "Implemented an LLM fallback chain: Claude Haiku → Groq → OpenRouter → Gemini → Sarvam for resilient inference.",
+      "Managed BullMQ job queues, Python FastAPI agent layer, and PostgreSQL via Prisma on Railway.",
+      "Filed Invention Disclosure Form with MIT-ADT's RDC-IPR Cell; applied for AWS Activate credits.",
+    ],
+    techStack: ["Next.js", "FastAPI", "ReactFlow", "Monaco Editor", "BullMQ", "Prisma", "PostgreSQL", "Claude Haiku", "Groq"]
+  },
+  {
+    id: "exp-2",
+    role: "Full Stack Developer",
+    company: "Danges Academy",
+    period: "Nov 2025 to Present",
+    type: "Freelance",
+    location: "Freelance",
+    logo: "/dange.png",
+    description: [
+      "Building the academy's production website from scratch, owning frontend architecture and core features.",
+      "Developed authentication flows, course management UI, and responsive layouts used by real users.",
+      "Designed scalable component structure and handled performance optimizations during development.",
+      "Collaborating directly with stakeholders to translate requirements into shipped features.",
+    ],
+    techStack: ["React.js", "Vite", "Framer Motion", "JavaScript", "Lucide React"]
+  },
+  {
+    id: "exp-1",
+    role: "Software Development Intern",
+    company: "Yes Boss Technology Pvt. Ltd.",
+    period: "Jun 2025 to Sep 2025",
+    type: "On-site",
+    location: "On-site",
+    logo: "/yesbosslogo.jpg",
+    description: [
+      "Built and maintained backend REST APIs using Django and PostgreSQL for production features.",
+      "Developed an analytics dashboard with logging, usage tracking, and data export.",
+      "Improved API performance and reduced response latency by ~30%.",
+      "Collaborated via GitHub on feature development, reviews, and deployments."
+    ],
+    techStack: ["Django", "PostgreSQL", "GPT-4", "Agile"]
+  }
+];
+
+export const PROJECTS: ProjectItem[] = [
+  {
+    id: "proj-auren",
+    title: "Auren - Autonomous Multi-Agent OS",
+    description: "AI execution layer built solo in ~6 days. Integrates Gmail, Google Calendar, and GitHub via MCP with Human-in-the-Loop confirmation before any action executes.",
+    longDescription: "Auren is an AI execution agent that integrates Gmail, Google Calendar, and GitHub through the Model Context Protocol (MCP). It features a Human-in-the-Loop confirmation pattern no action executes without user approval. Built for the Corsair × ChaiCode Hackathon in approximately 6 days.",
+    techStack: ["Next.js", "Supabase", "pgvector", "Clerk", "OpenRouter", "Claude Haiku", "MCP"],
+    github: "https://github.com/pranavgawaii",
+    link: "https://tryauren.in",
+    status: "",
+    image: "/sahara_preview.jpg",
+    architecture: [
+      { layer: "Frontend", tech: "Next.js + Clerk Auth", desc: "Warm cream UI (#FBF3EC), coral accent (#E8593C)" },
+      { layer: "MCP Layer", tech: "Corsair MCP", desc: "Gmail, Google Calendar, GitHub integrations" },
+      { layer: "AI Core", tech: "Claude Haiku + OpenRouter", desc: "Email classification & multi-model routing" },
+      { layer: "Memory", tech: "Supabase + pgvector", desc: "Semantic memory with cosine similarity search" },
+      { layer: "Human-in-Loop", tech: "Confirmation UI", desc: "Every action requires explicit user approval" },
+    ]
+  },
+  {
+    id: "proj-rovn",
+    title: "Rovn - AI Omnichannel Inbox",
+    description: "AI omnichannel inbox for Indian SMBs integrating WhatsApp, Instagram, and Email into one unified dashboard. Scored 88/100 from OpenAI & Outskill judges.",
+    longDescription: "Rovn is an AI-powered omnichannel inbox designed for Indian SMBs. It unifies WhatsApp, Instagram, and Email into one intelligent dashboard with AI-driven response suggestions. Achieved Top 1% of 10,000+ teams at the OpenAI × Outskill Hackathon with an 88/100 judge score.",
+    techStack: ["Next.js", "Node.js", "WhatsApp API", "Instagram API", "OpenAI", "PostgreSQL"],
+    github: "https://github.com/pranavgawaii",
+    link: "https://github.com/pranavgawaii",
+    status: "",
+    image: "/medsecure24_preview.jpg",
+    architecture: [
+      { layer: "Inbox UI", tech: "Next.js Dashboard", desc: "Unified view across all channels" },
+      { layer: "Channels", tech: "WhatsApp + Instagram + Email APIs", desc: "Real-time message ingestion" },
+      { layer: "AI Layer", tech: "OpenAI GPT", desc: "Smart reply suggestions & auto-categorization" },
+      { layer: "Database", tech: "PostgreSQL", desc: "Message threading, contacts, conversation history" },
+    ]
+  },
+  {
+    id: "proj-specboard",
+    title: "SpecBoard - Build Faster",
+    description: "Multi-tenant SaaS platform tracking PRD requirements through the full delivery lifecycle with GitHub PR integration. Built for ChaiCode Builder Mode On hackathon.",
+    longDescription: "Specboard is a multi-tenant SaaS platform that tracks PRD (Product Requirements Document) requirements through the entire delivery lifecycle, with native GitHub PR integration to link specs to code. In active development for the ChaiCode 'Builder Mode On' hackathon.",
+    techStack: ["Next.js", "Supabase", "GitHub API", "Prisma", "TypeScript"],
+    github: "https://github.com/pranavgawaii",
+    link: "https://specboard.in",
+    status: "",
+    image: "/sahara_preview.jpg",
+    architecture: [
+      { layer: "Multi-tenant UI", tech: "Next.js App Router", desc: "Per-org workspace with role-based access" },
+      { layer: "PRD Engine", tech: "Custom spec parser", desc: "Requirement → ticket → PR lifecycle tracking" },
+      { layer: "GitHub Integration", tech: "GitHub API", desc: "Link PRs to specific requirements in real-time" },
+      { layer: "Database", tech: "Supabase + Prisma", desc: "Multi-tenant schema with RLS policies" },
+    ]
+  },
+  {
+    id: "proj-1",
+    title: "MedSecure - Real-Time ICU Monitoring",
+    description: "Encrypted live vitals monitoring system using AES-256, JWT, and Socket.io with sub-2s latency. Complete security architecture and threat model delivered in 24 hours.",
+    longDescription: "MedSecure24 is a real-time medical vitals monitoring system built with end-to-end encryption. Uses AES-256 for data at rest, JWT for auth, and Socket.io for sub-2 second live transmission. Built and presented in a 24-hour national cybersecurity hackathon securing 1st place.",
+    techStack: ["React", "Node.js", "PostgreSQL", "AES-256", "Socket.io", "JWT"],
+    github: "https://github.com/pranavgawaii/medsecure",
+    link: "https://youtu.be/Q7ZKzBrLb5E",
+    youtube: "https://youtu.be/Q7ZKzBrLb5E",
+    status: "",
+    image: "/medsecure24_preview.jpg",
+    architecture: [
+      { layer: "Client", tech: "React Dashboard", desc: "Real-time vitals display with alert thresholds" },
+      { layer: "Transport", tech: "Socket.io", desc: "Sub-2s bidirectional vitals streaming" },
+      { layer: "Auth", tech: "JWT + AES-256", desc: "End-to-end encryption, role-based access" },
+      { layer: "API", tech: "Node.js + Express", desc: "REST endpoints for device registration & history" },
+      { layer: "Database", tech: "PostgreSQL", desc: "Encrypted vitals time-series storage" },
+    ]
+  },
+  {
+    id: "proj-2",
+    title: "Sahara - AI Mental Health Agent",
+    description: "WCAG 2.1-compliant accessible platform with Google OAuth, real-time messaging, and multilingual Gemini AI chatbot with voice features serving 200+ active users.",
+    longDescription: "Sahara is a fully accessible platform built to WCAG 2.1 AA standards. Features Google OAuth, real-time messaging via Socket.io, a multilingual Gemini AI chatbot with voice input, and serves 200+ active users. Secured Top 10 among 800+ teams at Smart India Hackathon 2025.",
+    techStack: ["React", "TypeScript", "Node.js", "Gemini API", "Socket.io", "Google OAuth"],
+    github: "https://github.com/pranavgawaii/sahara-main",
+    link: "https://github.com/pranavgawaii/sahara-main",
+    youtube: "https://youtu.be/YhirH5UDh-4",
+    status: "",
+    image: "/sahara_preview.jpg",
+    architecture: [
+      { layer: "Frontend", tech: "React + TypeScript", desc: "WCAG 2.1 AA compliant, screen reader support" },
+      { layer: "Auth", tech: "Google OAuth 2.0", desc: "SSO with secure session management" },
+      { layer: "Real-time", tech: "Socket.io", desc: "Live messaging and presence indicators" },
+      { layer: "AI Chatbot", tech: "Gemini API", desc: "Multilingual support + voice input/output" },
+      { layer: "Backend", tech: "Node.js + Express", desc: "REST API with rate limiting & CORS" },
+    ]
+  },
+  {
+    id: "proj-placepro",
+    title: "PlacePro - Placement Management",
+    description: "Campus placement management platform pitched to the TPO cell at MIT-ADT. Streamlines placement drives, student profiles, and recruiter coordination.",
+    longDescription: "PlacePro is a campus placement management system designed for the MIT-ADT university TPO cell. It streamlines end-to-end placement drive management from student profile creation to recruiter coordination and offer letter distribution. Pitched directly to the Training and Placement Office.",
+    techStack: ["React", "Node.js", "PostgreSQL", "Express"],
+    github: "https://github.com/pranavgawaii",
+    link: "https://placepro.in",
+    status: "",
+    image: "/postgenius_preview.jpg",
+    architecture: [
+      { layer: "Student Portal", tech: "React Dashboard", desc: "Profile builder, application tracker, offer letters" },
+      { layer: "TPO Admin", tech: "Admin Panel", desc: "Drive management, eligibility filters, bulk comms" },
+      { layer: "Recruiter Portal", tech: "Company View", desc: "JD posting, shortlisting, scheduling" },
+      { layer: "Backend", tech: "Node.js + Express", desc: "REST API with role-based access control" },
+      { layer: "Database", tech: "PostgreSQL", desc: "Students, drives, applications, offers schema" },
+    ]
+  },
+];
+
+export const LEADERSHIP: LeadershipItem[] = [
+  {
+    id: "lead-mlss",
+    title: "Amazon MLSS 2026",
+    role: "Cleared SOP Round Selection Test Window Opens",
+    description: "Cleared the Statement of Purpose screening round for Amazon's prestigious Machine Learning Summer School 2026. Selection test window opens June 28.",
+    category: "award"
+  },
+  {
+    id: "lead-openai",
+    title: "Top 1% of 10,000+ Teams",
+    role: "OpenAI × Outskill Hackathon Rovn (Score: 88/100)",
+    description: "Built Rovn, an AI omnichannel inbox for Indian SMBs. Judges from OpenAI & Outskill awarded 88/100: 'Strong submission with clear product direction, solid build quality, and a well-structured evaluation narrative.'",
+    category: "award"
+  },
+  {
+    id: "lead-1",
+    title: "1st Place Winner",
+    role: "24-Hour National Cybersecurity Hackathon 2025 (MedSecure24)",
+    description: "Built and presented a cybersecurity-focused encrypted vitals system under a 24-hour deadline, securing first place through technical execution and security architecture depth.",
+    category: "award"
+  },
+  {
+    id: "lead-ai-grand",
+    title: "2nd Place",
+    role: "National AI Grand Challenge",
+    description: "Secured 2nd place at the National AI Grand Challenge, competing against top engineering teams with an AI-driven solution evaluated on real-world impact and technical rigor.",
+    category: "award"
+  },
+  {
+    id: "lead-3",
+    title: "Top 10 Finalist",
+    role: "Smart India Hackathon 2025 800+ Teams (Sahara)",
+    description: "Selected among the top 10 teams nationwide out of 800+ entries by building a scalable, WCAG-compliant accessibility platform evaluated by industry and government mentors.",
+    category: "award"
+  },
+  {
+    id: "lead-2",
+    title: ".PlacePro - College Placement Portal",
+    role: "MIT-ADT University Batch 2027 Core Team",
+    description: "Serving on the core placement team, coordinating campus recruitment with 50+ companies and organizing large-scale training and placement activities for 1200+ students.",
+    category: "role"
+  },
+  {
+    id: "lead-4",
+    title: "GitHub Foundations Certification",
+    role: "Score: 83/100",
+    description: "Demonstrated strong understanding of version control, Git workflows, collaboration practices, and open-source fundamentals.",
+    category: "certification"
+  },
+  {
+    id: "lead-5",
+    title: "NPTEL Certification",
+    role: "Design and Analysis of Algorithms",
+    description: "Completed an academically rigorous course covering algorithm design, complexity analysis, and problem-solving techniques.",
+    category: "certification"
+  },
+];
+
+export const ICONS_MAP: Record<string, any> = {
+  github: Github,
+  linkedin: Linkedin,
+  mail: Mail,
+  external: ExternalLink,
+  twitter: Twitter,
+  x: XIcon,
+  medium: MediumIcon,
+  instagram: Instagram
+};
+
+export const BLOGS: BlogPost[] = [
+  {
+    id: "blog-internal-1",
+    slug: "why-i-build",
+    title: "Why I Build",
+    description: "On obsession, overnight servers, and what it actually feels like to ship something from zero.",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
+    date: "Jun 28, 2025",
+    tags: ["Engineering", "Personal"],
+    platform: "Portfolio",
+    isLocal: true,
+    content: [
+      {
+        type: "paragraph",
+        text: "There's a specific feeling I keep chasing. It happens at around 2am, when the terminal finally stops throwing errors and the page loads correctly for the first time. No audience. No notification. Just a browser tab and the quiet knowledge that something that didn't exist twelve hours ago now does."
+      },
+      {
+        type: "paragraph",
+        text: "I build because of that feeling. Not the shipping, not the launch - the moment right before it, when the system is alive but the world doesn't know yet."
+      },
+      {
+        type: "heading",
+        text: "It started with a broken laptop"
+      },
+      {
+        type: "paragraph",
+        text: "My first real project was a Python script that automated attendance tracking for my class. The college portal was painfully slow, the UI was from 2008, and I was tired of manually counting absences. I wrote a scraper, wrapped it in a loop, and sent the results to a WhatsApp group via an API I definitely should not have been using."
+      },
+      {
+        type: "paragraph",
+        text: "It didn't scale. It broke every time the college updated their login page. But 40 people used it every morning. That was enough."
+      },
+      {
+        type: "heading",
+        text: "The gap between learning and building"
+      },
+      {
+        type: "paragraph",
+        text: "Courses teach you syntax. Projects teach you judgment. The first time you have to decide between three possible solutions - all of which are technically correct - is when real engineering starts. No tutorial covers that moment. You have to build enough junk to develop taste."
+      },
+      {
+        type: "paragraph",
+        text: "I've built things that were genuinely embarrassing in retrospect. A React app where every component was in a single 1,400-line file. A FastAPI backend that stored sessions in a global Python dictionary. A hackathon project that worked exactly once, in exactly my environment, in front of exactly the judges who mattered."
+      },
+      {
+        type: "paragraph",
+        text: "These failures were not detours. They were the road."
+      },
+      {
+        type: "heading",
+        text: "What I'm actually trying to build"
+      },
+      {
+        type: "paragraph",
+        text: "I'm pre-final year. I have time. Not a lot, but enough to be deliberate. I'm not trying to collect side projects - I'm trying to develop depth. The difference is what you do with feedback. A side project sits on GitHub with 3 stars. Depth means you shipped it, watched real users break it in ways you didn't predict, fixed it, and shipped again."
+      },
+      {
+        type: "paragraph",
+        text: "I want to work at an AI-first startup where the problem is genuinely unsolved and the team is small enough that one person's judgment materially changes the outcome. That goal shapes what I build now - not demos, but systems. Not features, but products."
+      },
+      {
+        type: "heading",
+        text: "The honest part"
+      },
+      {
+        type: "paragraph",
+        text: "Building is not always romantic. Most days look like: debugging a CORS error for an hour, realising you spelled the environment variable wrong, fixing it, then finding a completely different bug underneath. There's no montage. There's just you, the terminal, and the stubborn belief that it should work."
+      },
+      {
+        type: "paragraph",
+        text: "But when it does work - when the pieces finally connect and the system does exactly what you asked it to do - there's nothing quite like it. I don't know how to explain it to someone who hasn't felt it. You just have to build something."
+      },
+      {
+        type: "paragraph",
+        text: "So build something."
+      }
+    ]
+  },
+  {
+    id: "blog-1",
+    slug: "git-visual-workflow",
+    title: "Git Visual Workflow",
+    description: "A beginner's guide to mastering Git visually. Understand branches, commits, and merges with easy-to-follow diagrams.",
+    image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2076&auto=format&fit=crop",
+    link: "https://pranavgawai.hashnode.dev/git-for-beginners-visual-workflow",
+    date: "Oct 12, 2023",
+    tags: ["Git", "DevOps"],
+    platform: "Hashnode"
+  },
+  {
+    id: "blog-2",
+    slug: "sih-2024",
+    title: "From Ideas to Impact: My SIH 2024 Journey",
+    description: "A detailed account of my Smart India Hackathon experience - the problem statement, the team, the 36-hour grind, and the lessons that stuck.",
+    image: "/blogsih2024.jpg",
+    link: "https://medium.com/@pranavgawai1518/from-ideas-to-impact-my-experience-at-the-smart-india-hackathon-34831673024d",
+    date: "Sep 20, 2024",
+    tags: ["Hackathon", "Experience"],
+    platform: "Medium"
+  },
+  {
+    id: "blog-internal-2",
+    slug: "the-illusion-of-progress",
+    title: "The Illusion of Progress",
+    description: "Why watching tutorials all day feels like learning but isn't. The difference between consuming knowledge and actually building something.",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070&auto=format&fit=crop",
+    date: "May 14, 2025",
+    tags: ["Personal", "Engineering"],
+    platform: "Portfolio",
+    isLocal: true,
+    content: [
+      { type: "paragraph", text: "I've watched enough YouTube tutorials to build an entire company. I haven't. That's the thing nobody tells you - consuming is not the same as creating. They feel identical from the inside, and that's exactly the problem." },
+      { type: "paragraph", text: "There's a dopamine hit that comes from finishing a tutorial. You close the tab feeling like you've done something. But you haven't built anything. The code lives in the instructor's repository. The thinking was theirs. You followed instructions. That's useful - but it's not engineering." },
+      { type: "heading", text: "What fake progress looks like" },
+      { type: "paragraph", text: "Fake progress has a recognisable shape. You switch frameworks every two weeks because the new one looks cleaner. You spend four days setting up a perfect development environment. You refactor working code into something more 'elegant.' You read architecture articles without having architected anything yourself." },
+      { type: "paragraph", text: "I've done all of these. I had opinions about Next.js App Router vs Pages Router before I'd shipped a single Next.js app to production. I had thoughts on microservices before I'd run into the limits of a monolith. The confidence was completely unearned." },
+      { type: "heading", text: "The thing that actually moved me forward" },
+      { type: "paragraph", text: "The first time real progress happened, I noticed it by accident. I was building something for a hackathon - deadline in 36 hours, no time to read documentation carefully, just trying to make things work. I was forced to debug instead of watch. Forced to make decisions instead of follow along. Forced to ship something broken and fix it in public." },
+      { type: "paragraph", text: "That experience compressed three months of tutorial-watching into 36 hours of actual learning. I came out of it understanding things in my hands, not just my head." },
+      { type: "heading", text: "The reframe that helped" },
+      { type: "paragraph", text: "A senior engineer once told me: if you can't explain what you built to a five-year-old, you didn't build it - you assembled it. That distinction matters. Assembly is valuable. It's how you start. But you have to eventually understand the pieces, not just know where they slot together." },
+      { type: "paragraph", text: "Now when I notice myself switching tabs to a new tutorial instead of debugging the one thing in front of me, I stop. The discomfort of not knowing is where the actual learning is. Staying in it is the job." },
+      { type: "paragraph", text: "Tutorials are maps. Maps are useful. But you learn the territory by walking it, not by memorising the map." }
+    ]
+  },
+  {
+    id: "blog-internal-3",
+    slug: "how-i-think-about-ai-products",
+    title: "How I Think About AI Products",
+    description: "Most AI products are search bars with a language model attached. The ones that last are built around a problem, not a model.",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=2070&auto=format&fit=crop",
+    date: "Apr 2, 2025",
+    tags: ["AI", "Engineering"],
+    platform: "Portfolio",
+    isLocal: true,
+    content: [
+      { type: "paragraph", text: "In 2023, the playbook was simple: take ChatGPT, wrap a UI around it, add a specific domain label - 'AI for legal', 'AI for sales', 'AI for homework' - and ship. Some of those products worked. Most of them didn't, because the differentiation was purely cosmetic. The underlying logic was identical. The moat was exactly zero." },
+      { type: "paragraph", text: "I've been thinking a lot about what makes an AI product actually worth building. Not in the hype sense - in the sense of: would this exist and be useful in five years, or is it a temporary bridge product that gets absorbed into the model itself?" },
+      { type: "heading", text: "The distribution trap" },
+      { type: "paragraph", text: "A lot of AI founders I've spoken to think about distribution first. Get users, iterate on the product later. This works in consumer apps because the switching cost is low and attention is the game. It doesn't work as well for AI products, because the AI is the product - and if the AI gets commoditised (it will), you need something underneath that isn't just the model." },
+      { type: "paragraph", text: "The companies that will survive the AI commoditisation cycle are the ones that have accumulated proprietary data, deeply embedded workflows, or genuinely novel model applications that aren't obvious. Those things take time. Distribution-first can't shortcut them." },
+      { type: "heading", text: "What I look for" },
+      { type: "paragraph", text: "When I'm thinking about whether to build something, I ask: is this product useful without the AI? If the answer is no, then the AI is the entire value proposition - and that's a fragile position. If the answer is yes, then the AI is an accelerant. That's a much stronger place to build from." },
+      { type: "paragraph", text: "The second question is: who benefits the most from this being automated? Not 'who would use it' but 'whose job or life gets materially better.' The gap between those two groups is where most AI products fail. They get used but not relied on." },
+      { type: "heading", text: "What I'm building toward" },
+      { type: "paragraph", text: "The project I'm most excited about right now involves code generation - specifically, the problem of generating large, interdependent codebases, not just individual functions. The insight is that most LLM code generation fails at scale because it doesn't model dependencies. Fix that, and you can generate architecture, not just snippets." },
+      { type: "paragraph", text: "Whether that's the right insight, I won't know until it's in users' hands. But that's the point. You build toward the hypothesis, ship it, and let reality correct you." }
+    ]
+  },
+  {
+    id: "blog-internal-4",
+    slug: "on-being-a-student-engineer",
+    title: "On Being a Student Engineer",
+    description: "The strange position of building real things while sitting in lectures. What college teaches you, what it doesn't, and why both matter.",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop",
+    date: "Mar 10, 2025",
+    tags: ["Personal"],
+    platform: "Portfolio",
+    isLocal: true,
+    content: [
+      { type: "paragraph", text: "I'm writing this between two back-to-back lectures on operating systems. In three hours, I have to submit a database assignment. Tonight, I'm shipping a feature for a real product used by actual people. This is the normal texture of being a student engineer in 2025." },
+      { type: "paragraph", text: "The strange thing about this position is that you're simultaneously taken too seriously and not seriously enough. Recruiters at big companies see 'B.Tech, 2nd year' and mentally file you under 'future candidate.' Startups see your GitHub and treat you like a peer. Neither gets it completely right." },
+      { type: "heading", text: "What college actually teaches you" },
+      { type: "paragraph", text: "Not the syntax. Not the frameworks. Not what any reasonable person would call 'practical skills.' What college teaches you - if you pay attention - is how to learn things you don't want to learn, under time pressure, and produce something that approximates correct." },
+      { type: "paragraph", text: "That's not nothing. The muscle of sitting with something confusing and working through it, even when the deadline is tomorrow morning and you still don't understand the third normal form - that's the actual transferable skill. The operating systems knowledge will be mostly irrelevant. The ability to debug unfamiliar systems under pressure will not." },
+      { type: "heading", text: "What college doesn't teach you" },
+      { type: "paragraph", text: "It doesn't teach you taste. It doesn't teach you when to stop building and start shipping. It doesn't teach you how to disagree with a senior engineer professionally, or how to scope a project so it actually gets done, or how to write a commit message that means something six months later." },
+      { type: "paragraph", text: "Those things come from doing the work in the real world. Which is why I think the students who are building alongside college - not instead of it, alongside it - come out significantly further ahead. The context of a real product makes the abstract concepts land differently." },
+      { type: "heading", text: "The honest answer to 'what should I do in college?'" },
+      { type: "paragraph", text: "Build something. Doesn't have to be big. Doesn't have to be profitable. Has to be real - meaning someone other than you uses it and depends on it. That dependency is what teaches you things no course can." },
+      { type: "paragraph", text: "And go to the lectures. Not because the content will save you, but because showing up to hard things consistently is itself a form of practice. The discipline doesn't hurt." }
+    ]
+  },
+];
+
+
+export type BlogContent = { type: 'paragraph' | 'heading'; text: string };
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  image?: string;
+  link?: string;
+  date: string;
+  tags?: string[];
+  platform?: string;
+  isLocal?: boolean;
+  content?: BlogContent[];
+}
+
+
