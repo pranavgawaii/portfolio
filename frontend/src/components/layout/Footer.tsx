@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PROFILE, ICONS_MAP } from '../../config/constants';
 import { useNav } from '../../App';
 import { useUser } from '@clerk/clerk-react';
-import { Github } from 'lucide-react';
+import { Github, Users, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
@@ -12,6 +12,21 @@ const Footer: React.FC = () => {
   const { user } = useUser();
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
   const [githubHover, setGithubHover] = useState(false);
+  const [visitorData, setVisitorData] = useState<{ count: number; location: string } | null>(null);
+
+  useEffect(() => {
+    const API = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+    if (!API && !import.meta.env.DEV) return;
+
+    fetch(`${API}/api/track-visitor`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.count) {
+          setVisitorData({ count: data.count, location: data.location || 'Earth' });
+        }
+      })
+      .catch(err => console.error('Visitor tracking failed:', err));
+  }, []);
 
   return (
     <footer className="w-full bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark transition-colors duration-300">
@@ -88,6 +103,21 @@ const Footer: React.FC = () => {
             <p className="font-sans text-xs text-text-muted-light dark:text-text-muted-dark">
               © 2026 Pranav Gawai
             </p>
+            {visitorData && (
+              <>
+                <span className="text-border-light dark:text-border-dark text-xs">|</span>
+                <div className="flex items-center gap-3 text-xs font-medium text-text-muted-light dark:text-text-muted-dark">
+                  <div className="flex items-center gap-1.5" title="Total Unique Visitors">
+                    <Users size={14} className="text-emerald-500" />
+                    <span>#{visitorData.count.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5" title="Your Location">
+                    <MapPin size={14} className="text-amber-500" />
+                    <span>{visitorData.location}</span>
+                  </div>
+                </div>
+              </>
+            )}
             {isAdmin && (
               <button
                 onClick={goAdmin}

@@ -43,7 +43,7 @@ CRITICAL RULES:
 
 // Initialize Firebase dynamically after env vars are loaded
 const { db } = await import('../frontend/src/lib/firebase.js');
-const { collection, addDoc } = await import('firebase/firestore');
+const { collection, addDoc, doc, getDoc, setDoc, query, orderBy, limit, getDocs } = await import('firebase/firestore');
 
 
 const server = http.createServer(async (req, res) => {
@@ -354,13 +354,9 @@ const server = http.createServer(async (req, res) => {
     } else if (url.pathname === '/api/analytics/track' && req.method === 'POST') {
         let body = '';
         req.on('data', c => body += c);
-        req.on('end', () => {
+        req.on('end', async () => {
             try {
                 const event = JSON.parse(body);
-                const analyticsPath = path.join(__dirname, 'analytics.json');
-                let store = { pageViews: {}, events: [] };
-                try { store = JSON.parse(fs.readFileSync(analyticsPath, 'utf-8')); } catch {}
-
                 const entry = {
                     ...event,
                     timestamp: new Date().toISOString(),
@@ -368,14 +364,36 @@ const server = http.createServer(async (req, res) => {
                     ref: (req.headers['referer'] || ''),
                 };
 
-                // Increment page view counter
+                const eventsCol = collection(db, 'analytics_events');
+                await addDoc(eventsCol, entry);
+
+                const summaryRef = doc(db, 'analytics', 'summary');
+                const snap = await getDoc(summaryRef);
+                let data = snap.exists() ? snap.data() : { pageViews: {}, eventCounts: {}, blogViews: {}, projectClicks: {}, totalPageViews: 0, totalEvents: 0 };
+                
+                if (!data.pageViews) data.pageViews = {};
+                if (!data.eventCounts) data.eventCounts = {};
+                if (!data.blogViews) data.blogViews = {};
+                if (!data.projectClicks) data.projectClicks = {};
+                if (!data.totalPageViews) data.totalPageViews = 0;
+                if (!data.totalEvents) data.totalEvents = 0;
+
                 if (event.type === 'page_view' && event.path) {
-                    store.pageViews[event.path] = (store.pageViews[event.path] || 0) + 1;
+                    data.pageViews[event.path] = (data.pageViews[event.path] || 0) + 1;
+                    data.totalPageViews += 1;
+                }
+                data.eventCounts[event.type] = (data.eventCounts[event.type] || 0) + 1;
+                data.totalEvents += 1;
+
+                if (event.type === 'blog_open' && event.slug) {
+                    data.blogViews[event.slug] = (data.blogViews[event.slug] || 0) + 1;
+                }
+                if (event.type === 'project_click' && event.projectId) {
+                    data.projectClicks[event.projectId] = (data.projectClicks[event.projectId] || 0) + 1;
                 }
 
-                // Keep last 2000 events
-                store.events = [entry, ...(store.events || [])].slice(0, 2000);
-                fs.writeFileSync(analyticsPath, JSON.stringify(store, null, 2));
+                await setDoc(summaryRef, data);
+
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ ok: true }));
             } catch (e) {
@@ -386,31 +404,28 @@ const server = http.createServer(async (req, res) => {
     // ── /api/analytics GET — return analytics summary ──────────────────────────
     } else if (url.pathname === '/api/analytics' && req.method === 'GET') {
         try {
-            const analyticsPath = path.join(__dirname, 'analytics.json');
-            let store = { pageViews: {}, events: [] };
-            try { store = JSON.parse(fs.readFileSync(analyticsPath, 'utf-8')); } catch {}
+            const summaryRef = doc(db, 'analytics', 'summary');
+            const snap = await getDoc(summaryRef);
+            const data = snap.exists() ? snap.data() : { pageViews: {}, eventCounts: {}, blogViews: {}, projectClicks: {}, totalPageViews: 0, totalEvents: 0 };
 
-            // Aggregate event counts by type
-            const eventCounts = {};
-            const blogViews = {};
-            const projectClicks = {};
-            for (const e of store.events) {
-                eventCounts[e.type] = (eventCounts[e.type] || 0) + 1;
-                if (e.type === 'blog_open' && e.slug) blogViews[e.slug] = (blogViews[e.slug] || 0) + 1;
-                if (e.type === 'project_click' && e.projectId) projectClicks[e.projectId] = (projectClicks[e.projectId] || 0) + 1;
-            }
-
-            const totalPageViews = Object.values(store.pageViews).reduce((a, b) => a + b, 0);
+            // Fetch recent 30 events from Firestore
+            const eventsCol = collection(db, 'analytics_events');
+            const q = query(eventsCol, orderBy('timestamp', 'desc'), limit(30));
+            const querySnap = await getDocs(q);
+            const recentEvents = [];
+            querySnap.forEach(d => {
+                recentEvents.push(d.data());
+            });
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({
-                totalPageViews,
-                pageViews: store.pageViews,
-                eventCounts,
-                blogViews,
-                projectClicks,
-                recentEvents: (store.events || []).slice(0, 30),
-                totalEvents: store.events.length,
+                totalPageViews: data.totalPageViews || 0,
+                pageViews: data.pageViews || {},
+                eventCounts: data.eventCounts || {},
+                blogViews: data.blogViews || {},
+                projectClicks: data.projectClicks || {},
+                recentEvents,
+                totalEvents: data.totalEvents || 0,
             }));
         } catch (e) {
             res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
@@ -418,11 +433,20 @@ const server = http.createServer(async (req, res) => {
 
     // ── /api/health GET — backend health check ─────────────────────────────────
     } else if (url.pathname === '/api/health' && req.method === 'GET') {
-        const analyticsPath = path.join(__dirname, 'analytics.json');
+        let analyticsSize = 0;
+        try {
+            const summaryRef = doc(db, 'analytics', 'summary');
+            const snap = await getDoc(summaryRef);
+            if (snap.exists()) {
+                const totalEvents = snap.data().totalEvents || 0;
+                analyticsSize = totalEvents * 150; // estimate size: ~150 bytes per event log
+            }
+        } catch {}
+
         const commentsPath = path.join(__dirname, 'comments.json');
-        let analyticsSize = 0, commentsCount = 0;
-        try { analyticsSize = fs.statSync(analyticsPath).size; } catch {}
+        let commentsCount = 0;
         try { const s = JSON.parse(fs.readFileSync(commentsPath, 'utf-8')); commentsCount = Object.values(s).reduce((a, b) => a + b.length, 0); } catch {}
+
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
             status: 'ok',
