@@ -27,7 +27,7 @@ const GitHubActivitySection: React.FC = () => {
     try { localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); } catch {}
   };
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
   useEffect(() => {
     if (activeTab === 'github' && !githubData.length) {
