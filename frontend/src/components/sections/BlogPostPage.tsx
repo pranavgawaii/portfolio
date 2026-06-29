@@ -9,7 +9,7 @@ import { track } from '../../hooks/useAnalytics';
 
 import { useUser, useClerk } from '@clerk/clerk-react';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
 
 // ─── Inline Reply Box — must be module-level to avoid remount-on-render bug ──
