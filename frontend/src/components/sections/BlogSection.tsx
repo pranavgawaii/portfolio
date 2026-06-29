@@ -3,6 +3,12 @@ import { BLOGS, BlogPost } from '../../config/constants';
 import { ArrowRight } from 'lucide-react';
 import { useNav } from '../../App';
 
+const readTime = (blog: BlogPost) => {
+  if (!blog.content) return null;
+  const words = blog.content.reduce((acc, b) => acc + (b.text?.split(' ').length ?? 0), 0);
+  return Math.max(1, Math.ceil(words / 200));
+};
+
 const BlogSection: React.FC = () => {
   const { openBlog } = useNav();
 
@@ -33,6 +39,7 @@ const BlogSection: React.FC = () => {
               <span>{blog.date}</span>
               <span>·</span>
               <span>{blog.platform}</span>
+              {readTime(blog) && <><span>·</span><span>{readTime(blog)} min</span></>}
             </div>
           </div>
           <div className="shrink-0 mt-1 text-text-muted-light dark:text-text-muted-dark group-hover:text-blue-500 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all">

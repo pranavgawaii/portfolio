@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Mic, MicOff, Send, MessageCircle, Volume2, Timer } from 'lucide-react';
+import { X, Mic, MicOff, Send, MessageCircle, Volume2, Timer, Loader2 } from 'lucide-react';
+import { useGroqChat } from '../../hooks/useGroqChat';
 
 // ── Knowledge base ────────────────────────────────────────────────────────────
 const KB: Array<{ patterns: RegExp; answer: string; demo?: 'auren' }> = [
@@ -133,8 +134,9 @@ interface Props { isOpen: boolean; onClose: () => void }
 
 const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [tab, setTab]               = useState<'chat' | 'voice'>('chat');
-  const [msgs, setMsgs]             = useState<Msg[]>([{ role: 'bot', text: 'Hey! Ask me anything about Pranav - his projects, experience, skills, or how to reach him. Try "show best project" for a live demo!' }]);
+  const [msgs, setMsgs]             = useState<Msg[]>([{ role: 'bot', text: 'Hey! Ask me anything about Pranav — his projects, experience, skills, or how to reach him. Try "show best project" for a live demo!' }]);
   const [input, setInput]           = useState('');
+  const groq = useGroqChat();
   const [listening, setListening]   = useState(false);
   const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'speaking'>('idle');
   const [voiceTranscript, setVoiceTranscript] = useState('');
@@ -149,7 +151,14 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [msgs]);
 
   useEffect(() => {
-    if (!isOpen) { stopListening(); window.speechSynthesis?.cancel(); clearInterval(timerRef.current); setTimeLeft(VOICE_LIMIT); setSessionActive(false); }
+    if (!isOpen) {
+      stopListening();
+      window.speechSynthesis?.cancel();
+      clearInterval(timerRef.current);
+      setTimeLeft(VOICE_LIMIT);
+      setSessionActive(false);
+      groq.clearHistory();
+    }
   }, [isOpen]);
 
   useEffect(() => {
@@ -165,13 +174,36 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
   const formatTime = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-  const send = (text?: string) => {
+  const send = async (text?: string) => {
     const q = (text ?? input).trim();
-    if (!q) return;
+    if (!q || groq.isThinking || groq.isStreaming) return;
     setInput('');
-    const { answer, demo } = getResponse(q);
-    setMsgs(m => [...m, { role: 'user', text: q }, { role: 'bot', text: answer, demo }]);
+    // Check for Auren demo trigger first (local KB)
+    const local = getResponse(q);
+    if (local.demo === 'auren') {
+      setMsgs(m => [...m, { role: 'user', text: q }, { role: 'bot', text: local.answer, demo: 'auren' }]);
+      return;
+    }
+    // Otherwise use real Groq AI
+    setMsgs(m => [...m, { role: 'user', text: q }]);
+    await groq.sendMessage(q);
   };
+
+  // Sync Groq streaming response into msgs
+  useEffect(() => {
+    if (groq.isStreaming && groq.aiResponse) {
+      setMsgs(m => {
+        const last = m[m.length - 1];
+        if (last?.role === 'bot' && last.text !== groq.aiResponse) {
+          return [...m.slice(0, -1), { role: 'bot', text: groq.aiResponse }];
+        }
+        if (last?.role === 'user') {
+          return [...m, { role: 'bot', text: groq.aiResponse }];
+        }
+        return m;
+      });
+    }
+  }, [groq.aiResponse, groq.isStreaming]);
 
   const SpeechRec = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -273,7 +305,7 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       <div className={`max-w-[88%] ${m.role === 'user' ? '' : 'w-full'}`}>
                         <div className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
                           m.role === 'user'
-                            ? 'bg-blue-500 text-white rounded-br-sm'
+                            ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-br-sm'
                             : 'bg-neutral-100 dark:bg-white/[0.06] text-neutral-600 dark:text-neutral-300 rounded-bl-sm'
                         }`}>
                           {m.role === 'bot' ? <Bold text={m.text} /> : m.text}
@@ -282,6 +314,19 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       </div>
                     </div>
                   ))}
+                  {/* Thinking indicator */}
+                  {groq.isThinking && (
+                    <div className="flex justify-start">
+                      <div className="bg-neutral-100 dark:bg-white/[0.06] rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
+                        {[0, 1, 2].map(i => (
+                          <motion.span key={i} className="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-500"
+                            animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
+                            transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.18, ease: 'easeInOut' }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div ref={endRef} />
                 </div>
 

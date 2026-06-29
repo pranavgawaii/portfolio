@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 
-const QuotesCTA: React.FC = () => (
+const QUOTES = [
+  { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House" },
+  { text: "The best way to predict the future is to invent it.", author: "Alan Kay" },
+  { text: "Simplicity is the soul of efficiency.", author: "Austin Freeman" },
+  { text: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+  { text: "Make it work, make it right, make it fast.", author: "Kent Beck" },
+  { text: "Any fool can write code a computer understands. Good programmers write code humans understand.", author: "Martin Fowler" },
+];
+
+const QuotesCTA: React.FC = () => {
+  const [idx] = useState(() => Math.floor(Math.random() * QUOTES.length));
+  const q = QUOTES[idx];
+
+  return (
   <section className="w-full flex justify-center px-4 sm:px-6 pt-16 pb-24">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -12,12 +25,12 @@ const QuotesCTA: React.FC = () => (
     >
       <div className="relative z-10 flex flex-col items-center gap-6 text-center mx-auto">
         <p className="font-mono italic text-base sm:text-lg text-text-muted-light dark:text-neutral-400 max-w-xl leading-relaxed">
-          "Code is like humor. When you have to explain it, it's bad."
+          "{q.text}"
         </p>
         <div className="shrink-0 flex items-center gap-3">
           <div className="w-6 h-[1px] bg-neutral-300 dark:bg-neutral-700" />
           <p className="font-sans font-medium text-xs tracking-widest uppercase text-text-muted-light dark:text-neutral-500">
-            Cory House
+            {q.author}
           </p>
           <div className="w-6 h-[1px] bg-neutral-300 dark:bg-neutral-700" />
         </div>
@@ -34,6 +47,7 @@ const QuotesCTA: React.FC = () => (
       </svg>
     </motion.div>
   </section>
-);
+  );
+};
 
 export default QuotesCTA;

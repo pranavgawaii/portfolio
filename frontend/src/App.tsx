@@ -1,12 +1,13 @@
 import React, { useState, useEffect, Suspense, createContext, useContext } from 'react';
+import { track } from './hooks/useAnalytics';
 import { playClick, playGeneralClick } from './lib/clickSound';
 import { EXPERIENCE, PROJECTS, BLOGS, BlogPost } from './config/constants';
 import Hero from './components/sections/Hero';
 import Navbar from './components/layout/Navbar';
-import Preloader from './components/layout/Preloader';
 import StarryBackground from './components/ui/StarryBackground';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowUp } from 'lucide-react';
+import SearchModal from './components/modals/SearchModal';
+import BackToTop from './components/ui/BackToTop';
 import { ProjectItem } from './types/index';
 
 const Footer           = React.lazy(() => import('./components/layout/Footer'));
@@ -24,9 +25,11 @@ const BlogPage         = React.lazy(() => import('./components/sections/BlogPage
 const BlogPostPage     = React.lazy(() => import('./components/sections/BlogPostPage'));
 const DSAPage          = React.lazy(() => import('./components/sections/DSAPage'));
 const ResumePage       = React.lazy(() => import('./components/sections/ResumePage'));
+const AdminPage        = React.lazy(() => import('./components/sections/AdminPage'));
+const NotFoundPage     = React.lazy(() => import('./components/sections/NotFoundPage'));
 
 // ─── Nav context ─────────────────────────────────────────────────────────────
-export type Page = 'home' | 'project-detail' | 'projects' | 'blog' | 'blog-post' | 'dsa' | 'resume';
+export type Page = 'home' | 'project-detail' | 'projects' | 'blog' | 'blog-post' | 'dsa' | 'resume' | 'admin' | 'not-found';
 
 interface NavCtx {
   page: Page;
@@ -39,6 +42,7 @@ interface NavCtx {
   goBlog: () => void;
   openBlog: (b: BlogPost) => void;
   goDSA: () => void;
+  goAdmin: () => void;
 }
 
 export const NavContext = createContext<NavCtx>({
@@ -52,6 +56,7 @@ export const NavContext = createContext<NavCtx>({
   goBlog: () => {},
   openBlog: () => {},
   goDSA: () => {},
+  goAdmin: () => {},
 });
 
 export const useNav = () => useContext(NavContext);
@@ -195,35 +200,44 @@ const App: React.FC = () => {
   const [page, setPage]               = useState<Page>('home');
   const [selectedProject, setProjectModal] = useState<ProjectItem | null>(null);
   const [selectedBlog, setSelectedBlog]   = useState<BlogPost | null>(null);
-  const [isLoading, setIsLoading]     = useState(true);
-  const [showTop, setShowTop]         = useState(false);
-  const [pageKey, setPageKey]         = useState(0); // increments on every nav
+  const [searchOpen, setSearchOpen]   = useState(false);
+  const [pageKey, setPageKey]         = useState(0);
 
   const nav = (p: Page, url: string) => {
     setPage(p);
     setPageKey(k => k + 1);
     window.history.pushState({}, '', url);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    track({ type: 'page_view', path: url });
   };
 
   const goHome     = () => nav('home', '/');
   const goProjects = () => nav('projects', '/projects');
   const goBlog     = () => nav('blog', '/blog');
   const goDSA      = () => nav('dsa', '/dsa');
-  const openResume = () => nav('resume', '/resume');
+  const openResume = () => { nav('resume', '/resume'); track({ type: 'resume_view' }); };
+  const goAdmin    = () => nav('admin', '/dashboard-x7');
   
-  const openProject = (p: ProjectItem) => { setProjectModal(p); };
+  const openProject = (p: ProjectItem) => { setProjectModal(p); track({ type: 'project_click', projectId: p.id, projectName: p.title }); };
   const closeProject = () => setProjectModal(null);
   const openBlog = (b: BlogPost) => {
     setSelectedBlog(b);
     setPage('blog-post');
     window.history.pushState({}, '', `/blog/${b.slug}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    track({ type: 'blog_open', slug: b.slug, title: b.title });
   };
 
   // expose for the "Show all" buttons inside HomePage
   (window as any).__goProjects = goProjects;
   (window as any).__goBlog = goBlog;
+
+  // Related post navigation from BlogPostPage
+  useEffect(() => {
+    const h = (e: Event) => { const blog = (e as CustomEvent).detail; if (blog) openBlog(blog); };
+    window.addEventListener('open-blog', h);
+    return () => window.removeEventListener('open-blog', h);
+  }, []);
 
   // ── Parse URL on mount so direct links work ─────────────────────────────
   useEffect(() => {
@@ -241,6 +255,10 @@ const App: React.FC = () => {
       setPage('dsa');
     } else if (path === '/resume') {
       setPage('resume');
+    } else if (path === '/dashboard-x7') {
+      setPage('admin');
+    } else if (path !== '/' && path !== '') {
+      setPage('not-found');
     }
     // Handle browser back/forward
     const onPop = () => {
@@ -254,15 +272,13 @@ const App: React.FC = () => {
         if (found) { setSelectedBlog(found); setPage('blog-post'); }
       } else if (p === '/dsa') setPage('dsa');
       else if (p === '/resume') setPage('resume');
+      else if (p === '/dashboard-x7') setPage('admin');
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  useEffect(() => {
-    const t = setTimeout(() => { setIsLoading(false); window.scrollTo(0, 0); }, 600);
-    return () => clearTimeout(t);
-  }, []);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {
     const h = (e: MouseEvent) => {
@@ -276,31 +292,40 @@ const App: React.FC = () => {
     return () => document.removeEventListener('click', h, true);
   }, []);
 
+
+  // Global keyboard shortcuts
   useEffect(() => {
-    const fn = () => setShowTop(window.scrollY > 400);
-    window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
+    const onKey = (e: KeyboardEvent) => {
+      // Cmd+K / Ctrl+K — search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setSearchOpen(o => !o); return; }
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'g') { e.preventDefault(); goHome(); }
+      else if (e.key === 'p') { e.preventDefault(); goProjects(); }
+      else if (e.key === 'b') { e.preventDefault(); goBlog(); }
+      else if (e.key === 'r') { e.preventDefault(); openResume(); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, []);
 
   return (
     <ClerkWrapper>
-      <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goDSA }}>
+      <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goDSA, goAdmin }}>
         <div className="min-h-screen bg-transparent text-text-light dark:text-text-dark font-sans antialiased flex flex-col items-center">
-          <AnimatePresence mode="wait">{isLoading && <Preloader />}</AnimatePresence>
-
           <StarryBackground />
           <Navbar onResumeOpen={openResume} />
 
           <AnimatePresence mode="wait">
-            <motion.div
+            <motion.main
               key={page === 'blog-post' ? `blog-post-${selectedBlog?.slug}` : page}
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="w-full flex flex-col items-center min-h-[calc(100vh-80px)]"
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full max-w-content mx-auto px-4 sm:px-6 pb-24 flex-1"
             >
-              <main className="w-full max-w-content mx-auto px-4 sm:px-6 pb-24 flex-1">
                 {page === 'home' && <HomePage openProject={openProject} />}
                 {page === 'projects' && (
                   <Suspense fallback={<Skel />}>
@@ -327,29 +352,27 @@ const App: React.FC = () => {
                     <ResumePage />
                   </Suspense>
                 )}
-              </main>
-
-              {/* Footer is now mounted INSIDE the page transition so it never jumps ahead of content */}
-              <div className="w-full">
-                <Suspense fallback={null}><Footer /></Suspense>
-              </div>
-            </motion.div>
+                {page === 'admin' && (
+                  <Suspense fallback={<Skel />}>
+                    <AdminPage />
+                  </Suspense>
+                )}
+                {page === 'not-found' && (
+                  <Suspense fallback={<Skel />}>
+                    <NotFoundPage />
+                  </Suspense>
+                )}
+            </motion.main>
           </AnimatePresence>
 
-          {/* Back-to-top */}
-          <AnimatePresence>
-            {showTop && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="fixed bottom-6 right-5 z-50 w-9 h-9 flex items-center justify-center rounded-full border border-border-light dark:border-border-dark bg-white dark:bg-neutral-900 text-text-muted-light dark:text-text-muted-dark shadow-lg hover:scale-110 transition-transform"
-              >
-                <ArrowUp size={16} />
-              </motion.button>
-            )}
-          </AnimatePresence>
+          {/* Footer outside AnimatePresence — never flickers */}
+          <div className="w-full">
+            <Suspense fallback={null}><Footer /></Suspense>
+          </div>
+
+          {/* Back-to-top + Search */}
+          <BackToTop />
+          <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
           {/* Project detail modal */}
           <AnimatePresence>

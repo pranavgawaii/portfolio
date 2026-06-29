@@ -44,15 +44,24 @@ const StarryBackground: React.FC = () => {
   const springX = useSpring(mouseX, { stiffness: 40, damping: 25 });
   const springY = useSpring(mouseY, { stiffness: 40, damping: 25 });
 
+  const [visible, setVisible] = useState(true);
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set((e.clientX / window.innerWidth - 0.5) * 100);
       mouseY.set((e.clientY / window.innerHeight - 0.5) * 100);
     };
+    const handleVisibility = () => setVisible(!document.hidden);
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [mouseX, mouseY]);
+
+  if (!visible) return null;
 
   if (!mounted) return null;
 

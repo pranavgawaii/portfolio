@@ -290,7 +290,8 @@ const server = http.createServer(async (req, res) => {
         req.on('data', c => body += c);
         req.on('end', () => {
             try {
-                const { author, avatar, text, clerkUserId, parentId } = JSON.parse(body);
+                const ADMIN_CLERK_ID = 'user_3Fncnt8BqkypDn2wAl3d13lWkMI';
+                const { author, avatar, text, clerkUserId, parentId, isAdmin } = JSON.parse(body);
                 if (!author || !text || !clerkUserId) { res.writeHead(400); res.end(JSON.stringify({ error: 'Missing fields' })); return; }
                 const raw = fs.readFileSync(path.join(__dirname, 'comments.json'), 'utf-8');
                 const store = JSON.parse(raw);
@@ -299,6 +300,7 @@ const server = http.createServer(async (req, res) => {
                     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
                     author, avatar: avatar || null, text: text.trim(),
                     clerkUserId,
+                    isAdmin: !!isAdmin || clerkUserId === ADMIN_CLERK_ID,
                     timestamp: new Date().toISOString(),
                     replies: []
                 };
@@ -346,6 +348,118 @@ const server = http.createServer(async (req, res) => {
             } catch (e) {
                 res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
             }
+        });
+
+    // ── /api/analytics/track POST — fire-and-forget event tracking ─────────────
+    } else if (url.pathname === '/api/analytics/track' && req.method === 'POST') {
+        let body = '';
+        req.on('data', c => body += c);
+        req.on('end', () => {
+            try {
+                const event = JSON.parse(body);
+                const analyticsPath = path.join(__dirname, 'analytics.json');
+                let store = { pageViews: {}, events: [] };
+                try { store = JSON.parse(fs.readFileSync(analyticsPath, 'utf-8')); } catch {}
+
+                const entry = {
+                    ...event,
+                    timestamp: new Date().toISOString(),
+                    ua: (req.headers['user-agent'] || '').slice(0, 120),
+                    ref: (req.headers['referer'] || ''),
+                };
+
+                // Increment page view counter
+                if (event.type === 'page_view' && event.path) {
+                    store.pageViews[event.path] = (store.pageViews[event.path] || 0) + 1;
+                }
+
+                // Keep last 2000 events
+                store.events = [entry, ...(store.events || [])].slice(0, 2000);
+                fs.writeFileSync(analyticsPath, JSON.stringify(store, null, 2));
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: true }));
+            } catch (e) {
+                res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
+            }
+        });
+
+    // ── /api/analytics GET — return analytics summary ──────────────────────────
+    } else if (url.pathname === '/api/analytics' && req.method === 'GET') {
+        try {
+            const analyticsPath = path.join(__dirname, 'analytics.json');
+            let store = { pageViews: {}, events: [] };
+            try { store = JSON.parse(fs.readFileSync(analyticsPath, 'utf-8')); } catch {}
+
+            // Aggregate event counts by type
+            const eventCounts = {};
+            const blogViews = {};
+            const projectClicks = {};
+            for (const e of store.events) {
+                eventCounts[e.type] = (eventCounts[e.type] || 0) + 1;
+                if (e.type === 'blog_open' && e.slug) blogViews[e.slug] = (blogViews[e.slug] || 0) + 1;
+                if (e.type === 'project_click' && e.projectId) projectClicks[e.projectId] = (projectClicks[e.projectId] || 0) + 1;
+            }
+
+            const totalPageViews = Object.values(store.pageViews).reduce((a, b) => a + b, 0);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                totalPageViews,
+                pageViews: store.pageViews,
+                eventCounts,
+                blogViews,
+                projectClicks,
+                recentEvents: (store.events || []).slice(0, 30),
+                totalEvents: store.events.length,
+            }));
+        } catch (e) {
+            res.writeHead(500); res.end(JSON.stringify({ error: e.message }));
+        }
+
+    // ── /api/health GET — backend health check ─────────────────────────────────
+    } else if (url.pathname === '/api/health' && req.method === 'GET') {
+        const analyticsPath = path.join(__dirname, 'analytics.json');
+        const commentsPath = path.join(__dirname, 'comments.json');
+        let analyticsSize = 0, commentsCount = 0;
+        try { analyticsSize = fs.statSync(analyticsPath).size; } catch {}
+        try { const s = JSON.parse(fs.readFileSync(commentsPath, 'utf-8')); commentsCount = Object.values(s).reduce((a, b) => a + b.length, 0); } catch {}
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            status: 'ok',
+            uptime: process.uptime(),
+            timestamp: new Date().toISOString(),
+            memory: process.memoryUsage().heapUsed,
+            analyticsSize,
+            commentsCount,
+        }));
+
+    // ── /api/reactions/:slug GET — get reaction counts ─────────────────────────
+    } else if (url.pathname.startsWith('/api/reactions/') && req.method === 'GET') {
+        const slug = url.pathname.replace('/api/reactions/', '');
+        const reactionsPath = path.join(__dirname, 'reactions.json');
+        let store = {};
+        try { store = JSON.parse(fs.readFileSync(reactionsPath, 'utf-8')); } catch {}
+        cors(res);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(store[slug] || {}));
+
+    // ── /api/reactions/:slug POST — toggle a reaction ──────────────────────────
+    } else if (url.pathname.startsWith('/api/reactions/') && req.method === 'POST') {
+        const slug = url.pathname.replace('/api/reactions/', '');
+        let body = '';
+        req.on('data', d => { body += d; });
+        req.on('end', () => {
+            const reactionsPath = path.join(__dirname, 'reactions.json');
+            let store = {};
+            try { store = JSON.parse(fs.readFileSync(reactionsPath, 'utf-8')); } catch {}
+            const { emoji, action } = JSON.parse(body || '{}');
+            if (!store[slug]) store[slug] = {};
+            if (!store[slug][emoji]) store[slug][emoji] = 0;
+            store[slug][emoji] = Math.max(0, store[slug][emoji] + (action === 'add' ? 1 : -1));
+            fs.writeFileSync(reactionsPath, JSON.stringify(store, null, 2));
+            cors(res);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(store[slug]));
         });
 
     } else {

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './globals.css';
 import { ThemeProvider } from './components/ui/ThemeProvider';
+import { Analytics } from '@vercel/analytics/react';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -14,6 +15,7 @@ const root = ReactDOM.createRoot(rootElement);
 const app = (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <App />
+    <Analytics />
   </ThemeProvider>
 );
 

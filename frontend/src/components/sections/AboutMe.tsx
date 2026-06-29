@@ -12,12 +12,15 @@ const AboutMe: React.FC = () => (
       </div>
     </div>
 
-    <div className="space-y-4 text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark">
+    <div className="space-y-3 text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark">
       <p>
-        Pre-final year B.Tech CSE (AI/ML) at <span className="text-text-light dark:text-text-dark font-medium">MIT-ADT University, Pune</span>. I build AI-native products and compete in national hackathons. Currently at <span className="text-text-light dark:text-text-dark font-medium">CraftaStudio</span> shipping a developer tool that generates entire codebases through a visual block system.
+        Final year <span className="text-text-light dark:text-text-dark font-medium">B.Tech CSE (AI/ML)</span> student at MIT-ADT, Pune. I build and ship <span className="bg-blue-100/70 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded font-medium">AI-native products</span> — not demos, real tools people can use.
       </p>
       <p>
-        Also serving as <span className="text-text-light dark:text-text-dark font-medium">Placement Coordinator</span> at MIT-ADT, helping batchmates land good engineering roles. Looking to join an AI-first startup where I can work close to the product.
+        Currently at <span className="text-text-light dark:text-text-dark font-medium">CraftaStudio</span>, building a visual developer tool that generates full codebases from a block interface. I also compete in national hackathons and build side projects that usually turn into something more.
+      </p>
+      <p>
+        Looking to join an early AI team where the product actually matters.
       </p>
     </div>
   </div>

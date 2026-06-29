@@ -25,3 +25,5 @@ debug_*.js
 
 # Live comment data
 backend/comments.json
+backend/analytics.json
+reactions.json
