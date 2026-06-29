@@ -1,25 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { PROFILE, ICONS_MAP } from '../../config/constants';
 import { useNav } from '../../App';
-import { MapPin, Users } from 'lucide-react';
+import { useUser } from '@clerk/clerk-react';
+import { Github } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+const ADMIN_EMAIL = 'pranvgg@gmail.com';
 
 const Footer: React.FC = () => {
-  const { goHome, goProjects, goBlog } = useNav();
-  const [visitorData, setVisitorData] = useState<{ count: number; location: string } | null>(null);
-
-  useEffect(() => {
-    fetch('https://ipapi.co/json/')
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.city) {
-          // Hardcode a base count plus some randomness to simulate a live counter
-          const baseCount = 1842;
-          const randomDaily = new Date().getDate() * 12;
-          setVisitorData({ count: baseCount + randomDaily, location: `${data.city}, ${data.country_code}` });
-        }
-      })
-      .catch(err => console.error('Location fetch failed:', err));
-  }, []);
+  const { goHome, goProjects, goBlog, goAdmin } = useNav() as any;
+  const { user } = useUser();
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
+  const [githubHover, setGithubHover] = useState(false);
 
   return (
     <footer className="w-full bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark transition-colors duration-300">
@@ -96,25 +88,43 @@ const Footer: React.FC = () => {
             <p className="font-sans text-xs text-text-muted-light dark:text-text-muted-dark">
               © 2026 Pranav Gawai
             </p>
-            {visitorData && (
-              <>
-                <span className="text-border-light dark:text-border-dark text-xs">|</span>
-                <div className="flex items-center gap-3 text-xs font-medium text-text-muted-light dark:text-text-muted-dark">
-                  <div className="flex items-center gap-1.5" title="Total Unique Visitors">
-                    <Users size={14} className="text-emerald-500" />
-                    <span>#{visitorData.count.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5" title="Your Location">
-                    <MapPin size={14} className="text-amber-500" />
-                    <span>{visitorData.location}</span>
-                  </div>
-                </div>
-              </>
+            {isAdmin && (
+              <button
+                onClick={goAdmin}
+                className="font-mono text-[10px] text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark transition-colors opacity-40 hover:opacity-100"
+              >
+                ⌥ portal
+              </button>
             )}
           </div>
-          <p className="font-sans text-xs text-text-muted-light dark:text-text-muted-dark">
-            Built with 🫶 · Pune, IN
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="font-sans text-xs text-text-muted-light dark:text-text-muted-dark">
+              Built with 🫶 · Pune, IN
+            </p>
+            <div className="relative" onMouseEnter={() => setGithubHover(true)} onMouseLeave={() => setGithubHover(false)}>
+              <a
+                href="https://github.com/pranavgawaii/portfolio"
+                target="_blank" rel="noopener noreferrer"
+                aria-label="View source code"
+                className="flex items-center justify-center w-7 h-7 rounded-lg border border-border-light dark:border-border-dark text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:border-neutral-400 dark:hover:border-neutral-500 transition-all opacity-50 hover:opacity-100"
+              >
+                <Github size={14} strokeWidth={1.5} />
+              </a>
+              <AnimatePresence>
+                {githubHover && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4, scale: 0.92 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 2, scale: 0.92 }}
+                    transition={{ duration: 0.12 }}
+                    className="absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap pointer-events-none z-10
+                      bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-lg"
+                  >
+                    View source code
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-100" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

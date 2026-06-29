@@ -13,36 +13,59 @@ const GitHubActivitySection: React.FC = () => {
   const [loadingGithub,   setLoadingGithub]   = useState(true);
   const [loadingLeetcode, setLoadingLeetcode] = useState(false);
 
+  const CACHE_TTL = 60 * 60 * 1000;
+  const getCached = (key: string) => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const { data, ts } = JSON.parse(raw);
+      if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem(key); return null; }
+      return data;
+    } catch { return null; }
+  };
+  const setCache = (key: string, data: unknown) => {
+    try { localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); } catch {}
+  };
+
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
   useEffect(() => {
     if (activeTab === 'github' && !githubData.length) {
+      const cached = getCached('gh_contributions');
+      if (cached) { setGithubData(cached.flat); setTotalGithub(cached.total); setLoadingGithub(false); return; }
       setLoadingGithub(true);
       fetch('https://github-contributions-api.jogruber.de/v4/pranavgawaii')
         .then(r => r.json())
         .then(d => {
           if (!d?.contributions) return;
           const flat = d.contributions as { date: string; count: number }[];
-          setGithubData(flat);
           const cutoff = new Date(); cutoff.setFullYear(cutoff.getFullYear() - 1);
-          setTotalGithub(flat.filter((x: any) => new Date(x.date) >= cutoff).reduce((s: number, x: any) => s + x.count, 0));
+          const total = flat.filter((x: any) => new Date(x.date) >= cutoff).reduce((s: number, x: any) => s + x.count, 0);
+          setGithubData(flat); setTotalGithub(total);
+          setCache('gh_contributions', { flat, total });
         })
         .catch(console.error)
         .finally(() => setLoadingGithub(false));
     }
     if (activeTab === 'leetcode' && !leetcodeData.length) {
+      const cached = getCached('lc_submissions');
+      if (cached) { setLeetcodeData(cached.transformed); setTotalLeetcode(cached.total); setLoadingLeetcode(false); return; }
       setLoadingLeetcode(true);
-      fetch('https://leetcode-api-faisalshohag.vercel.app/pranavgawai')
+      fetch(`${API_BASE}/api/leetcode`)
+        .catch(() => fetch('https://leetcode-api-faisalshohag.vercel.app/pranavgawai'))
         .then(r => r.json())
         .then(d => {
-          if (!d?.submissionCalendar) return;
-          const entries = Object.entries(d.submissionCalendar)
+          const cal = d?.submissionCalendar || d;
+          if (!cal || typeof cal !== 'object') return;
+          const entries = Object.entries(cal)
             .map(([ts, c]) => ({ ts: parseInt(ts), count: Number(c) }))
             .filter(e => !isNaN(e.ts) && !isNaN(e.count));
           const transformed = entries.map(({ ts, count }) => ({
-            date: new Date(ts * 1000).toISOString().split('T')[0],
-            count,
+            date: new Date(ts * 1000).toISOString().split('T')[0], count,
           })).sort((a, b) => a.date.localeCompare(b.date));
-          setLeetcodeData(transformed);
-          setTotalLeetcode(transformed.reduce((s, x) => s + x.count, 0));
+          const total = transformed.reduce((s, x) => s + x.count, 0);
+          setLeetcodeData(transformed); setTotalLeetcode(total);
+          setCache('lc_submissions', { transformed, total });
         })
         .catch(console.error)
         .finally(() => setLoadingLeetcode(false));
