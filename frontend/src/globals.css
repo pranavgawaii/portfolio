@@ -54,11 +54,47 @@ html {
   @apply bg-background-light dark:bg-background-dark;
   scroll-behavior: smooth;
   position: relative;
-  font-size: 17px;
+  font-size: 16px;
+  /* Safe area insets for iPhone notch / home bar */
+  padding-top: env(safe-area-inset-top);
 }
 
 body {
   @apply bg-transparent text-text-light dark:text-text-dark font-sans antialiased;
+  overscroll-behavior-y: none;
+  /* Prevent 300ms tap delay on all interactive elements */
+  touch-action: manipulation;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Remove tap highlight flash on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Expand touch target for small buttons without changing their visual size */
+.touch-compact {
+  position: relative;
+}
+.touch-compact::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+}
+
+/* Hide scrollbar on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  ::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: none; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ─── Theme Switching Flash Prevention ──────────────────────────────────────

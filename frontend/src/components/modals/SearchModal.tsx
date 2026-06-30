@@ -81,13 +81,13 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
             className="fixed inset-0 z-[80] bg-black/30 dark:bg-black/50 backdrop-blur-sm"
             onClick={onClose}
           />
-          <div className="fixed inset-0 z-[81] flex items-start justify-center pt-[15vh] px-4 pointer-events-none">
+          <div className="fixed inset-0 z-[81] flex items-end sm:items-start justify-center pt-0 sm:pt-[15vh] px-0 sm:px-4 pointer-events-none">
             <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.96, filter: 'blur(6px)' }}
+              initial={{ opacity: 0, y: 20, scale: 0.96, filter: 'blur(6px)' }}
               animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -10, scale: 0.97, filter: 'blur(4px)' }}
+              exit={{ opacity: 0, y: 10, scale: 0.97, filter: 'blur(4px)' }}
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="pointer-events-auto w-full max-w-[520px]
+              className="pointer-events-auto w-full sm:max-w-[520px] rounded-t-[20px] sm:rounded-[20px]
                 bg-white/75 dark:bg-[#0a0a0a]/80
                 backdrop-blur-2xl backdrop-saturate-[180%]
                 border border-white/70 dark:border-white/[0.07]
@@ -95,6 +95,7 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 shadow-[0_2px_0_rgba(255,255,255,0.9)_inset,0_32px_80px_rgba(0,0,0,0.14),0_8px_24px_rgba(0,0,0,0.08)]
                 dark:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_32px_80px_rgba(0,0,0,0.7),0_8px_24px_rgba(0,0,0,0.5)]
                 overflow-hidden"
+              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
               {/* Search input */}
               <div className="flex items-center gap-3 px-4 py-4 border-b border-neutral-200/50 dark:border-white/[0.05]">
@@ -108,8 +109,8 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 />
                 <div className="flex items-center gap-1.5 shrink-0">
                   {query && (
-                    <button onClick={() => setQuery('')} className="w-5 h-5 rounded-md bg-neutral-100 dark:bg-white/[0.07] flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors">
-                      <X size={10} />
+                    <button onClick={() => setQuery('')} className="touch-compact w-7 h-7 rounded-md bg-neutral-100 dark:bg-white/[0.07] flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors">
+                      <X size={12} />
                     </button>
                   )}
                   <kbd className="hidden sm:flex items-center px-1.5 py-0.5 text-[10px] font-mono

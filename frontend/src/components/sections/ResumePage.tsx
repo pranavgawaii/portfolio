@@ -65,7 +65,7 @@ const ResumePage: React.FC = () => (
           </div>
 
           {/* iFrame */}
-          <div style={{ height: '74vh' }}>
+          <div style={{ height: '74dvh' }}>
             <iframe
               src={DRIVE_PREVIEW}
               className="w-full h-full border-0 block"
