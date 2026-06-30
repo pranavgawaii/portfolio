@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
-const API = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+import { API_BASE as API } from '../../lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Comment { id: string; author: string; text: string; timestamp: string; clerkUserId: string; replies?: Comment[]; }

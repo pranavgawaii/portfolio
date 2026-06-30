@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'motion/react';
 import { GitHubCalendar } from '../ui/git-hub-calendar';
+import { API_BASE } from '../../lib/api';
 
 const GitHubActivitySection: React.FC = () => {
   const { resolvedTheme } = useTheme();
@@ -27,7 +28,6 @@ const GitHubActivitySection: React.FC = () => {
     try { localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })); } catch {}
   };
 
-  const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
 
   useEffect(() => {
     if (activeTab === 'github' && !githubData.length) {
