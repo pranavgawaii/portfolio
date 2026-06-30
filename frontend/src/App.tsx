@@ -390,7 +390,7 @@ const App: React.FC = () => {
                 >
                   <button
                     onClick={closeProject}
-                    className="touch-compact absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full text-text-muted-light dark:text-text-muted-dark hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors z-10 text-lg leading-none"
+                    className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full text-text-muted-light dark:text-text-muted-dark hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors z-10 text-lg leading-none"
                   >×</button>
                   <div className="px-6 py-6">
                     <Suspense fallback={<Skel />}>

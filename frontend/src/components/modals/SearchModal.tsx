@@ -109,7 +109,7 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 />
                 <div className="flex items-center gap-1.5 shrink-0">
                   {query && (
-                    <button onClick={() => setQuery('')} className="touch-compact w-7 h-7 rounded-md bg-neutral-100 dark:bg-white/[0.07] flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors">
+                    <button onClick={() => setQuery('')} className="w-7 h-7 rounded-md bg-neutral-100 dark:bg-white/[0.07] flex items-center justify-center text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors">
                       <X size={12} />
                     </button>
                   )}

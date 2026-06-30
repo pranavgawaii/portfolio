@@ -60,7 +60,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="touch-compact w-9 h-9 flex items-center justify-center rounded-full text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors"
           >
             <X size={15} />
           </button>
