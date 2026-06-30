@@ -46,11 +46,11 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
   if (!mounted) return <div className="w-full h-16" />;
 
   const links = [
-    { label: 'Home',     active: page === 'home',                          action: handleHome },
-    { label: 'Projects', active: page === 'projects',                       action: goProjects },
-    { label: 'Blog',     active: page === 'blog' || page === 'blog-post',   action: goBlog },
-    { label: 'Resume',   active: page === 'resume',                         action: onResumeOpen },
-    { label: 'Sheet',    active: page === 'dsa',                            action: goDSA },
+    { label: 'Home',     active: page === 'home',                          action: handleHome,    mobile: true },
+    { label: 'Projects', active: page === 'projects',                       action: goProjects,    mobile: true },
+    { label: 'Blog',     active: page === 'blog' || page === 'blog-post',   action: goBlog,        mobile: true },
+    { label: 'Resume',   active: page === 'resume',                         action: onResumeOpen,  mobile: true },
+    { label: 'Sheet',    active: page === 'dsa',                            action: goDSA,         mobile: false },
   ];
 
   const openSearch = () =>
@@ -79,11 +79,11 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
 
           {/* ── Nav links ──────────────────────────────────────────────────── */}
           <div className="flex items-center">
-            {links.map(({ label, active, action }) => (
+            {links.map(({ label, active, action, mobile }) => (
               <button
                 key={label}
                 onClick={action}
-                className={`relative px-3.5 py-[7px] rounded-[13px] text-[13px] font-medium transition-colors duration-150 ${
+                className={`relative touch-compact px-2 sm:px-3.5 py-[7px] rounded-[13px] text-[11px] sm:text-[13px] font-medium transition-colors duration-150 ${!mobile ? 'hidden sm:block' : ''} ${
                   active
                     ? 'text-neutral-900 dark:text-white'
                     : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'

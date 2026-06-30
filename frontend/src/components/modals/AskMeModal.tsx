@@ -259,7 +259,7 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
             initial={{ y: 48, opacity: 0, scale: 0.97 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 32, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 320, damping: 28 }}
             className="w-full sm:max-w-md bg-white dark:bg-[#0f0f0f] sm:rounded-2xl rounded-t-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl flex flex-col"
-            style={{ maxHeight: '88vh' }}
+            style={{ maxHeight: '88dvh', paddingBottom: 'env(safe-area-inset-bottom)' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
@@ -268,7 +268,7 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 <p className="font-sans font-bold text-base text-neutral-900 dark:text-white">Ask me anything</p>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">About Pranav · projects · experience · skills</p>
               </div>
-              <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 dark:text-neutral-400 transition-colors text-lg">×</button>
+              <button onClick={onClose} className="touch-compact w-9 h-9 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 dark:text-neutral-400 transition-colors text-lg">×</button>
             </div>
 
             {/* Tabs */}

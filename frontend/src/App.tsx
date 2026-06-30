@@ -379,18 +379,18 @@ const App: React.FC = () => {
             {selectedProject && (
               <motion.div
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm"
                 onClick={closeProject}
               >
                 <motion.div
                   initial={{ scale: 0.96, opacity: 0, y: 16 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.96, opacity: 0 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-                  className="relative w-full max-w-2xl max-h-[88vh] bg-white dark:bg-[#0a0a0a] rounded-2xl border border-border-light dark:border-border-dark shadow-2xl overflow-y-auto"
+                  className="relative w-full max-w-2xl max-h-[90dvh] bg-white dark:bg-[#0a0a0a] rounded-t-2xl sm:rounded-2xl border border-border-light dark:border-border-dark shadow-2xl overflow-y-auto"
                   onClick={e => e.stopPropagation()}
                 >
                   <button
                     onClick={closeProject}
-                    className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full text-text-muted-light dark:text-text-muted-dark hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors z-10 text-lg leading-none"
+                    className="touch-compact absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full text-text-muted-light dark:text-text-muted-dark hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors z-10 text-lg leading-none"
                   >×</button>
                   <div className="px-6 py-6">
                     <Suspense fallback={<Skel />}>
