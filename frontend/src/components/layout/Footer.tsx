@@ -3,6 +3,7 @@ import { PROFILE, ICONS_MAP } from '../../config/constants';
 import { useNav } from '../../App';
 import { useUser } from '@clerk/clerk-react';
 import { Github, Users, MapPin } from 'lucide-react';
+import { API_BASE } from '../../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
@@ -15,8 +16,8 @@ const Footer: React.FC = () => {
   const [visitorData, setVisitorData] = useState<{ count: number; location: string } | null>(null);
 
   useEffect(() => {
-    const API = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
-    if (!API && !import.meta.env.DEV) return;
+    const API = API_BASE;
+    if (!API) return;
 
     fetch(`${API}/api/track-visitor`)
       .then(res => res.json())

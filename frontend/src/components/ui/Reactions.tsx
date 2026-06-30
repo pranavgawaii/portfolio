@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ThumbsUp, Flame, Lightbulb, Heart } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+import { API_BASE as API } from '../../lib/api';
 
 const REACTIONS = [
   { key: 'like',      Icon: ThumbsUp,  label: 'Useful',      activeColor: 'text-blue-500',   activeBg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/60' },
