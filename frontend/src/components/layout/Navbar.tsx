@@ -83,7 +83,7 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
               <button
                 key={label}
                 onClick={action}
-                className={`relative touch-compact px-2 sm:px-3.5 py-[7px] rounded-[13px] text-[11px] sm:text-[13px] font-medium transition-colors duration-150 ${!mobile ? 'hidden sm:block' : ''} ${
+                className={`relative px-2 sm:px-3.5 py-[7px] rounded-[13px] text-[11px] sm:text-[13px] font-medium transition-colors duration-150 ${!mobile ? 'hidden sm:block' : ''} ${
                   active
                     ? 'text-neutral-900 dark:text-white'
                     : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200'

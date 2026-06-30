@@ -55,31 +55,17 @@ html {
   scroll-behavior: smooth;
   position: relative;
   font-size: 16px;
-  /* Safe area insets for iPhone notch / home bar */
-  padding-top: env(safe-area-inset-top);
 }
 
 body {
   @apply bg-transparent text-text-light dark:text-text-dark font-sans antialiased;
-  overscroll-behavior-y: none;
-  /* Prevent 300ms tap delay on all interactive elements */
-  touch-action: manipulation;
-  padding-bottom: env(safe-area-inset-bottom);
+  /* Contain overscroll only on modals, not globally */
+  overscroll-behavior: auto;
 }
 
-/* Remove tap highlight flash on mobile */
+/* Remove tap highlight flash on mobile — no side effects */
 * {
   -webkit-tap-highlight-color: transparent;
-}
-
-/* Expand touch target for small buttons without changing their visual size */
-.touch-compact {
-  position: relative;
-}
-.touch-compact::after {
-  content: '';
-  position: absolute;
-  inset: -10px;
 }
 
 /* Hide scrollbar on touch devices */
@@ -88,14 +74,18 @@ body {
   * { scrollbar-width: none; }
 }
 
-/* Respect reduced motion */
+/* Respect reduced motion for CSS-only transitions (not JS/Framer Motion) */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *:not([data-framer-motion]) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Safe area padding helpers */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
 
 /* ─── Theme Switching Flash Prevention ──────────────────────────────────────
    Applied for exactly 1 animation frame during toggle.

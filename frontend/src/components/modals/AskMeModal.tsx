@@ -268,7 +268,7 @@ const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 <p className="font-sans font-bold text-base text-neutral-900 dark:text-white">Ask me anything</p>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">About Pranav · projects · experience · skills</p>
               </div>
-              <button onClick={onClose} className="touch-compact w-9 h-9 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 dark:text-neutral-400 transition-colors text-lg">×</button>
+              <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 dark:text-neutral-400 transition-colors text-lg">×</button>
             </div>
 
             {/* Tabs */}
