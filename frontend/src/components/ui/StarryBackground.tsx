@@ -1,131 +1,114 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { motion, useTransform, useMotionValue, useSpring } from 'motion/react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 
+const STAR_COUNT_DESKTOP = 130;
+const STAR_COUNT_MOBILE  = 60;
+
 interface Star {
-  id: number;
-  x: number;
-  y: number;
+  x: number; y: number;
   size: number;
-  opacity: number;
-  parallaxFactor: number;
-  animationDelay: number;
-  colorType: number;
+  baseOpacity: number;
+  phase: number;       // twinkle phase offset
+  speed: number;       // twinkle speed
+  r: number; g: number; b: number; // color
 }
 
 const StarryBackground: React.FC = () => {
-  const [mounted, setMounted] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
 
-  const stars = useMemo(() => {
-    const starCount = 150;
-    const generatedStars: Star[] = [];
-    for (let i = 0; i < starCount; i++) {
-      generatedStars.push({
-        id: i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.5 + 0.3,
-        parallaxFactor: Math.random() * 0.08 + 0.02,
-        animationDelay: Math.random() * 5,
-        colorType: Math.floor(Math.random() * 3),
-      });
-    }
-    return generatedStars;
-  }, []);
+    const isMobile = window.innerWidth < 768;
+    const count = isMobile ? STAR_COUNT_MOBILE : STAR_COUNT_DESKTOP;
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springX = useSpring(mouseX, { stiffness: 40, damping: 25 });
-  const springY = useSpring(mouseY, { stiffness: 40, damping: 25 });
-
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set((e.clientX / window.innerWidth - 0.5) * 100);
-      mouseY.set((e.clientY / window.innerHeight - 0.5) * 100);
+    const resize = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
-    const handleVisibility = () => setVisible(!document.hidden);
+    resize();
 
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('visibilitychange', handleVisibility);
+    // Generate stars once
+    const stars: Star[] = Array.from({ length: count }, () => {
+      const t = Math.random();
+      // Color palette: white, blue-tint, amber-tint
+      const palette = [
+        { r: 255, g: 255, b: 255 },
+        { r: 200, g: 220, b: 255 },
+        { r: 255, g: 240, b: 200 },
+      ];
+      const col = palette[Math.floor(Math.random() * palette.length)];
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 1.4 + 0.4,
+        baseOpacity: Math.random() * 0.45 + 0.2,
+        phase: Math.random() * Math.PI * 2,
+        speed: (Math.random() * 0.4 + 0.2) * (isMobile ? 0.5 : 1),
+        ...col,
+      };
+    });
+
+    let raf: number;
+    let t = 0;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const dark = resolvedTheme === 'dark' || document.documentElement.classList.contains('dark');
+
+      for (const s of stars) {
+        const twinkle = Math.sin(t * s.speed + s.phase) * 0.3 + 0.7;
+        const alpha = s.baseOpacity * twinkle * (dark ? 1 : 0.55);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${s.r},${s.g},${s.b},${alpha})`;
+        ctx.fill();
+      }
+
+      t += 0.016; // ~1/60
+      raf = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    const onResize = () => {
+      resize();
+      // Reposition stars proportionally
+      const scaleX = canvas.width  / (canvas.width  || 1);
+      const scaleY = canvas.height / (canvas.height || 1);
+      for (const s of stars) {
+        s.x = Math.random() * canvas.width;
+        s.y = Math.random() * canvas.height;
+      }
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
     };
-  }, [mouseX, mouseY]);
-
-  if (!visible) return null;
-
-  if (!mounted) return null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-2] overflow-hidden transition-colors duration-300 bg-background-light dark:bg-[#050505]">
-      {stars.map((star) => (
-        <StarLayer 
-          key={star.id} 
-          star={star} 
-          springX={springX} 
-          springY={springY} 
-        />
-      ))}
-      {/* Light Mode Gradient */}
-      <div 
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(255,255,255,0.8)_100%)] transition-opacity duration-300 opacity-100 dark:opacity-0" 
+    <>
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 pointer-events-none z-[-2]"
+        aria-hidden
       />
-      {/* Dark Mode Gradient */}
-      <div 
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.6)_100%)] transition-opacity duration-300 opacity-0 dark:opacity-100" 
-      />
-    </div>
-  );
-};
-
-interface StarLayerProps {
-  star: Star;
-  springX: any;
-  springY: any;
-}
-
-const StarLayer: React.FC<StarLayerProps> = ({ star, springX, springY }) => {
-  const x = useTransform(springX, (val: number) => val * star.parallaxFactor);
-  const y = useTransform(springY, (val: number) => val * star.parallaxFactor);
-
-  // Premium subtle colors for the particles mapped to Tailwind theme classes
-  const darkColors = ['dark:bg-white', 'dark:bg-blue-100', 'dark:bg-amber-100'];
-  const lightColors = ['bg-slate-400', 'bg-sky-400', 'bg-amber-400'];
-  const colorClass = `${lightColors[star.colorType]} ${darkColors[star.colorType]}`;
-
-  return (
-    <motion.div
-      style={{
-        position: 'absolute',
-        top: `${star.y}%`,
-        left: `${star.x}%`,
-        width: `${star.size}px`,
-        height: `${star.size}px`,
-        opacity: star.opacity,
-        x,
-        y,
-      }}
-      className={`rounded-full blur-[0.4px] transition-colors duration-300 ${colorClass}`}
-      animate={{
-        opacity: [star.opacity * 0.4, star.opacity, star.opacity * 0.4],
-        scale: [1, 1.2, 1],
-      }}
-      transition={{
-        duration: 3 + Math.random() * 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay: star.animationDelay,
-      }}
-    />
+      {/* Background colour fill */}
+      <div className="fixed inset-0 pointer-events-none z-[-3] bg-background-light dark:bg-[#050505]" />
+      {/* Vignette */}
+      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.45)_100%)] opacity-0 dark:opacity-100" />
+      <div className="fixed inset-0 pointer-events-none z-[-1] bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(255,255,255,0.6)_100%)] opacity-100 dark:opacity-0" />
+    </>
   );
 };
 

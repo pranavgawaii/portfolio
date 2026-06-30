@@ -320,10 +320,10 @@ const App: React.FC = () => {
           <AnimatePresence mode="wait">
             <motion.main
               key={page === 'blog-post' ? `blog-post-${selectedBlog?.slug}` : page}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
               className="w-full max-w-content mx-auto px-4 sm:px-6 pb-24 flex-1"
             >
                 {page === 'home' && <HomePage openProject={openProject} />}
