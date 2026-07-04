@@ -13,7 +13,7 @@ interface Card {
 const cardData = {
     1: {
         title: "Git Visual Workflow",
-        description: "A beginner's guide to mastering Git visually — branches, commits, and merges with diagrams.",
+        description: "A beginner's guide to mastering Git visually: branches, commits, and merges with diagrams.",
         image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2076&auto=format&fit=crop",
         link: "https://pranavgawai.hashnode.dev/git-for-beginners-visual-workflow",
         date: "OCT 2023",
@@ -21,7 +21,7 @@ const cardData = {
     },
     2: {
         title: "From Ideas to Impact: My SIH 2024 Journey",
-        description: "My Smart India Hackathon experience — the problem, the team, 36 hours of building, and what stuck.",
+        description: "My Smart India Hackathon experience: the problem, the team, 36 hours of building, and what stuck.",
         image: "/blogsih2024.jpg",
         link: "https://medium.com/@pranavgawai1518/from-ideas-to-impact-my-experience-at-the-smart-india-hackathon-34831673024d",
         date: "SEP 2024",

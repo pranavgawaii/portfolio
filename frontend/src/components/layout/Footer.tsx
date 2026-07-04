@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-border-light dark:border-border-dark pt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="border-t border-border-light dark:border-border-dark pt-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <p className="font-sans text-xs text-text-muted-light dark:text-text-muted-dark">
               © 2026 Pranav Gawai
@@ -144,9 +144,11 @@ const Footer: React.FC = () => {
               <AnimatePresence>
                 {githubHover && (
                   <motion.div
-                    initial={{ opacity: 0, y: 4, scale: 0.92 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 2, scale: 0.92 }}
+                    initial={{ opacity: 0, y: 4, x: "-50%", scale: 0.92 }} 
+                    animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }} 
+                    exit={{ opacity: 0, y: 2, x: "-50%", scale: 0.92 }}
                     transition={{ duration: 0.12 }}
-                    className="absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap pointer-events-none z-10
+                    className="absolute -top-9 left-1/2 px-2.5 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap pointer-events-none z-10
                       bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-lg"
                   >
                     View source code

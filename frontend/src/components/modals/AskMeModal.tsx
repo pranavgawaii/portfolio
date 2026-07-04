@@ -134,7 +134,7 @@ interface Props { isOpen: boolean; onClose: () => void }
 
 const AskMeModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [tab, setTab]               = useState<'chat' | 'voice'>('chat');
-  const [msgs, setMsgs]             = useState<Msg[]>([{ role: 'bot', text: 'Hey! Ask me anything about Pranav — his projects, experience, skills, or how to reach him. Try "show best project" for a live demo!' }]);
+  const [msgs, setMsgs]             = useState<Msg[]>([{ role: 'bot', text: 'Hey! Ask me anything about Pranav, like his projects, experience, skills, or how to reach him. Try "show best project" for a live demo!' }]);
   const [input, setInput]           = useState('');
   const groq = useGroqChat();
   const [listening, setListening]   = useState(false);

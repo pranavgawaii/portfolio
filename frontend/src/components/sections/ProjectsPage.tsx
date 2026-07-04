@@ -47,7 +47,7 @@ const TechChip = ({ tech }: { tech: string }) => {
   const [hovered, setHovered] = React.useState(false);
   return (
     <div
-      className="flex items-center rounded-xl border border-dashed border-neutral-700 bg-neutral-900 overflow-hidden cursor-default transition-[border-color] duration-150 hover:border-neutral-500"
+      className="flex items-center rounded-xl border border-dashed border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 overflow-hidden cursor-default transition-[border-color] duration-150 hover:border-neutral-500"
       style={{ height: 36 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -59,7 +59,7 @@ const TechChip = ({ tech }: { tech: string }) => {
         }
       </div>
       <div
-        className="overflow-hidden whitespace-nowrap text-[10px] font-sans font-medium text-neutral-300 transition-[max-width,padding] duration-200 ease-out"
+        className="overflow-hidden whitespace-nowrap text-[10px] font-sans font-medium text-text-muted-light dark:text-neutral-300 transition-[max-width,padding] duration-200 ease-out"
         style={{ maxWidth: hovered ? 96 : 0, paddingRight: hovered ? 10 : 0 }}
       >
         {tech}
@@ -83,7 +83,7 @@ const badgeClass = (s: string) => {
   if (/top 1%|88/i.test(s))        return 'border-violet-600  text-violet-400  bg-violet-950/30';
   if (/top 10|2nd/i.test(s))       return 'border-blue-600    text-blue-400    bg-blue-950/30';
   if (/progress/i.test(s))         return 'border-sky-600     text-sky-400     bg-sky-950/30';
-  return 'border-neutral-600 text-neutral-400 bg-neutral-900';
+  return 'border-neutral-300 dark:border-neutral-600 text-text-muted-light dark:text-neutral-400 bg-white dark:bg-neutral-900';
 };
 
 const dotClass = (s: string) => {

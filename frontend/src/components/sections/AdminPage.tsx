@@ -234,8 +234,8 @@ const AdminPage: React.FC = () => {
             <div className="space-y-8">
               {/* KPI grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <Stat label="Page views" value={analytics?.totalPageViews ?? '—'} sub="all time" icon={<Eye size={14} />} color="text-blue-500" />
-                <Stat label="Events tracked" value={analytics?.totalEvents ?? '—'} sub="all time" icon={<Activity size={14} />} color="text-violet-500" />
+                <Stat label="Page views" value={analytics?.totalPageViews ?? '-'} sub="all time" icon={<Eye size={14} />} color="text-blue-500" />
+                <Stat label="Events tracked" value={analytics?.totalEvents ?? '-'} sub="all time" icon={<Activity size={14} />} color="text-violet-500" />
                 <Stat label="Comments" value={totalComments} sub={`across ${commentEntries.length} posts`} icon={<MessageCircle size={14} />} color="text-amber-500" />
                 <Stat label="AskMe opens" value={analytics?.eventCounts?.askme_open ?? 0} sub="total" icon={<Zap size={14} />} color="text-emerald-500" />
               </div>
@@ -463,7 +463,7 @@ const AdminPage: React.FC = () => {
                   {!health && !loadingHealth ? (
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-red-500" />
-                      <p className="text-sm text-text-muted-light dark:text-text-muted-dark">Backend offline — <span className="font-mono text-[11px]">localhost:{API.split(':').pop()}</span></p>
+                      <p className="text-sm text-text-muted-light dark:text-text-muted-dark">Backend offline - <span className="font-mono text-[11px]">localhost:{API.split(':').pop()}</span></p>
                     </div>
                   ) : health ? (
                     <div className="space-y-3">
@@ -510,8 +510,8 @@ const AdminPage: React.FC = () => {
                 <div className="space-y-2">
                   {[
                     { icon: <Eye size={12} />, label: 'Page views', desc: 'Every navigation fires a page_view event with the URL path' },
-                    { icon: <BookOpen size={12} />, label: 'Blog reads', desc: 'Each time a blog post is opened — slug + title recorded' },
-                    { icon: <MousePointer size={12} />, label: 'Project clicks', desc: 'Each project modal open — id + name recorded' },
+                    { icon: <BookOpen size={12} />, label: 'Blog reads', desc: 'Each time a blog post is opened - slug + title recorded' },
+                    { icon: <MousePointer size={12} />, label: 'Project clicks', desc: 'Each project modal open - id + name recorded' },
                     { icon: <Zap size={12} />, label: 'AskMe opens', desc: 'Every time the AI chat is opened via Navbar' },
                     { icon: <FileText size={12} />, label: 'Resume views', desc: 'Each time the resume page is navigated to' },
                     { icon: <Activity size={12} />, label: 'User agent', desc: 'Browser/device string attached to each server-side event' },

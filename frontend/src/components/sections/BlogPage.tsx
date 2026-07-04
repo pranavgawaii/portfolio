@@ -206,7 +206,7 @@ const BlogPage: React.FC<Props> = ({ onBack, onOpenBlog }) => {
             onClick={() => setActiveTag(tag)}
             className={`text-xs font-mono px-3.5 py-1.5 rounded-full border transition-all ${
               activeTag === tag
-                ? 'border-neutral-900 dark:border-neutral-200 text-neutral-900 dark:text-neutral-100 bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900'
+                ? 'border-neutral-900 dark:border-neutral-200 text-white bg-neutral-900 dark:bg-neutral-100 dark:text-neutral-900'
                 : 'border-neutral-200 dark:border-neutral-800 text-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-600 hover:text-neutral-700 dark:hover:text-neutral-300'
             }`}
           >

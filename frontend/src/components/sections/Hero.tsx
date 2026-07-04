@@ -55,8 +55,8 @@ const Hero: React.FC = () => {
         {/* Bio */}
         <p className="text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark mb-4 w-full">
           Final year CSE student building{' '}
-          <span className="bg-blue-100/70 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded font-medium">AI-native products</span>{' '}
-          at <span className="text-text-light dark:text-text-dark font-medium">CraftaStudio</span>. Competing in national hackathons. Looking for an early AI team to join.
+          <span className="bg-blue-100/70 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded font-medium">AI-native products</span>. 
+          Competing in national hackathons. Looking for an early AI team to join.
         </p>
 
         {/* Social icons */}

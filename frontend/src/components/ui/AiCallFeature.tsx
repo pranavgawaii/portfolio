@@ -10,7 +10,7 @@ type TextChatMessage = { id: number; sender: 'ai' | 'user'; text: string };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const GREETING =
-  "Hey! I'm Pranav's AI. I'm a full-stack developer from Pune, India. You're on my portfolio — ask me anything about my work, projects, or tech stack. Let's go!";
+  "Hey! I'm Pranav's AI. I'm a full-stack developer from Pune, India. You're on my portfolio, so ask me anything about my work, projects, or tech stack. Let's go!";
 
 const avatarUrl = '/avatar.jpg';
 
@@ -243,7 +243,7 @@ const AiCallFeature: React.FC = () => {
     setTimeout(() => {
       setChatMessages(prev => [...prev, {
         id: Date.now(), sender: 'ai',
-        text: "Thanks for chatting! AI backend is live — but this panel is a separate flow. Use the voice call for real AI responses!",
+        text: "Thanks for chatting! AI backend is live, but this panel is a separate flow. Use the voice call for real AI responses!",
       }]);
       setIsAiTypingChat(false);
     }, 1500);

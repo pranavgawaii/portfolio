@@ -87,7 +87,7 @@ const BlogModal: React.FC<BlogModalProps> = ({ isOpen, onClose }) => {
 
                                 {/* Coming soon placeholder */}
                                 <div className="border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-6 text-center">
-                                    <p className="text-sm text-neutral-400 dark:text-neutral-500">More articles coming soon —</p>
+                                    <p className="text-sm text-neutral-400 dark:text-neutral-500">More articles coming soon...</p>
                                     <p className="text-xs text-neutral-400 dark:text-neutral-600 mt-1">Follow me on <a href="https://x.com/pranavgawai_" target="_blank" rel="noopener noreferrer" className="underline hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">X @pranavgawai_</a> for updates</p>
                                 </div>
                             </div>

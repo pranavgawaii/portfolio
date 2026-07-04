@@ -69,7 +69,7 @@ const ResumePage: React.FC = () => (
             <iframe
               src={DRIVE_PREVIEW}
               className="w-full h-full border-0 block"
-              title="Pranav Gawai — Resume"
+              title="Pranav Gawai - Resume"
             />
           </div>
 
