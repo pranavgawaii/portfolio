@@ -2,8 +2,8 @@ import React from 'react';
 import { Download } from 'lucide-react';
 import { motion } from 'motion/react';
 
-const DRIVE_PREVIEW = 'https://drive.google.com/file/d/1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi/preview';
-const DRIVE_DOWNLOAD = 'https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi';
+const DRIVE_PREVIEW = 'https://drive.google.com/file/d/1rzKHkdME-8SsIoQqEqh6ZVAoKYXoQ7M4/preview';
+const DRIVE_DOWNLOAD = 'https://drive.google.com/uc?export=download&id=1rzKHkdME-8SsIoQqEqh6ZVAoKYXoQ7M4';
 
 const ResumePage: React.FC = () => (
   <div className="w-full min-h-screen pt-8 pb-24">
