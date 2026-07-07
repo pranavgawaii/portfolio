@@ -437,6 +437,23 @@ html::before {
     display: none;
 }
 
+/* Roast boom payoff — screen shake synced with the whiteout flash */
+@keyframes site-shake {
+  0%, 100% { transform: translate(0, 0); }
+  8%  { transform: translate(-10px, 4px); }
+  16% { transform: translate(9px, -6px); }
+  24% { transform: translate(-8px, 6px); }
+  32% { transform: translate(10px, 2px); }
+  40% { transform: translate(-7px, -4px); }
+  48% { transform: translate(8px, 4px); }
+  56% { transform: translate(-6px, -2px); }
+  64% { transform: translate(5px, 3px); }
+  72% { transform: translate(-4px, 1px); }
+  80% { transform: translate(3px, -2px); }
+  88% { transform: translate(-2px, 1px); }
+}
+.site-shake { animation: site-shake 0.65s ease-in-out; }
+
 /* Premium shine sweep for bio text */
 @keyframes shine-sweep {
   0%   { background-position: -200% center; }

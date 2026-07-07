@@ -13,7 +13,7 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 
 const app = (
-  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
     <App />
     <Analytics />
   </ThemeProvider>

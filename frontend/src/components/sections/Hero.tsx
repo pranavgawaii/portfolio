@@ -9,7 +9,7 @@ const Hero: React.FC = () => {
   const [showContact, setShowContact] = useState(false);
   const [showZoom, setShowZoom]       = useState(false);
   const [mounted, setMounted]         = useState(false);
-  const { openResume } = useNav() as any;
+  const { openResume, roast } = useNav() as any;
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -17,15 +17,45 @@ const Hero: React.FC = () => {
 
   return (
     <>
-      <header className="pt-10 pb-2">
+      <header className="pt-24 pb-2">
         {/* Identity block */}
         <div className="flex items-center gap-4 mb-5">
-          <button
-            onClick={() => setShowZoom(true)}
-            className="shrink-0 w-24 h-24 rounded-2xl overflow-hidden hover:ring-2 hover:ring-neutral-400 dark:hover:ring-neutral-500 transition-all duration-300"
-          >
-            <ProgressiveImage src="/avatar.jpg" alt="Pranav Gawai" className="w-full h-full object-cover" />
-          </button>
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowZoom(true)}
+              className="w-24 h-24 rounded-2xl overflow-hidden hover:ring-2 hover:ring-neutral-400 dark:hover:ring-neutral-500 transition-all duration-300"
+            >
+              <ProgressiveImage src="/avatar.jpg" alt="Pranav Gawai" className="w-full h-full object-cover" />
+            </button>
+
+            {/* Roast bubble — dark mode is locked, this fires when someone tries to switch it */}
+            <AnimatePresence>
+              {roast && (
+                <motion.div
+                  key={roast.id}
+                  initial={{ opacity: 0, y: 'calc(-50% + 8px)', scale: 0.85, rotate: -3 }}
+                  animate={{ opacity: 1, y: '-50%', scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, y: '-50%', scale: 0.9 }}
+                  transition={{ type: 'spring', stiffness: 460, damping: 24 }}
+                  className="absolute z-30 w-[min(220px,80vw)] px-4.5 py-3.5 right-full top-1/2 mr-3.5
+                    bg-white/95 dark:bg-neutral-950/95
+                    backdrop-blur-xl
+                    border border-neutral-200/80 dark:border-white/[0.08]
+                    rounded-[20px]
+                    shadow-[0_2px_0_rgba(255,255,255,0.95)_inset,0_20px_48px_rgba(0,0,0,0.16)]
+                    dark:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_20px_48px_rgba(0,0,0,0.6)]
+                    text-[13.5px] font-semibold tracking-[-0.01em] leading-snug text-text-light dark:text-text-dark text-center
+                    pointer-events-none"
+                >
+                  {roast.text}
+                  <span className="absolute top-1/2 -translate-y-1/2 -right-[6px] w-3.5 h-3.5
+                    bg-white/95 dark:bg-neutral-950/95
+                    border-r border-b border-neutral-200/80 dark:border-white/[0.08]
+                    rotate-[-45deg]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">

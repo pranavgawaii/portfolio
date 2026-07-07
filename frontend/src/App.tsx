@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef, Suspense, createContext, useContext } from 'react';
 import { track } from './hooks/useAnalytics';
 import { playClick, playGeneralClick } from './lib/clickSound';
 import { EXPERIENCE, PROJECTS, BLOGS, BlogPost } from './config/constants';
@@ -31,6 +31,8 @@ const NotFoundPage     = React.lazy(() => import('./components/sections/NotFound
 // ─── Nav context ─────────────────────────────────────────────────────────────
 export type Page = 'home' | 'project-detail' | 'projects' | 'blog' | 'blog-post' | 'dsa' | 'resume' | 'admin' | 'not-found';
 
+export interface RoastEvent { text: string; id: number }
+
 interface NavCtx {
   page: Page;
   selectedProject: ProjectItem | null;
@@ -43,6 +45,8 @@ interface NavCtx {
   openBlog: (b: BlogPost) => void;
   goDSA: () => void;
   goAdmin: () => void;
+  roast: RoastEvent | null;
+  triggerRoast: () => void;
 }
 
 export const NavContext = createContext<NavCtx>({
@@ -57,9 +61,23 @@ export const NavContext = createContext<NavCtx>({
   openBlog: () => {},
   goDSA: () => {},
   goAdmin: () => {},
+  roast: null,
+  triggerRoast: () => {},
 });
 
 export const useNav = () => useContext(NavContext);
+
+// Light mode is permanently vetoed. Clicking the toggle just roasts the visitor.
+// The 5th message lines up with the first boom (see isBoom in triggerRoast below).
+const ROAST_MESSAGES = [
+  "Dark mode is the default. The default is correct.",
+  "You're a developer. You'll adapt.",
+  "Works on my machine. My machine is dark.",
+  "The sun is a single point of failure.",
+  "Alright. Brace yourself.",
+  "I closed that issue as 'wontfix'.",
+  "Add it yourself. PRs welcome. (They're not.)",
+];
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 const Skel = () => <div className="h-32 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-900" />;
@@ -202,6 +220,44 @@ const App: React.FC = () => {
   const [selectedBlog, setSelectedBlog]   = useState<BlogPost | null>(null);
   const [searchOpen, setSearchOpen]   = useState(false);
   const [pageKey, setPageKey]         = useState(0);
+  const [roast, setRoast]             = useState<RoastEvent | null>(null);
+  const [boom, setBoom]               = useState<number | null>(null);
+  const roastCountRef = useRef(0);
+  const roastIdRef = useRef(0);
+  const boomIdRef = useRef(0);
+  const roastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const boomTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (roastTimerRef.current) clearTimeout(roastTimerRef.current);
+    if (boomTimerRef.current) clearTimeout(boomTimerRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (boom == null) return;
+    const root = document.documentElement;
+    root.classList.add('site-shake');
+    const t = setTimeout(() => root.classList.remove('site-shake'), 650);
+    return () => clearTimeout(t);
+  }, [boom]);
+
+  const triggerRoast = () => {
+    // Boom fires on the 5th click onward, alongside whichever roast line is showing.
+    const isBoom = roastCountRef.current >= 4;
+    const idx = Math.min(roastCountRef.current, ROAST_MESSAGES.length - 1);
+    roastCountRef.current += 1;
+    roastIdRef.current += 1;
+    setRoast({ text: ROAST_MESSAGES[idx], id: roastIdRef.current });
+    if (roastTimerRef.current) clearTimeout(roastTimerRef.current);
+    roastTimerRef.current = setTimeout(() => setRoast(null), 2800);
+
+    if (isBoom) {
+      boomIdRef.current += 1;
+      setBoom(boomIdRef.current);
+      if (boomTimerRef.current) clearTimeout(boomTimerRef.current);
+      boomTimerRef.current = setTimeout(() => setBoom(null), 1300);
+    }
+  };
 
   const nav = (p: Page, url: string) => {
     setPage(p);
@@ -305,6 +361,7 @@ const App: React.FC = () => {
       else if (e.key === 'p') { e.preventDefault(); goProjects(); }
       else if (e.key === 'b') { e.preventDefault(); goBlog(); }
       else if (e.key === 'r') { e.preventDefault(); openResume(); }
+      else if (e.key === 's') { e.preventDefault(); goDSA(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -312,10 +369,24 @@ const App: React.FC = () => {
 
   return (
     <ClerkWrapper>
-      <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goDSA, goAdmin }}>
+      <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goDSA, goAdmin, roast, triggerRoast }}>
         <div className="min-h-screen bg-transparent text-text-light dark:text-text-dark font-sans antialiased flex flex-col items-center">
           <StarryBackground />
           <Navbar onResumeOpen={openResume} />
+
+          {/* Boom payoff — kicks in from the 5th click onward: a strobing whiteout */}
+          <AnimatePresence>
+            {boom != null && (
+              <motion.div key={boom} className="fixed inset-0 z-[300] pointer-events-none overflow-hidden">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0.15, 1, 0.4, 0] }}
+                  transition={{ duration: 1.1, times: [0, 0.07, 0.22, 0.32, 0.55, 1] }}
+                  className="absolute inset-0 bg-white"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <AnimatePresence mode="wait">
             <motion.main

@@ -16,7 +16,7 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
   const [askOpen, setAskOpen]       = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { page, goHome, goProjects, goBlog, goDSA, goAdmin } = useNav();
+  const { page, goHome, goProjects, goBlog, goDSA, goAdmin, roast, triggerRoast } = useNav();
   const { isSignedIn, user } = useUser();
   const { signOut } = useClerk();
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
@@ -31,12 +31,13 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
 
   useEffect(() => { setMounted(true); }, []);
 
-  const toggleTheme = () => {
-    const root = document.documentElement;
-    root.classList.add('theme-switching');
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
-  };
+  // Coerce any stale "light" preference from before the lock existed.
+  useEffect(() => {
+    if (mounted && resolvedTheme === 'light') setTheme('dark');
+  }, [mounted, resolvedTheme, setTheme]);
+
+  // Light mode is locked — every click just roasts the visitor instead of switching.
+  const toggleTheme = () => { triggerRoast(); };
 
   const handleHome = () => {
     if (page !== 'home') goHome();
@@ -142,9 +143,38 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
               <span className="hidden sm:inline">Ask me</span>
             </button>
 
-            {/* Theme toggle */}
-            <div className="px-1 text-neutral-400 dark:text-neutral-500">
+            {/* Theme toggle — light mode is locked, clicking just roasts you (message shows next to the profile picture on Home, or here on other pages) */}
+            <div className="relative px-1 text-neutral-400 dark:text-neutral-500">
               <AnimatedThemeToggler isDark={resolvedTheme === 'dark'} onToggle={toggleTheme} />
+
+              {page !== 'home' && (
+                <AnimatePresence>
+                  {roast && (
+                    <motion.div
+                      key={roast.id}
+                      initial={{ opacity: 0, y: 'calc(-50% + 8px)', scale: 0.85, rotate: 3 }}
+                      animate={{ opacity: 1, y: '-50%', scale: 1, rotate: 0 }}
+                      exit={{ opacity: 0, y: '-50%', scale: 0.9 }}
+                      transition={{ type: 'spring', stiffness: 460, damping: 24 }}
+                      className="absolute z-30 w-[min(220px,70vw)] px-4.5 py-3.5 left-full top-1/2 ml-3.5
+                        bg-white/95 dark:bg-neutral-950/95
+                        backdrop-blur-xl
+                        border border-neutral-200/80 dark:border-white/[0.08]
+                        rounded-[20px]
+                        shadow-[0_2px_0_rgba(255,255,255,0.95)_inset,0_20px_48px_rgba(0,0,0,0.16)]
+                        dark:shadow-[0_1px_0_rgba(255,255,255,0.05)_inset,0_20px_48px_rgba(0,0,0,0.6)]
+                        text-[13.5px] font-semibold tracking-[-0.01em] leading-snug text-text-light dark:text-text-dark text-center
+                        pointer-events-none"
+                    >
+                      {roast.text}
+                      <span className="absolute top-1/2 -translate-y-1/2 -left-[6px] w-3.5 h-3.5
+                        bg-white/95 dark:bg-neutral-950/95
+                        border-r border-b border-neutral-200/80 dark:border-white/[0.08]
+                        rotate-[135deg]" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
             </div>
 
             {/* Admin avatar — only shown to admin */}

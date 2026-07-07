@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, ArrowRight, BookOpen, Layers, X, Hash, Command } from 'lucide-react';
+import { Search, ArrowRight, BookOpen, Layers, X, Home, FileText, Terminal } from 'lucide-react';
 import { BLOGS, PROJECTS } from '../../config/constants.tsx';
 import { useNav } from '../../App';
 
@@ -31,11 +31,25 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { openBlog, openProject, goBlog } = useNav() as any;
+  const { openBlog, openProject, goBlog, goHome, goProjects, openResume, goDSA } = useNav() as any;
+
+  const QUICK_ACTIONS = [
+    { icon: Home,     label: 'Home',       shortcut: 'G', action: goHome },
+    { icon: Layers,   label: 'Projects',   shortcut: 'P', action: goProjects },
+    { icon: BookOpen, label: 'Blog',       shortcut: 'B', action: goBlog },
+    { icon: FileText, label: 'Resume',     shortcut: 'R', action: openResume },
+    { icon: Terminal, label: 'DSA Sheet',  shortcut: 'S', action: goDSA },
+  ];
+
+  const actions = query.trim().length > 0
+    ? QUICK_ACTIONS.filter(a => a.label.toLowerCase().includes(query.toLowerCase()))
+    : QUICK_ACTIONS;
 
   const results = query.trim().length > 0
     ? ALL_RESULTS.map(r => ({ ...r, s: score(r, query) })).filter(r => r.s > 0).sort((a, b) => b.s - a.s)
     : ALL_RESULTS.slice(0, 6);
+
+  const total = actions.length + results.length;
 
   useEffect(() => { if (isOpen) { setQuery(''); setSelected(0); setTimeout(() => inputRef.current?.focus(), 50); } }, [isOpen]);
   useEffect(() => { setSelected(0); }, [query]);
@@ -52,17 +66,22 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
     }
   }, [onClose, openBlog, openProject, goBlog]);
 
+  const activate = useCallback((index: number) => {
+    if (index < actions.length) { onClose(); actions[index].action(); }
+    else { pick(results[index - actions.length]); }
+  }, [actions, results, onClose, pick]);
+
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown') { e.preventDefault(); setSelected(s => Math.min(s + 1, results.length - 1)); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setSelected(s => Math.min(s + 1, total - 1)); }
       if (e.key === 'ArrowUp') { e.preventDefault(); setSelected(s => Math.max(s - 1, 0)); }
-      if (e.key === 'Enter' && results[selected]) pick(results[selected]);
+      if (e.key === 'Enter' && total > 0) activate(selected);
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [isOpen, results, selected, pick, onClose]);
+  }, [isOpen, total, selected, activate, onClose]);
 
   const hi = (text: string, q: string) => {
     if (!q.trim()) return <>{text}</>;
@@ -124,32 +143,70 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
               {/* Results */}
               <div className="py-1.5 max-h-80 overflow-y-auto">
-                {results.length === 0 ? (
+                {total === 0 ? (
                   <p className="text-[13px] text-neutral-400 dark:text-neutral-600 text-center py-10">No results for "{query}"</p>
                 ) : (
-                  results.map((item, i) => (
-                    <button
-                      key={item.id}
-                      onMouseEnter={() => setSelected(i)}
-                      onClick={() => pick(item)}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                        selected === i ? 'bg-neutral-100 dark:bg-white/[0.06]' : ''
-                      }`}
-                    >
-                      <div className={`w-7 h-7 rounded-[9px] flex items-center justify-center shrink-0 border ${
-                        item.type === 'blog'
-                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-800/40'
-                          : 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border-sky-200/60 dark:border-sky-800/40'
-                      }`}>
-                        {item.type === 'blog' ? <BookOpen size={12} strokeWidth={1.8} /> : <Layers size={12} strokeWidth={1.8} />}
+                  <>
+                    {actions.length > 0 && (
+                      <div className="pb-1">
+                        <p className="px-4 pt-1 pb-1.5 text-[10px] font-mono uppercase tracking-wider text-neutral-400 dark:text-neutral-600">Quick actions</p>
+                        {actions.map((item, i) => (
+                          <button
+                            key={item.label}
+                            onMouseEnter={() => setSelected(i)}
+                            onClick={() => activate(i)}
+                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                              selected === i ? 'bg-neutral-100 dark:bg-white/[0.06]' : ''
+                            }`}
+                          >
+                            <div className="w-7 h-7 rounded-[9px] flex items-center justify-center shrink-0 border
+                              bg-neutral-50 dark:bg-white/[0.04] text-neutral-500 dark:text-neutral-400
+                              border-neutral-200/60 dark:border-white/[0.06]">
+                              <item.icon size={13} strokeWidth={1.8} />
+                            </div>
+                            <span className="flex-1 text-[13px] font-medium text-neutral-800 dark:text-neutral-100">{item.label}</span>
+                            <kbd className="text-[9px] font-mono px-1.5 py-0.5 rounded-md bg-white dark:bg-white/[0.06] border border-neutral-200/60 dark:border-white/[0.06] text-neutral-400 dark:text-neutral-500">
+                              {item.shortcut}
+                            </kbd>
+                          </button>
+                        ))}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-medium text-neutral-800 dark:text-neutral-100 truncate">{hi(item.title, query)}</p>
-                        <p className="text-[11px] text-neutral-400 dark:text-neutral-500 truncate">{item.description}</p>
+                    )}
+
+                    {results.length > 0 && (
+                      <div>
+                        {actions.length > 0 && (
+                          <p className="px-4 pt-2 pb-1.5 text-[10px] font-mono uppercase tracking-wider text-neutral-400 dark:text-neutral-600">Content</p>
+                        )}
+                        {results.map((item, i) => {
+                          const idx = actions.length + i;
+                          return (
+                            <button
+                              key={item.id}
+                              onMouseEnter={() => setSelected(idx)}
+                              onClick={() => pick(item)}
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                                selected === idx ? 'bg-neutral-100 dark:bg-white/[0.06]' : ''
+                              }`}
+                            >
+                              <div className={`w-7 h-7 rounded-[9px] flex items-center justify-center shrink-0 border ${
+                                item.type === 'blog'
+                                  ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200/60 dark:border-emerald-800/40'
+                                  : 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 border-sky-200/60 dark:border-sky-800/40'
+                              }`}>
+                                {item.type === 'blog' ? <BookOpen size={12} strokeWidth={1.8} /> : <Layers size={12} strokeWidth={1.8} />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] font-medium text-neutral-800 dark:text-neutral-100 truncate">{hi(item.title, query)}</p>
+                                <p className="text-[11px] text-neutral-400 dark:text-neutral-500 truncate">{item.description}</p>
+                              </div>
+                              {selected === idx && <ArrowRight size={12} className="text-neutral-400 shrink-0" />}
+                            </button>
+                          );
+                        })}
                       </div>
-                      {selected === i && <ArrowRight size={12} className="text-neutral-400 shrink-0" />}
-                    </button>
-                  ))
+                    )}
+                  </>
                 )}
               </div>
 
