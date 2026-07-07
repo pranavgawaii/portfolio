@@ -224,7 +224,7 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
                       </div>
                       {/* Dashboard */}
                       <button
-                        onClick={() => { (goAdmin as any)?.(); setUserMenuOpen(false); }}
+                        onClick={() => { goAdmin(); setUserMenuOpen(false); }}
                         className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium
                           text-neutral-600 dark:text-neutral-300
                           hover:bg-neutral-50 dark:hover:bg-white/[0.04]

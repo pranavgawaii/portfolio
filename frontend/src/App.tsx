@@ -93,7 +93,9 @@ const Sec = ({ id, title, children }: { id: string; title: string; children: Rea
 );
 
 // ─── Home page ────────────────────────────────────────────────────────────────
-const HomePage: React.FC<{ openProject: (p: ProjectItem) => void }> = ({ openProject }) => (
+const HomePage: React.FC<{ openProject: (p: ProjectItem) => void }> = ({ openProject }) => {
+  const { goProjects } = useNav();
+  return (
   <>
     {/* Hero */}
     <section id="home" className="mb-14">
@@ -119,7 +121,7 @@ const HomePage: React.FC<{ openProject: (p: ProjectItem) => void }> = ({ openPro
         </div>
         <div className="mt-5 flex justify-center">
           <button
-            onClick={() => (window as any).__goProjects?.()}
+            onClick={goProjects}
             className="text-sm text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark transition-colors underline underline-offset-4 decoration-dashed"
           >
             Show all projects →
@@ -158,7 +160,8 @@ const HomePage: React.FC<{ openProject: (p: ProjectItem) => void }> = ({ openPro
     {/* Quote */}
     <Suspense fallback={null}><QuotesCTA /></Suspense>
   </>
-);
+  );
+};
 
 import { ClerkProvider } from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
@@ -283,10 +286,6 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     track({ type: 'blog_open', slug: b.slug, title: b.title });
   };
-
-  // expose for the "Show all" buttons inside HomePage
-  (window as any).__goProjects = goProjects;
-  (window as any).__goBlog = goBlog;
 
   // Related post navigation from BlogPostPage
   useEffect(() => {

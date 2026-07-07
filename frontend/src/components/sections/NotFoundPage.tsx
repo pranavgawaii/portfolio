@@ -4,7 +4,7 @@ import { useNav } from '../../App';
 import { ArrowLeft } from 'lucide-react';
 
 const NotFoundPage: React.FC = () => {
-  const { goHome } = useNav() as any;
+  const { goHome } = useNav();
   return (
     <div className="w-full min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
       <motion.div

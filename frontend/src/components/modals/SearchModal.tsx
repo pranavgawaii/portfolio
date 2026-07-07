@@ -31,7 +31,7 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { openBlog, openProject, goBlog, goHome, goProjects, openResume, goDSA } = useNav() as any;
+  const { openBlog, openProject, goBlog, goHome, goProjects, openResume, goDSA } = useNav();
 
   const QUICK_ACTIONS = [
     { icon: Home,     label: 'Home',       shortcut: 'G', action: goHome },

@@ -9,7 +9,7 @@ const Hero: React.FC = () => {
   const [showContact, setShowContact] = useState(false);
   const [showZoom, setShowZoom]       = useState(false);
   const [mounted, setMounted]         = useState(false);
-  const { openResume, roast } = useNav() as any;
+  const { openResume, roast } = useNav();
 
   useEffect(() => { setMounted(true); }, []);
 

@@ -1,9 +1,8 @@
 import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, path.resolve(__dirname, '..'), '');
+export default defineConfig(() => {
   return {
     envDir: path.resolve(__dirname, '..'),
     server: {
@@ -32,10 +31,6 @@ export default defineConfig(({ mode }) => {
       }
     },
     plugins: [react()],
-    define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
@@ -45,9 +40,11 @@ export default defineConfig(({ mode }) => {
       outDir: 'build',
       rollupOptions: {
         output: {
+          // Firebase isn't chunked here — the frontend never imports lib/firebase.js;
+          // it's only reached from the backend (backend/index.js dynamically imports
+          // it at runtime for Firestore writes, outside the Vite build entirely).
           manualChunks: {
             vendor: ['react', 'react-dom'],
-            firebase: ['firebase/app', 'firebase/analytics'],
             ui: ['lucide-react', 'react-snowfall', 'react-github-calendar']
           }
         }

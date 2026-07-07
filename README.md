@@ -1,87 +1,132 @@
-# 🚀 Portfolio - Pranav Gawai
+# Pranav Gawai — Portfolio
 
-A premium, modern personal portfolio engineered with **React 19**, **TypeScript**, and **Tailwind CSS**. Designed for performance, accessibility, and visual excellence.
+Personal portfolio and blog for [Pranav Gawai](https://pranavx.in), built with React 19, TypeScript, and Tailwind CSS. Includes a Node.js backend for AI chat, live analytics, and blog comments/reactions.
 
-![License](https://img.shields.io/github/license/pranavgawaii/portfolio?style=flat-square)
 ![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=flat-square&logo=tailwind-css)
 
-## ✨ key Features
+## Features
 
-- **Live Integrations**: Real-time LeetCode activity visualizations.
-- **Dynamic UX**: Responsive design with liquid transitions, motion-enhanced interactions, and adaptive dark mode.
-- **Modular Architecture**: Component-driven development with a clear separation of concerns.
-- **Micro-Services**: Lightweight Node.js proxy server for API orchestration and secure state management.
-- **Optimized Performance**: Lazy loading, asset optimization, and minimal bundle size.
+- **Home** — hero, experience timeline, project highlights, tech stack marquee, GitHub activity heatmap, education, and about sections.
+- **Projects** — full project list with tech stack, links, and a detail view per project.
+- **Blog** — posts with threaded comments and emoji reactions, gated behind Clerk auth for posting.
+- **DSA Sheet** — progress tracker for the Striver SDE Sheet with per-topic breakdowns.
+- **Resume** — inline PDF viewer sized to the document, no scroll needed to see the full page.
+- **Ask Me** — an AI voice/text assistant (Groq-backed) that answers questions about Pranav using a local knowledge base, with Web Speech API support for voice input.
+- **Cmd+K search** — a command palette with quick navigation actions (Home/Projects/Blog/Resume/DSA Sheet, each with a keyboard shortcut) plus fuzzy search over blog posts and projects.
+- **Admin dashboard** — Clerk-gated view for managing comments and viewing site analytics.
+- Dark mode only, by design — the theme toggle is intentionally locked (see `App.tsx` / `Navbar.tsx` if you're curious why).
 
-## 🛠️ Technology Stack
+## Tech stack
 
-| Category | Tools |
+| Layer | Tools |
 | :--- | :--- |
-| **Frontend** | React 19, TypeScript, motion/react (formerly Framer Motion) |
-| **Styling** | Tailwind CSS, Lucide Icons, Glassmorphism UI |
-| **Backend** | Node.js (Proxy Server), Vercel Serverless Functions |
-| **Services** | LeetCode GraphQL API, Firebase Firestore |
-| **Tooling** | Vite, PostCSS, ESLint, npm |
+| Frontend | React 19, TypeScript, Vite 6, Tailwind CSS, motion (Framer Motion) |
+| Auth | Clerk |
+| Data | Firebase Firestore (analytics, visitor logs), flat JSON files (comments, reactions) |
+| AI | Groq SDK (chat completions), Web Speech API (voice input) |
+| Backend | Node.js (`http` module, no framework) |
+| Icons | Lucide |
 
-## 📂 Project Structure
+## Project structure
 
 ```text
-├── core/               # Production Serverless Functions (Vercel)
-├── static/             # Static assets (images, fonts, resume)
-├── gateway/            # Local Development API Proxy
-├── web/
-│   ├── components/
-│   │   ├── features/   # Logic-heavy components (Projects)
-│   │   ├── icons/      # Custom SVG components
-│   │   ├── layout/     # Structural components (Navbar, Footer, Preloader)
-│   │   ├── sections/   # Page-level section components (Hero, About, Contact)
-│   │   └── ui/         # Reusable design primitives (Buttons, Cards, Badges)
-│   ├── config/         # App configuration and constants
-│   ├── lib/            # Third-party service initializations (Firebase)
-│   ├── types/          # TypeScript definitions and global interfaces
-│   ├── App.tsx         # Main Application Orchestrator
-│   └── globals.css     # Global Design System and Tailwind Directives
-└── vite.config.ts      # Build and Dev Server Configuration
+.
+├── backend/                  # Node HTTP server — AI chat, LeetCode proxy, comments/reactions, analytics
+│   └── index.js
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── features/     # Logic-heavy components (ExperienceCard, ProjectCard, ...)
+│   │   │   ├── layout/       # Navbar, Footer, Preloader
+│   │   │   ├── modals/       # Search, Contact, Ask Me, Blog/Project modals
+│   │   │   ├── sections/     # Page-level sections (Hero, ProjectsPage, BlogPage, DSAPage, ...)
+│   │   │   └── ui/           # Reusable primitives (Card, Badge, ProgressiveImage, ...)
+│   │   ├── config/           # Site content and constants (profile, projects, experience, DSA sheet data)
+│   │   ├── hooks/            # useGroqChat, useSpeechRecognition, useAnalytics
+│   │   ├── lib/               # Firebase init, API base URL resolution, small utilities
+│   │   ├── types/
+│   │   ├── App.tsx           # Routing, nav context, global keyboard shortcuts
+│   │   └── globals.css       # Design tokens and Tailwind directives
+│   └── vite.config.ts
+└── package.json               # npm workspaces root (frontend + backend)
 ```
 
-## 🚀 Getting Started
+## Getting started
 
 ### Prerequisites
 
-- Node.js (v20 or higher)
-- npm or pnpm
+- Node.js 20+
+- npm
 
-### Installation
+### Install
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/pranavgawaii/portfolio.git
-   cd portfolio
-   ```
+```bash
+git clone https://github.com/pranavgawaii/portfolio.git
+cd portfolio
+npm install
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### Environment variables
 
-3. **Configure Environment Variables**
-   Create a `.env` file in the root directory:
-   ```env
-   # Add Firebase and other service keys as required
-   ```
+Create a `.env` file at the repo root:
 
-4. **Launch Development Environment**
-   ```bash
-   npm run dev
-   ```
-   *This starts the API Proxy on port 3001 and the Frontend on port 3000.*
+```env
+# Groq (Ask Me chat)
+GROQ_API_KEY=
 
-## 📄 License
+# Clerk (auth — comments, admin dashboard)
+VITE_CLERK_PUBLISHABLE_KEY=
 
-This project is licensed under the [MIT License](LICENSE).
+# Firebase (Firestore — analytics, visitor logs)
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+
+# Optional — only needed if the backend is deployed at a different origin
+# than the frontend in production
+VITE_API_URL=
+```
+
+### Run
+
+```bash
+npm run dev
+```
+
+This runs the frontend (Vite, `:3002`) and backend (`:3001`) together via npm workspaces. To run just one:
+
+```bash
+npm run dev -w frontend
+npm run dev -w backend
+```
+
+### Build
+
+```bash
+npm run build     # frontend production build, output to frontend/build
+npm run preview   # serve the production build locally
+```
+
+## Known gaps
+
+Kept here instead of pretending they don't exist:
+
+- **No automated tests.** Neither frontend nor backend has test coverage today.
+- **Comments and reactions persist to flat JSON files** (`backend/comments.json`, `backend/reactions.json`) rather than a database. Analytics and visitor logs already run through Firestore; comments/reactions are the remaining piece of that migration.
+- **TypeScript `strict` mode is off.** `tsconfig.json` doesn't set `"strict": true`, and `npx tsc --noEmit` currently surfaces a handful of pre-existing type errors unrelated to any specific feature. Worth tackling as a dedicated pass rather than folding into unrelated changes.
+- A few installed dependencies (`@giscus/react`, `react-activity-calendar`) aren't imported anywhere in the source — safe to remove next time `package.json` is touched.
+
+## License
+
+No license file is currently included — all rights reserved by default. Add a `LICENSE` file if you want to permit reuse.
 
 ---
 
-> Built with 🖤 by **[Pranav Gawai](https://github.com/pranavgawaii)**
+Built by [Pranav Gawai](https://github.com/pranavgawaii) · [pranavx.in](https://pranavx.in)

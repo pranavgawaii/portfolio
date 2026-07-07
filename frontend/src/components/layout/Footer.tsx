@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
 
 const Footer: React.FC = () => {
-  const { goHome, goProjects, goBlog, goAdmin } = useNav() as any;
+  const { goHome, goProjects, goBlog, goAdmin } = useNav();
   const { user } = useUser();
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
   const [githubHover, setGithubHover] = useState(false);
