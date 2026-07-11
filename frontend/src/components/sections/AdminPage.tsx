@@ -9,7 +9,8 @@ import {
   BarChart2, LogOut, ChevronRight,
 } from 'lucide-react';
 
-const ADMIN_EMAIL = 'pranvgg@gmail.com';
+const ADMIN_CLERK_ID = 'user_3FlAhDnbr2HQ7H9yL7jlUuxiSu4';
+
 import { API_BASE as API } from '../../lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -90,7 +91,7 @@ const AdminPage: React.FC = () => {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [healthLatency, setHealthLatency] = useState<number | null>(null);
 
-  const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
+  const isAdmin = user?.id === ADMIN_CLERK_ID;
 
   const fetchComments = useCallback(async () => {
     setLoadingComments(true);
