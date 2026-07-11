@@ -1,5 +1,21 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
+import { getVerifiedUserId } from './_lib/admin.js';
+
+function countsFromVotes(votes) {
+  const counts = {};
+  for (const [emoji, userIds] of Object.entries(votes || {})) {
+    counts[emoji] = (userIds || []).length;
+  }
+  return counts;
+}
+
+function myVotesFromVotes(votes, userId) {
+  if (!userId) return [];
+  return Object.entries(votes || {})
+    .filter(([, userIds]) => (userIds || []).includes(userId))
+    .map(([emoji]) => emoji);
+}
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
@@ -13,21 +29,31 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      const userId = await getVerifiedUserId(req);
       const doc = await reactions.findOne({ slug });
-      res.status(200).json(doc?.counts || {});
+      const votes = doc?.votes || {};
+      res.status(200).json({ counts: countsFromVotes(votes), myVotes: myVotesFromVotes(votes, userId) });
       return;
     }
 
     if (req.method === 'POST') {
-      const { emoji, action } = req.body || {};
+      const userId = await getVerifiedUserId(req);
+      if (!userId) { res.status(401).json({ error: 'Sign in required to react' }); return; }
+
+      const { emoji } = req.body || {};
       if (!emoji) { res.status(400).json({ error: 'Missing emoji' }); return; }
 
       const doc = await reactions.findOne({ slug });
-      const counts = doc?.counts || {};
-      counts[emoji] = Math.max(0, (counts[emoji] || 0) + (action === 'add' ? 1 : -1));
+      const votes = doc?.votes || {};
+      const current = new Set(votes[emoji] || []);
 
-      await reactions.updateOne({ slug }, { $set: { slug, counts } }, { upsert: true });
-      res.status(200).json(counts);
+      // Server decides add vs. remove from current membership — never trusts
+      // a client-supplied action, so it can't be replayed to double-vote.
+      if (current.has(userId)) current.delete(userId); else current.add(userId);
+      votes[emoji] = [...current];
+
+      await reactions.updateOne({ slug }, { $set: { slug, votes } }, { upsert: true });
+      res.status(200).json({ counts: countsFromVotes(votes), myVotes: myVotesFromVotes(votes, userId) });
       return;
     }
 

@@ -86,6 +86,7 @@ interface Comment {
   clerkUserId: string;
   isAdmin?: boolean;
   timestamp: string;
+  likedBy?: string[];
   replies?: Comment[];
 }
 
@@ -123,9 +124,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   const [replySubmitting, setReplySubmitting] = useState<string | null>(null);
-  // local like state: maps commentId/replyId → liked bool + count
-  type LikeState = { count: number; liked: boolean };
-  const [likes, setLikes] = useState<Record<string, LikeState>>({});
+  const [likePending, setLikePending] = useState<string | null>(null);
 
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
 
@@ -135,16 +134,6 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
       if (res.ok) {
         const data: Comment[] = await res.json();
         setComments(data);
-        // seed like counts from stored likes in localStorage
-        const stored: Record<string, { count: number; liked: boolean }> = {};
-        const savedLikes: string[] = JSON.parse(localStorage.getItem(`likes-${slug}`) || '[]');
-        data.forEach(c => {
-          stored[c.id] = { count: (c as any).likes || 0, liked: savedLikes.includes(c.id) };
-          (c.replies || []).forEach(r => {
-            stored[r.id] = { count: (r as any).likes || 0, liked: savedLikes.includes(r.id) };
-          });
-        });
-        setLikes(stored);
       } else {
         console.error('[comments] fetch failed:', res.status);
       }
@@ -206,16 +195,35 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
     }
   };
 
-  const handleLike = (id: string) => {
-    setLikes(l => {
-      const cur = l[id] || { count: 0, liked: false };
-      const next = { count: cur.liked ? cur.count - 1 : cur.count + 1, liked: !cur.liked };
-      const updated = { ...l, [id]: next };
-      // persist to localStorage
-      const savedLikes = Object.entries(updated).filter(([, v]) => (v as LikeState).liked).map(([k]) => k);
-      localStorage.setItem(`likes-${slug}`, JSON.stringify(savedLikes));
-      return updated;
-    });
+  const handleLike = async (commentId: string, parentId?: string) => {
+    if (!isSignedIn) { openSignIn(); return; }
+    if (likePending) return;
+    setLikePending(commentId);
+    try {
+      const token = await getToken();
+      const res = await fetch(`${API}/api/comments/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ slug, commentId, parentId }),
+      });
+      if (res.ok) {
+        const { liked, count } = await res.json();
+        setComments(prev => prev.map(c => {
+          if (parentId) {
+            if (c.id !== parentId) return c;
+            return { ...c, replies: (c.replies || []).map(r => r.id === commentId ? { ...r, likedBy: liked ? [...(r.likedBy || []), user!.id] : (r.likedBy || []).filter(id => id !== user!.id) } : r) };
+          }
+          if (c.id !== commentId) return c;
+          return { ...c, likedBy: liked ? [...(c.likedBy || []), user!.id] : (c.likedBy || []).filter(id => id !== user!.id) };
+        }));
+        void count;
+      } else {
+        console.error('[comments] like failed:', res.status);
+      }
+    } catch (err) {
+      console.error('[comments] like error:', err);
+    }
+    setLikePending(null);
   };
 
   const canDelete = (c: Comment) => isAdmin || c.clerkUserId === user?.id;
@@ -342,12 +350,14 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
                       <motion.button
                         whileTap={{ scale: 0.85 }}
                         onClick={() => handleLike(c.id)}
-                        className={`flex items-center gap-1 text-[11px] transition-colors ${
-                          likes[c.id]?.liked ? 'text-blue-500' : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                        disabled={likePending === c.id}
+                        title={isSignedIn ? undefined : 'Sign in to like'}
+                        className={`flex items-center gap-1 text-[11px] transition-colors disabled:opacity-60 ${
+                          c.likedBy?.includes(user?.id || '') ? 'text-blue-500' : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
                         }`}
                       >
-                        <ThumbsUp size={11} className={likes[c.id]?.liked ? 'fill-current' : ''} strokeWidth={1.8} />
-                        {(likes[c.id]?.count || 0) > 0 && <span className="font-mono">{likes[c.id]?.count}</span>}
+                        <ThumbsUp size={11} className={c.likedBy?.includes(user?.id || '') ? 'fill-current' : ''} strokeWidth={1.8} />
+                        {(c.likedBy?.length || 0) > 0 && <span className="font-mono">{c.likedBy?.length}</span>}
                       </motion.button>
 
                       {/* Reply button */}
@@ -409,13 +419,15 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
                                 {/* Like reply */}
                                 <motion.button
                                   whileTap={{ scale: 0.85 }}
-                                  onClick={() => handleLike(r.id)}
-                                  className={`flex items-center gap-1 text-[11px] transition-colors ${
-                                    likes[r.id]?.liked ? 'text-blue-500' : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+                                  onClick={() => handleLike(r.id, c.id)}
+                                  disabled={likePending === r.id}
+                                  title={isSignedIn ? undefined : 'Sign in to like'}
+                                  className={`flex items-center gap-1 text-[11px] transition-colors disabled:opacity-60 ${
+                                    r.likedBy?.includes(user?.id || '') ? 'text-blue-500' : 'text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
                                   }`}
                                 >
-                                  <ThumbsUp size={10} className={likes[r.id]?.liked ? 'fill-current' : ''} strokeWidth={1.8} />
-                                  {(likes[r.id]?.count || 0) > 0 && <span className="font-mono">{likes[r.id]?.count}</span>}
+                                  <ThumbsUp size={10} className={r.likedBy?.includes(user?.id || '') ? 'fill-current' : ''} strokeWidth={1.8} />
+                                  {(r.likedBy?.length || 0) > 0 && <span className="font-mono">{r.likedBy?.length}</span>}
                                 </motion.button>
                                 {canDelete(r) && (
                                   <button onClick={() => handleDelete(r.id, c.id)} className="flex items-center gap-1 text-[11px] text-red-400 hover:text-red-500 transition-colors">

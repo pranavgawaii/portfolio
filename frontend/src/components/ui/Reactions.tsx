@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 import { ThumbsUp, Flame, Lightbulb, Heart } from 'lucide-react';
 
 import { API_BASE as API } from '../../lib/api';
@@ -16,40 +17,62 @@ type ReactionKey = typeof REACTIONS[number]['key'];
 interface Props { slug: string }
 
 const Reactions: React.FC<Props> = ({ slug }) => {
+  const { isSignedIn } = useUser();
+  const { openSignIn } = useClerk();
+  const { getToken } = useAuth();
+
   const [counts, setCounts] = useState<Record<ReactionKey, number>>({} as Record<ReactionKey, number>);
-  const [voted, setVoted] = useState<Set<ReactionKey>>(() => {
-    try { return new Set(JSON.parse(localStorage.getItem(`reactions-${slug}`) || '[]') as ReactionKey[]); }
-    catch { return new Set(); }
-  });
+  const [voted, setVoted] = useState<Set<ReactionKey>>(new Set());
   const [burst, setBurst] = useState<ReactionKey | null>(null);
   const [tooltip, setTooltip] = useState<ReactionKey | null>(null);
+  const [pending, setPending] = useState<ReactionKey | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/api/reactions?slug=${encodeURIComponent(slug)}`)
-      .then(r => r.ok ? r.json() : {})
-      .then(setCounts)
-      .catch(() => {});
-  }, [slug]);
+    (async () => {
+      try {
+        const token = isSignedIn ? await getToken() : null;
+        const res = await fetch(`${API}/api/reactions?slug=${encodeURIComponent(slug)}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        setCounts(data.counts || {});
+        setVoted(new Set((data.myVotes || []) as ReactionKey[]));
+      } catch (err) {
+        console.error('[reactions] fetch error:', err);
+      }
+    })();
+  }, [slug, isSignedIn]);
 
   const toggle = async (key: ReactionKey) => {
+    if (!isSignedIn) {
+      openSignIn();
+      return;
+    }
+    if (pending) return;
+    setPending(key);
+
     const alreadyVoted = voted.has(key);
-    const action = alreadyVoted ? 'remove' : 'add';
-    setCounts(c => ({ ...c, [key]: Math.max(0, (c[key] || 0) + (alreadyVoted ? -1 : 1)) }));
-    const next = new Set(voted);
-    alreadyVoted ? next.delete(key) : next.add(key);
-    setVoted(next);
-    localStorage.setItem(`reactions-${slug}`, JSON.stringify([...next]));
     if (!alreadyVoted) { setBurst(key); setTimeout(() => setBurst(null), 500); }
+
     try {
+      const token = await getToken();
       const res = await fetch(`${API}/api/reactions?slug=${encodeURIComponent(slug)}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emoji: key, action }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ emoji: key }),
       });
-      if (res.ok) setCounts(await res.json());
-      else console.error('[reactions] toggle failed:', res.status);
+      if (res.ok) {
+        const data = await res.json();
+        setCounts(data.counts || {});
+        setVoted(new Set((data.myVotes || []) as ReactionKey[]));
+      } else {
+        console.error('[reactions] toggle failed:', res.status);
+      }
     } catch (err) {
       console.error('[reactions] toggle error:', err);
     }
+    setPending(null);
   };
 
   const total = (Object.values(counts) as number[]).reduce((a: number, b: number) => a + b, 0);
@@ -78,7 +101,7 @@ const Reactions: React.FC<Props> = ({ slug }) => {
                     className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap
                       bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 pointer-events-none z-10"
                   >
-                    {label}
+                    {isSignedIn ? label : 'Sign in to react'}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -102,7 +125,8 @@ const Reactions: React.FC<Props> = ({ slug }) => {
                 onMouseEnter={() => setTooltip(key)}
                 onMouseLeave={() => setTooltip(null)}
                 onClick={() => toggle(key)}
-                className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl border transition-all duration-200 ${
+                disabled={pending === key}
+                className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl border transition-all duration-200 disabled:opacity-60 ${
                   active
                     ? `${activeBg} ${activeColor}`
                     : 'border-neutral-200 dark:border-neutral-800 text-neutral-400 dark:text-neutral-600 hover:border-neutral-300 dark:hover:border-neutral-700 hover:text-neutral-600 dark:hover:text-neutral-400 bg-transparent'

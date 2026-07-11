@@ -39,6 +39,7 @@ export default async function handler(req, res) {
         isAdmin: verifiedAdmin,
         timestamp: new Date().toISOString(),
         replies: [],
+        likedBy: [],
       };
 
       const doc = await comments.findOne({ slug });
