@@ -42,7 +42,10 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          dsa: path.resolve(__dirname, 'dsa.html')
+          dsa: path.resolve(__dirname, 'dsa.html'),
+          projects: path.resolve(__dirname, 'projects.html'),
+          resume: path.resolve(__dirname, 'resume.html'),
+          blog: path.resolve(__dirname, 'blog.html')
         },
         output: {
           manualChunks: {

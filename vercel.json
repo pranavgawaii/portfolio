@@ -12,6 +12,18 @@
             "destination": "/dsa.html"
         },
         {
+            "source": "/projects",
+            "destination": "/projects.html"
+        },
+        {
+            "source": "/resume",
+            "destination": "/resume.html"
+        },
+        {
+            "source": "/blog",
+            "destination": "/blog.html"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
