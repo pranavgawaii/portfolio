@@ -1,5 +1,7 @@
 {
-    "outputDirectory": "frontend/build",
+    "outputDirectory": "frontend/dist",
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
     "rewrites": [
         {
             "source": "/(.*)",

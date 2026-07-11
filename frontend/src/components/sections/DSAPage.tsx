@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ExternalLink, Github, CheckCircle2, ChevronDown, Check } from 'lucide-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
+import { ExternalLink, Github, CheckCircle2, ChevronDown, Check, Lock } from 'lucide-react';
 import { STRIVER_SHEET } from '../../config/striverSheet';
+import { API_BASE as API } from '../../lib/api';
 
 const REPO_URL  = 'https://github.com/pranavgawaii/Striver-SDE-Sheet';
 const SHEET_URL = 'https://takeuforward.org/dsa/strivers-sde-sheet-top-coding-interview-problems';
+const ADMIN_EMAIL = 'pranvgg@gmail.com';
 
 interface Props { onBack?: () => void }
 
@@ -15,36 +18,44 @@ const difficultyColors = {
 };
 
 const DSAPage: React.FC<Props> = () => {
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
+
   const [submittedIds, setSubmittedIds] = useState<Set<string>>(new Set());
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
-  // Load from local storage on mount
+  // This sheet reflects Pranav's own solving progress — everyone can see it,
+  // only the admin account can check problems off.
   useEffect(() => {
-    const saved = localStorage.getItem('striver_sde_progress');
-    if (saved) {
-      try {
-        const ids = JSON.parse(saved);
-        if (Array.isArray(ids)) {
-          setSubmittedIds(new Set(ids));
-        }
-      } catch (e) {
-        console.error('Failed to parse progress', e);
-      }
-    }
+    fetch(`${API}/api/dsa-progress`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data.solvedIds)) setSubmittedIds(new Set(data.solvedIds));
+      })
+      .catch(err => console.error('Failed to load DSA progress', err))
+      .finally(() => setLoaded(true));
   }, []);
 
-  const toggleProblem = (id: string, e: React.MouseEvent) => {
+  const toggleProblem = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSubmittedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      localStorage.setItem('striver_sde_progress', JSON.stringify(Array.from(next)));
-      return next;
-    });
+    if (!isAdmin) return;
+
+    const next = new Set(submittedIds);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setSubmittedIds(next);
+
+    try {
+      const token = await getToken();
+      await fetch(`${API}/api/dsa-progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ solvedIds: Array.from(next) }),
+      });
+    } catch (err) {
+      console.error('Failed to save DSA progress', err);
+    }
   };
 
   // Calculate stats
@@ -84,9 +95,14 @@ const DSAPage: React.FC<Props> = () => {
         <h1 className="font-sans font-bold text-3xl sm:text-4xl text-text-light dark:text-text-dark tracking-tight mb-4">
           Striver SDE Sheet
         </h1>
-        <p className="text-base text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-6">
+        <p className="text-base text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-2">
           Solving one problem daily from the Striver SDE Sheet. Code and notes are pushed to the repo after every session.
         </p>
+        {!isAdmin && (
+          <p className="flex items-center gap-1.5 text-xs text-text-muted-light dark:text-text-muted-dark opacity-70 mb-4">
+            <Lock size={11} /> This tracks my own progress — view only.
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-3">
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer"
@@ -101,7 +117,7 @@ const DSAPage: React.FC<Props> = () => {
       </div>
 
       {/* Main Stats with Difficulty Breakdown */}
-      <div className="mb-12">
+      <div className={`mb-12 transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-4">
           <div>
             <p className="text-xs font-mono uppercase tracking-widest text-text-muted-light dark:text-text-muted-dark mb-1">Overall Progress</p>
@@ -200,13 +216,17 @@ const DSAPage: React.FC<Props> = () => {
                             <button
                               key={prob.id}
                               onClick={(e) => toggleProblem(prob.id, e)}
-                              className="flex items-center justify-between py-2 px-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg transition-colors text-left group"
+                              disabled={!isAdmin}
+                              title={isAdmin ? undefined : 'Only Pranav can update this sheet'}
+                              className={`flex items-center justify-between py-2 px-2 rounded-lg transition-colors text-left group ${
+                                isAdmin ? 'hover:bg-neutral-100 dark:hover:bg-neutral-900 cursor-pointer' : 'cursor-default'
+                              }`}
                             >
                               <div className="flex items-center gap-3">
                                 <div className={`w-4 h-4 rounded-[4px] border flex items-center justify-center transition-colors ${
-                                  isSubmitted 
-                                    ? 'bg-emerald-500 border-emerald-500 text-white' 
-                                    : 'border-border-light dark:border-border-dark group-hover:border-neutral-400'
+                                  isSubmitted
+                                    ? 'bg-emerald-500 border-emerald-500 text-white'
+                                    : `border-border-light dark:border-border-dark ${isAdmin ? 'group-hover:border-neutral-400' : ''}`
                                 }`}>
                                   {isSubmitted && <Check size={12} strokeWidth={3} />}
                                 </div>

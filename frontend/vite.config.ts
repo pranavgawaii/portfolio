@@ -9,6 +9,7 @@ export default defineConfig(() => {
       port: 3002,
       host: '0.0.0.0',
       historyApiFallback: true,
+      // /api is served locally by `vercel dev --listen 3001` (see root package.json's "dev" script)
       proxy: {
         '/api': {
           target: 'http://localhost:3001',
@@ -40,9 +41,6 @@ export default defineConfig(() => {
       outDir: 'build',
       rollupOptions: {
         output: {
-          // Firebase isn't chunked here — the frontend never imports lib/firebase.js;
-          // it's only reached from the backend (backend/index.js dynamically imports
-          // it at runtime for Firestore writes, outside the Vite build entirely).
           manualChunks: {
             vendor: ['react', 'react-dom'],
             ui: ['lucide-react', 'react-snowfall', 'react-github-calendar']

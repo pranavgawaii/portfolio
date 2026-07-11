@@ -1,8 +1,4 @@
-const raw = import.meta.env.VITE_API_URL ?? '';
-
-// Never send requests to localhost from a production build — it triggers the
-// Chrome Private Network Access (PNA) permission prompt on real users' browsers.
-const isLocalhost = raw.includes('localhost') || raw.includes('127.0.0.1');
-const isBuild = !import.meta.env.DEV;
-
-export const API_BASE = isLocalhost && isBuild ? '' : raw || (import.meta.env.DEV ? 'http://localhost:3001' : '');
+// API routes are Vercel Serverless Functions living in the same deployment
+// as this frontend (see /api at the repo root), so calls are always relative
+// to the current origin — no separate backend host to configure or misconfigure.
+export const API_BASE = '';

@@ -27,3 +27,4 @@ debug_*.js
 backend/comments.json
 backend/analytics.json
 reactions.json
+.vercel

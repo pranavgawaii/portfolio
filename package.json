@@ -4,12 +4,17 @@
   "version": "1.0.0",
   "type": "module",
   "workspaces": [
-    "frontend",
-    "backend"
+    "frontend"
   ],
   "scripts": {
-    "dev": "npm run dev -w backend & npm run dev -w frontend",
+    "dev": "npm run dev -w frontend",
+    "dev:api": "vercel dev --listen 3001 --yes",
     "build": "npm run build -w frontend",
     "preview": "npm run preview -w frontend"
+  },
+  "dependencies": {
+    "mongodb": "^6.12.0",
+    "@clerk/backend": "^1.21.0",
+    "groq-sdk": "^1.1.1"
   }
 }
