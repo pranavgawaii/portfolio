@@ -100,66 +100,65 @@ const DSAPage: React.FC<Props> = () => {
       transition={{ duration: 0.3 }}
       className="pt-10 pb-24 max-w-content mx-auto"
     >
-      {/* Header */}
-      <div className="mb-10">
-        <h1 className="font-sans font-bold text-3xl sm:text-4xl text-text-light dark:text-text-dark tracking-tight mb-4">
+      {/* Header / Hero Section */}
+      <div className="mb-12 border-b border-border-light dark:border-border-dark pb-10">
+        <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted-light dark:text-text-muted-dark opacity-70 mb-4">
           Striver SDE Sheet
-        </h1>
-        <p className="text-base text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-2">
-          Solving one problem daily from the Striver SDE Sheet. Code and notes are pushed to the repo after every session.
         </p>
-        {!isAdmin && (
-          <p className="flex items-center gap-1.5 text-xs text-text-muted-light dark:text-text-muted-dark opacity-70 mb-4">
-            <Lock size={11} /> This tracks my own progress — view only.
-          </p>
-        )}
+        <h1 className="font-sans font-bold text-4xl sm:text-5xl text-text-light dark:text-text-dark tracking-tight mb-4">
+          Solving Every Day.
+        </h1>
+        <p className="text-base text-text-muted-light dark:text-text-muted-dark leading-relaxed mb-10 max-w-xl">
+          Working through the Striver SDE Sheet — one problem at a time. Solutions pushed to GitHub after every session.
+        </p>
 
-        <div className="flex flex-wrap gap-3">
-          <a href={REPO_URL} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border-light dark:border-border-dark text-sm font-medium text-text-light dark:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors">
-            <Github size={14} /> Solutions Repo
-          </a>
-          <a href={SHEET_URL} target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border-light dark:border-border-dark text-sm font-medium text-text-light dark:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors">
-            <ExternalLink size={14} className="text-text-muted-light dark:text-text-muted-dark" /> Original Sheet
-          </a>
-        </div>
-      </div>
-
-      {/* Main Stats with Difficulty Breakdown */}
-      <div className={`mb-12 transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-4">
-          <div>
-            <p className="text-xs font-mono uppercase tracking-widest text-text-muted-light dark:text-text-muted-dark mb-1">Overall Progress</p>
-            <div className="flex items-baseline gap-2">
-              <span className="font-sans font-bold text-2xl text-text-light dark:text-text-dark">{solved}</span>
-              <span className="text-sm text-text-muted-light dark:text-text-muted-dark">/ {total} solved</span>
-            </div>
+        {/* Progress & Stats */}
+        <div className={`transition-opacity duration-300 mb-8 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="flex items-baseline gap-2 mb-3">
+            <span className="font-sans font-bold text-4xl text-text-light dark:text-text-dark">{solved}</span>
+            <span className="text-lg text-text-muted-light dark:text-text-muted-dark">/ {total} solved</span>
+            {!isAdmin && (
+              <span className="flex items-center gap-1 text-xs text-text-muted-light dark:text-text-muted-dark ml-4 opacity-70">
+                <Lock size={12} /> View only
+              </span>
+            )}
           </div>
           
-          <div className="flex items-center gap-4 text-xs font-mono">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-[#00b8a3]"></div>
-              <span className="text-text-muted-light dark:text-text-muted-dark">Easy <span className="text-text-light dark:text-text-dark font-medium">{solvedEasy}/{totalEasy}</span></span>
+          <div className="w-full max-w-lg h-0.5 rounded-full bg-border-light dark:bg-border-dark overflow-hidden relative mb-4">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="absolute left-0 top-0 h-full bg-text-light dark:bg-text-dark"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] sm:text-xs">
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-[#00b8a3]/20 bg-[#00b8a3]/5 text-[#00b8a3]">
+              <span>Easy</span>
+              <span className="opacity-70">{solvedEasy}/{totalEasy}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-[#ffc01e]"></div>
-              <span className="text-text-muted-light dark:text-text-muted-dark">Medium <span className="text-text-light dark:text-text-dark font-medium">{solvedMedium}/{totalMedium}</span></span>
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-[#ffc01e]/20 bg-[#ffc01e]/5 text-[#ffc01e]">
+              <span>Medium</span>
+              <span className="opacity-70">{solvedMedium}/{totalMedium}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-[#ff375f]"></div>
-              <span className="text-text-muted-light dark:text-text-muted-dark">Hard <span className="text-text-light dark:text-text-dark font-medium">{solvedHard}/{totalHard}</span></span>
+            <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-md border border-[#ff375f]/20 bg-[#ff375f]/5 text-[#ff375f]">
+              <span>Hard</span>
+              <span className="opacity-70">{solvedHard}/{totalHard}</span>
             </div>
-            <span className="font-sans font-bold text-xl text-text-light dark:text-text-dark ml-2">{pct}%</span>
           </div>
         </div>
-        <div className="w-full h-1.5 rounded-full bg-border-light dark:bg-border-dark overflow-hidden relative flex">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="h-full rounded-full bg-text-light dark:bg-text-dark"
-          />
+
+        {/* Buttons */}
+        <div className="flex flex-wrap gap-3">
+          <a href={REPO_URL} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-light dark:border-border-dark text-sm font-medium text-text-light dark:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors">
+            <Github size={16} /> Solutions Repo
+          </a>
+          <a href={SHEET_URL} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border-light dark:border-border-dark text-sm font-medium text-text-light dark:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors">
+            <ExternalLink size={16} className="text-text-muted-light dark:text-text-muted-dark" /> Original Sheet
+          </a>
         </div>
       </div>
 
