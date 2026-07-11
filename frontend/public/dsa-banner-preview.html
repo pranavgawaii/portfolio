@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Minimal Banner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 50px;
+      background: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .banner {
+      width: 1200px;
+      height: 630px;
+      background-color: #100F0F;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      font-family: 'Hanken Grotesk', sans-serif;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(circle at center, #262626 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .url {
+      color: #a3a3a3;
+      font-size: 28px;
+      letter-spacing: 0.1em;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px 24px;
+      border-radius: 100px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .title {
+      color: #ededed;
+      font-size: 100px;
+      font-weight: 800;
+      margin: 0 0 20px 0;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      color: #a3a3a3;
+      font-size: 42px;
+      font-weight: 400;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="banner">
+    <div class="content">
+      <div class="url">pranavx.in/dsa</div>
+      <h1 class="title">Striver SDE Sheet</h1>
+      <p class="subtitle">Solving Every Day.</p>
+    </div>
+  </div>
+
+</body>
+</html>

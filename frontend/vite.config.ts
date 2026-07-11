@@ -40,6 +40,10 @@ export default defineConfig(() => {
     build: {
       outDir: 'build',
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          dsa: path.resolve(__dirname, 'dsa.html')
+        },
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom'],

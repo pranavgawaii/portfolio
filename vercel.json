@@ -8,6 +8,10 @@
             "destination": "/api/:path*"
         },
         {
+            "source": "/dsa",
+            "destination": "/dsa.html"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
