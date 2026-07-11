@@ -117,6 +117,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
@@ -143,8 +144,12 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
           });
         });
         setLikes(stored);
+      } else {
+        console.error('[comments] fetch failed:', res.status);
       }
-    } catch {}
+    } catch (err) {
+      console.error('[comments] fetch error:', err);
+    }
     setLoading(false);
   }, [slug]);
 
@@ -154,6 +159,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
     const body = parentId ? (replyTexts[parentId] || '') : text;
     if (!body.trim() || !isSignedIn || !user) return;
     if (parentId) setReplySubmitting(parentId); else setSubmitting(true);
+    setSubmitError(null);
     try {
       const res = await fetch(`${API}/api/comments/${slug}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -170,20 +176,30 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
         if (parentId) { setReplyTexts(t => ({ ...t, [parentId]: '' })); setReplyingTo(null); }
         else setText('');
         await fetchComments();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        console.error('[comments] submit failed:', res.status, data);
+        setSubmitError(data.error || `Failed to post comment (${res.status})`);
       }
-    } catch {}
+    } catch (err) {
+      console.error('[comments] submit error:', err);
+      setSubmitError('Network error — please try again.');
+    }
     if (parentId) setReplySubmitting(null); else setSubmitting(false);
   };
 
   const handleDelete = async (commentId: string, parentId?: string) => {
     if (!user) return;
     try {
-      await fetch(`${API}/api/comments/${slug}/delete`, {
+      const res = await fetch(`${API}/api/comments/${slug}/delete`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ commentId, parentId, clerkUserId: user.id, isAdmin }),
       });
+      if (!res.ok) console.error('[comments] delete failed:', res.status);
       await fetchComments();
-    } catch {}
+    } catch (err) {
+      console.error('[comments] delete error:', err);
+    }
   };
 
   const handleLike = (id: string) => {
@@ -266,6 +282,9 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
                   Post
                 </button>
               </div>
+              {submitError && (
+                <p className="mt-1.5 text-[11px] text-red-500 dark:text-red-400">{submitError}</p>
+              )}
             </div>
           </div>
         </div>

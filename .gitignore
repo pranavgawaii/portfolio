@@ -23,8 +23,4 @@ dist-ssr/
 *.sw?
 debug_*.js
 
-# Live comment data
-backend/comments.json
-backend/analytics.json
-reactions.json
 .vercel

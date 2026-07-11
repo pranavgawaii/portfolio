@@ -46,7 +46,10 @@ const Reactions: React.FC<Props> = ({ slug }) => {
         body: JSON.stringify({ emoji: key, action }),
       });
       if (res.ok) setCounts(await res.json());
-    } catch {}
+      else console.error('[reactions] toggle failed:', res.status);
+    } catch (err) {
+      console.error('[reactions] toggle error:', err);
+    }
   };
 
   const total = (Object.values(counts) as number[]).reduce((a: number, b: number) => a + b, 0);

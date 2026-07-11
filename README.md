@@ -1,6 +1,6 @@
 # Pranav Gawai — Portfolio
 
-Personal portfolio and blog for [Pranav Gawai](https://pranavx.in), built with React 19, TypeScript, and Tailwind CSS. Includes a Node.js backend for AI chat, live analytics, and blog comments/reactions.
+Personal portfolio and blog for [Pranav Gawai](https://pranavx.in), built with React 19, TypeScript, and Tailwind CSS. Backed by Vercel Serverless Functions and MongoDB for AI chat, live analytics, and blog comments/reactions.
 
 ![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
@@ -12,7 +12,7 @@ Personal portfolio and blog for [Pranav Gawai](https://pranavx.in), built with R
 - **Home** — hero, experience timeline, project highlights, tech stack marquee, GitHub activity heatmap, education, and about sections.
 - **Projects** — full project list with tech stack, links, and a detail view per project.
 - **Blog** — posts with threaded comments and emoji reactions, gated behind Clerk auth for posting.
-- **DSA Sheet** — progress tracker for the Striver SDE Sheet with per-topic breakdowns.
+- **DSA Sheet** — progress tracker for the Striver SDE Sheet with per-topic breakdowns. Reflects Pranav's own solving progress; visitors can view it, only the admin account can check problems off (server-verified via Clerk token).
 - **Resume** — inline PDF viewer sized to the document, no scroll needed to see the full page.
 - **Ask Me** — an AI voice/text assistant (Groq-backed) that answers questions about Pranav using a local knowledge base, with Web Speech API support for voice input.
 - **Cmd+K search** — a command palette with quick navigation actions (Home/Projects/Blog/Resume/DSA Sheet, each with a keyboard shortcut) plus fuzzy search over blog posts and projects.
@@ -25,17 +25,20 @@ Personal portfolio and blog for [Pranav Gawai](https://pranavx.in), built with R
 | :--- | :--- |
 | Frontend | React 19, TypeScript, Vite 6, Tailwind CSS, motion (Framer Motion) |
 | Auth | Clerk |
-| Data | Firebase Firestore (analytics, visitor logs), flat JSON files (comments, reactions) |
+| Data | MongoDB Atlas (comments, reactions, analytics, visitor logs, DSA progress) |
 | AI | Groq SDK (chat completions), Web Speech API (voice input) |
-| Backend | Node.js (`http` module, no framework) |
+| Backend | Vercel Serverless Functions (`/api`), Node.js runtime |
 | Icons | Lucide |
 
 ## Project structure
 
 ```text
 .
-├── backend/                  # Node HTTP server — AI chat, LeetCode proxy, comments/reactions, analytics
-│   └── index.js
+├── api/                       # Vercel Serverless Functions — AI chat, LeetCode proxy, comments/reactions, analytics, DSA progress
+│   ├── _lib/                  # Shared MongoDB client, CORS, admin (Clerk) auth helpers
+│   ├── comments/[slug]/
+│   ├── reactions/[slug].js
+│   └── ...
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -51,7 +54,7 @@ Personal portfolio and blog for [Pranav Gawai](https://pranavx.in), built with R
 │   │   ├── App.tsx           # Routing, nav context, global keyboard shortcuts
 │   │   └── globals.css       # Design tokens and Tailwind directives
 │   └── vite.config.ts
-└── package.json               # npm workspaces root (frontend + backend)
+└── package.json               # npm workspace root (frontend) + /api dependencies
 ```
 
 ## Getting started
@@ -77,35 +80,25 @@ Create a `.env` file at the repo root:
 # Groq (Ask Me chat)
 GROQ_API_KEY=
 
-# Clerk (auth — comments, admin dashboard)
+# Clerk (auth — comments, admin dashboard, DSA sheet edit lock)
 VITE_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 
-# Firebase (Firestore — analytics, visitor logs)
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
-VITE_FIREBASE_MEASUREMENT_ID=
-
-# Optional — only needed if the backend is deployed at a different origin
-# than the frontend in production
-VITE_API_URL=
+# MongoDB Atlas (comments, reactions, analytics, visitor logs, DSA progress)
+MONGODB_URI=
+MONGODB_DB=portfolio
 ```
 
 ### Run
 
-```bash
-npm run dev
-```
-
-This runs the frontend (Vite, `:3002`) and backend (`:3001`) together via npm workspaces. To run just one:
+API routes live as Vercel Serverless Functions under `/api`, so local development runs two processes:
 
 ```bash
-npm run dev -w frontend
-npm run dev -w backend
+npm run dev        # Vite frontend, :3002 (proxies /api/* to :3001)
+npm run dev:api    # vercel dev, serves /api/* on :3001
 ```
+
+Run both in separate terminals. The frontend proxy in `frontend/vite.config.ts` expects `/api` on `:3001`.
 
 ### Build
 
@@ -118,8 +111,8 @@ npm run preview   # serve the production build locally
 
 Kept here instead of pretending they don't exist:
 
-- **No automated tests.** Neither frontend nor backend has test coverage today.
-- **Comments and reactions persist to flat JSON files** (`backend/comments.json`, `backend/reactions.json`) rather than a database. Analytics and visitor logs already run through Firestore; comments/reactions are the remaining piece of that migration.
+- **No automated tests.** Neither frontend nor `/api` has test coverage today.
+- **Comment/reply deletion trusts the client-supplied `clerkUserId`/`isAdmin` fields** rather than verifying the Clerk session token server-side (unlike the DSA progress endpoint, which does verify). Low risk at this project's scale, but worth tightening if abuse ever becomes a concern.
 - **TypeScript `strict` mode is off.** `tsconfig.json` doesn't set `"strict": true`, and `npx tsc --noEmit` currently surfaces a handful of pre-existing type errors unrelated to any specific feature. Worth tackling as a dedicated pass rather than folding into unrelated changes.
 - A few installed dependencies (`@giscus/react`, `react-activity-calendar`) aren't imported anywhere in the source — safe to remove next time `package.json` is touched.
 
