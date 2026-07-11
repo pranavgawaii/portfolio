@@ -137,10 +137,10 @@ const AdminPage: React.FC = () => {
     if (!user) return;
     setDeleting(commentId);
     try {
-      await fetch(`${API}/api/comments/${slug}/delete`, {
+      await fetch(`${API}/api/comments/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId, parentId, clerkUserId: user.id, isAdmin: true }),
+        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id, isAdmin: true }),
       });
       await fetchComments();
     } catch {}

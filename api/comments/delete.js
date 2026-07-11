@@ -1,12 +1,11 @@
-import { getDb } from '../../_lib/mongodb.js';
-import { applyCors } from '../../_lib/cors.js';
+import { getDb } from '../_lib/mongodb.js';
+import { applyCors } from '../_lib/cors.js';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
-  const { slug } = req.query;
-  const { commentId, parentId, clerkUserId, isAdmin } = req.body || {};
+  const { slug, commentId, parentId, clerkUserId, isAdmin } = req.body || {};
   if (!slug) { res.status(400).json({ error: 'Missing slug' }); return; }
 
   try {

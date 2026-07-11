@@ -4,10 +4,6 @@
     "buildCommand": "npm run build",
     "rewrites": [
         {
-            "source": "/api/:path*",
-            "destination": "/api/:path*"
-        },
-        {
             "source": "/dsa",
             "destination": "/dsa.html"
         },

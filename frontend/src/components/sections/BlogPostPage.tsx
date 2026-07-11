@@ -191,9 +191,9 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const handleDelete = async (commentId: string, parentId?: string) => {
     if (!user) return;
     try {
-      const res = await fetch(`${API}/api/comments/${slug}/delete`, {
+      const res = await fetch(`${API}/api/comments/delete`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ commentId, parentId, clerkUserId: user.id, isAdmin }),
+        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id, isAdmin }),
       });
       if (!res.ok) console.error('[comments] delete failed:', res.status);
       await fetchComments();
