@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
+import { useUser, useAuth } from '@clerk/clerk-react';
 import { ThumbsUp, Flame, Lightbulb, Heart } from 'lucide-react';
 
 import { API_BASE as API } from '../../lib/api';
+import { openGoogleSignInPopup } from '../../lib/oauthPopup';
 
 const REACTIONS = [
   { key: 'like',      Icon: ThumbsUp,  label: 'Useful',      activeColor: 'text-blue-500',   activeBg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/60' },
@@ -18,7 +19,6 @@ interface Props { slug: string }
 
 const Reactions: React.FC<Props> = ({ slug }) => {
   const { isSignedIn } = useUser();
-  const { openSignIn } = useClerk();
   const { getToken } = useAuth();
 
   const [counts, setCounts] = useState<Record<ReactionKey, number>>({} as Record<ReactionKey, number>);
@@ -46,7 +46,7 @@ const Reactions: React.FC<Props> = ({ slug }) => {
 
   const toggle = async (key: ReactionKey) => {
     if (!isSignedIn) {
-      openSignIn();
+      openGoogleSignInPopup();
       return;
     }
     if (pending) return;

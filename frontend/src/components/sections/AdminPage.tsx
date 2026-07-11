@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
+import { openGoogleSignInPopup } from '../../lib/oauthPopup';
 import { motion, AnimatePresence } from 'motion/react';
 import { PROJECTS, BLOGS, EXPERIENCE } from '../../config/constants.tsx';
 import {
@@ -80,7 +81,7 @@ type Tab = typeof TABS[number];
 
 const AdminPage: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
-  const { openSignIn, signOut } = useClerk();
+  const { signOut } = useClerk();
   const { getToken } = useAuth();
   const [tab, setTab] = useState<Tab>('overview');
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
@@ -168,7 +169,7 @@ const AdminPage: React.FC = () => {
         <h1 className="font-sans font-bold text-lg text-text-light dark:text-text-dark mb-1">Admin access</h1>
         <p className="text-sm text-text-muted-light dark:text-text-muted-dark">Sign in with your admin account to continue.</p>
       </div>
-      <button onClick={() => openSignIn()} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:opacity-85 transition-opacity">
+      <button onClick={() => openGoogleSignInPopup()} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:opacity-85 transition-opacity">
         <LogIn size={14} /> Sign in
       </button>
     </div>

@@ -9,6 +9,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import SearchModal from './components/modals/SearchModal';
 import BackToTop from './components/ui/BackToTop';
 import { ProjectItem } from './types/index';
+import { OAuthPopupRouter } from './components/auth/OAuthPopupPages';
+import { isOAuthPopupPath } from './lib/oauthPopup';
 
 const Footer           = React.lazy(() => import('./components/layout/Footer'));
 const QuotesCTA        = React.lazy(() => import('./components/sections/QuotesCTA'));
@@ -365,6 +367,14 @@ const App: React.FC = () => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  if (isOAuthPopupPath(window.location.pathname)) {
+    return (
+      <ClerkWrapper>
+        <OAuthPopupRouter pathname={window.location.pathname} />
+      </ClerkWrapper>
+    );
+  }
 
   return (
     <ClerkWrapper>
