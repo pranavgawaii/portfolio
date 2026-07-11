@@ -1,11 +1,12 @@
 import { getDb } from '../_lib/mongodb.js';
 import { applyCors } from '../_lib/cors.js';
+import { isVerifiedAdmin } from '../_lib/admin.js';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
-  const { slug, commentId, parentId, clerkUserId, isAdmin } = req.body || {};
+  const { slug, commentId, parentId, clerkUserId } = req.body || {};
   if (!slug) { res.status(400).json({ error: 'Missing slug' }); return; }
 
   try {
@@ -14,8 +15,12 @@ export default async function handler(req, res) {
     const doc = await comments.findOne({ slug });
     if (!doc) { res.status(404).json({ error: 'Not found' }); return; }
 
+    // Admin override is only granted from a verified Clerk token, never a
+    // client-supplied flag — anyone can still delete their own comment by
+    // matching clerkUserId.
+    const verifiedAdmin = await isVerifiedAdmin(req);
     const items = doc.items || [];
-    const canDelete = (c) => isAdmin || c.clerkUserId === clerkUserId;
+    const canDelete = (c) => verifiedAdmin || c.clerkUserId === clerkUserId;
 
     let updatedItems = items;
     if (parentId) {

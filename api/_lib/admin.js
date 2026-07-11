@@ -49,3 +49,14 @@ export async function requireAdmin(req, res) {
   }
   return true;
 }
+
+/**
+ * Like requireAdmin, but never blocks the request — just returns whether the
+ * verified token belongs to the admin. Used to compute an "isAdmin" flag
+ * (e.g. the comment author badge) from real identity instead of trusting
+ * whatever the client claims in the request body.
+ */
+export async function isVerifiedAdmin(req) {
+  const userId = await getVerifiedUserId(req);
+  return userId === ADMIN_CLERK_ID;
+}

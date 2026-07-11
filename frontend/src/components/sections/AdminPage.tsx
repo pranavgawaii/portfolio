@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PROJECTS, BLOGS, EXPERIENCE } from '../../config/constants.tsx';
 import {
@@ -81,6 +81,7 @@ type Tab = typeof TABS[number];
 const AdminPage: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
   const { openSignIn, signOut } = useClerk();
+  const { getToken } = useAuth();
   const [tab, setTab] = useState<Tab>('overview');
   const [comments, setComments] = useState<Record<string, Comment[]>>({});
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -137,10 +138,11 @@ const AdminPage: React.FC = () => {
     if (!user) return;
     setDeleting(commentId);
     try {
+      const token = await getToken();
       await fetch(`${API}/api/comments/delete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id, isAdmin: true }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id }),
       });
       await fetchComments();
     } catch {}

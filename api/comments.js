@@ -1,6 +1,6 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
-import { ADMIN_CLERK_ID } from './_lib/admin.js';
+import { isVerifiedAdmin } from './_lib/admin.js';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
@@ -20,11 +20,15 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { author, avatar, text, clerkUserId, parentId, isAdmin } = req.body || {};
+      const { author, avatar, text, clerkUserId, parentId } = req.body || {};
       if (!author || !text || !clerkUserId) {
         res.status(400).json({ error: 'Missing fields' });
         return;
       }
+
+      // isAdmin is never trusted from the client — only a verified Clerk
+      // token matching the admin account can earn the "author" badge.
+      const verifiedAdmin = await isVerifiedAdmin(req);
 
       const newComment = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -32,7 +36,7 @@ export default async function handler(req, res) {
         avatar: avatar || null,
         text: String(text).trim(),
         clerkUserId,
-        isAdmin: !!isAdmin || clerkUserId === ADMIN_CLERK_ID,
+        isAdmin: verifiedAdmin,
         timestamp: new Date().toISOString(),
         replies: [],
       };

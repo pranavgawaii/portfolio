@@ -7,7 +7,7 @@ import Reactions from '../ui/Reactions';
 import { DynamicIslandTOC } from '../ui/DynamicIslandTOC';
 import { track } from '../../hooks/useAnalytics';
 
-import { useUser, useClerk } from '@clerk/clerk-react';
+import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
 
 import { API_BASE as API } from '../../lib/api';
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
@@ -114,6 +114,7 @@ const CommentSection: React.FC<{ slug: string }> = ({ slug }) => {
 const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const { isSignedIn, user } = useUser();
   const { openSignIn, signOut } = useClerk();
+  const { getToken } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -161,15 +162,16 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
     if (parentId) setReplySubmitting(parentId); else setSubmitting(true);
     setSubmitError(null);
     try {
+      const token = await getToken();
       const res = await fetch(`${API}/api/comments?slug=${encodeURIComponent(slug)}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           author: user.fullName || user.firstName || 'Anonymous',
           avatar: user.imageUrl || null,
           text: body.trim(),
           clerkUserId: user.id,
           parentId: parentId || undefined,
-          isAdmin,
         }),
       });
       if (res.ok) {
@@ -191,9 +193,11 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const handleDelete = async (commentId: string, parentId?: string) => {
     if (!user) return;
     try {
+      const token = await getToken();
       const res = await fetch(`${API}/api/comments/delete`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id, isAdmin }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id }),
       });
       if (!res.ok) console.error('[comments] delete failed:', res.status);
       await fetchComments();

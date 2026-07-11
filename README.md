@@ -112,7 +112,7 @@ npm run preview   # serve the production build locally
 Kept here instead of pretending they don't exist:
 
 - **No automated tests.** Neither frontend nor `/api` has test coverage today.
-- **Comment/reply deletion trusts the client-supplied `clerkUserId`/`isAdmin` fields** rather than verifying the Clerk session token server-side (unlike the DSA progress endpoint, which does verify). Low risk at this project's scale, but worth tightening if abuse ever becomes a concern.
+- **`clerkUserId` (self-identity for "delete your own comment") is still client-supplied**, not verified against the session token — only the admin "author" badge and admin-override delete are now server-verified.
 - **TypeScript `strict` mode is off.** `tsconfig.json` doesn't set `"strict": true`, and `npx tsc --noEmit` currently surfaces a handful of pre-existing type errors unrelated to any specific feature. Worth tackling as a dedicated pass rather than folding into unrelated changes.
 - A few installed dependencies (`@giscus/react`, `react-activity-calendar`) aren't imported anywhere in the source — safe to remove next time `package.json` is touched.
 
