@@ -1,11 +1,11 @@
-import { getDb } from '../_lib/mongodb.js';
-import { applyCors } from '../_lib/cors.js';
-import { ADMIN_CLERK_ID } from '../_lib/admin.js';
+import { getDb } from './_lib/mongodb.js';
+import { applyCors } from './_lib/cors.js';
+import { ADMIN_CLERK_ID } from './_lib/admin.js';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
-  const { slug } = req.query;
+  const slug = req.query.slug || (req.body && req.body.slug);
   if (!slug) { res.status(400).json({ error: 'Missing slug' }); return; }
 
   try {

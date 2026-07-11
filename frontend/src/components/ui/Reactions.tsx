@@ -25,7 +25,7 @@ const Reactions: React.FC<Props> = ({ slug }) => {
   const [tooltip, setTooltip] = useState<ReactionKey | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/api/reactions/${slug}`)
+    fetch(`${API}/api/reactions?slug=${encodeURIComponent(slug)}`)
       .then(r => r.ok ? r.json() : {})
       .then(setCounts)
       .catch(() => {});
@@ -41,7 +41,7 @@ const Reactions: React.FC<Props> = ({ slug }) => {
     localStorage.setItem(`reactions-${slug}`, JSON.stringify([...next]));
     if (!alreadyVoted) { setBurst(key); setTimeout(() => setBurst(null), 500); }
     try {
-      const res = await fetch(`${API}/api/reactions/${slug}`, {
+      const res = await fetch(`${API}/api/reactions?slug=${encodeURIComponent(slug)}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ emoji: key, action }),
       });

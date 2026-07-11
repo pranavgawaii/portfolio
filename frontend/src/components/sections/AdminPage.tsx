@@ -98,7 +98,7 @@ const AdminPage: React.FC = () => {
     const store: Record<string, Comment[]> = {};
     await Promise.all(BLOGS.map(async b => {
       try {
-        const res = await fetch(`${API}/api/comments/${b.slug}`);
+        const res = await fetch(`${API}/api/comments?slug=${encodeURIComponent(b.slug)}`);
         if (res.ok) { const d = await res.json(); if (d.length) store[b.slug] = d; }
       } catch {}
     }));

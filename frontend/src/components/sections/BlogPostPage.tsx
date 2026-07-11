@@ -130,7 +130,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
 
   const fetchComments = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/api/comments/${slug}`);
+      const res = await fetch(`${API}/api/comments?slug=${encodeURIComponent(slug)}`);
       if (res.ok) {
         const data: Comment[] = await res.json();
         setComments(data);
@@ -161,7 +161,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
     if (parentId) setReplySubmitting(parentId); else setSubmitting(true);
     setSubmitError(null);
     try {
-      const res = await fetch(`${API}/api/comments/${slug}`, {
+      const res = await fetch(`${API}/api/comments?slug=${encodeURIComponent(slug)}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           author: user.fullName || user.firstName || 'Anonymous',
