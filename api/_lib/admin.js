@@ -1,4 +1,4 @@
-const ADMIN_CLERK_ID = 'user_3FIAhDnbr2HQ7H9yL7j|UuxiSu4';
+const ADMIN_CLERK_ID = 'user_3FlAhDnbr2HQ7H9yL7jlUuxiSu4';
 
 /**
  * Decodes a JWT manually (without verification) to extract the sub claim.

@@ -8,7 +8,7 @@ import { API_BASE as API } from '../../lib/api';
 const REPO_URL  = 'https://github.com/pranavgawaii/Striver-SDE-Sheet';
 const SHEET_URL = 'https://takeuforward.org/dsa/strivers-sde-sheet-top-coding-interview-problems';
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
-const ADMIN_CLERK_ID = 'user_3FIAhDnbr2HQ7H9yL7j|UuxiSu4';
+const ADMIN_CLERK_ID = 'user_3FlAhDnbr2HQ7H9yL7jlUuxiSu4';
 
 interface Props { onBack?: () => void }
 
