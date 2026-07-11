@@ -23,7 +23,8 @@ export async function getVerifiedUserId(req) {
 export async function requireAdmin(req, res) {
   const userId = await getVerifiedUserId(req);
   if (userId !== ADMIN_CLERK_ID) {
-    res.status(403).json({ error: 'Admin only' });
+    console.error(`Admin check failed: token userId=${userId}, expected=${ADMIN_CLERK_ID}`);
+    res.status(403).json({ error: `Admin only (Your ID: ${userId || 'Invalid Token'})` });
     return false;
   }
   return true;

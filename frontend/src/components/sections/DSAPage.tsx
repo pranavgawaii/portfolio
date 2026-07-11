@@ -29,7 +29,7 @@ const DSAPage: React.FC<Props> = () => {
   // This sheet reflects Pranav's own solving progress — everyone can see it,
   // only the admin account can check problems off.
   useEffect(() => {
-    fetch(`${API}/api/dsa-progress`)
+    fetch(`${API}/api/dsa-progress`, { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.solvedIds)) setSubmittedIds(new Set(data.solvedIds));
@@ -42,19 +42,28 @@ const DSAPage: React.FC<Props> = () => {
     e.stopPropagation();
     if (!isAdmin) return;
 
+    // Optimistically update UI
+    const prev = new Set(submittedIds);
     const next = new Set(submittedIds);
     if (next.has(id)) next.delete(id); else next.add(id);
     setSubmittedIds(next);
 
     try {
       const token = await getToken();
-      await fetch(`${API}/api/dsa-progress`, {
+      const res = await fetch(`${API}/api/dsa-progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ solvedIds: Array.from(next) }),
       });
-    } catch (err) {
+      
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `HTTP ${res.status} ${res.statusText}`);
+      }
+    } catch (err: any) {
       console.error('Failed to save DSA progress', err);
+      alert(`Failed to save to database: ${err.message}. Reverting...`);
+      setSubmittedIds(prev); // Revert optimistic update
     }
   };
 

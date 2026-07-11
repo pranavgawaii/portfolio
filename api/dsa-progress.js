@@ -11,6 +11,7 @@ export default async function handler(req, res) {
   const progress = db.collection('dsa_progress');
 
   if (req.method === 'GET') {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     const doc = await progress.findOne({ _id: 'admin' });
     res.status(200).json({ solvedIds: doc?.solvedIds || [] });
     return;
