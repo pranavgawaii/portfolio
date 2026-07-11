@@ -8,6 +8,7 @@ import { API_BASE as API } from '../../lib/api';
 const REPO_URL  = 'https://github.com/pranavgawaii/Striver-SDE-Sheet';
 const SHEET_URL = 'https://takeuforward.org/dsa/strivers-sde-sheet-top-coding-interview-problems';
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
+const ADMIN_CLERK_ID = 'user_3FIAhDnbr2HQ7H9yL7j|UuxiSu4';
 
 interface Props { onBack?: () => void }
 
@@ -20,7 +21,7 @@ const difficultyColors = {
 const DSAPage: React.FC<Props> = () => {
   const { user } = useUser();
   const { getToken } = useAuth();
-  const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
+  const isAdmin = user?.id === ADMIN_CLERK_ID;
 
   const [submittedIds, setSubmittedIds] = useState<Set<string>>(new Set());
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
