@@ -32,7 +32,7 @@ export const OAuthPopupStart: React.FC = () => {
     signIn.authenticateWithRedirect({
       strategy: 'oauth_google',
       redirectUrl: `${window.location.origin}/oauth-popup-callback`,
-      redirectUrlComplete: `${window.location.origin}/oauth-popup-callback`,
+      redirectUrlComplete: `${window.location.origin}/oauth-popup-done`,
     });
   }, [isLoaded, signIn]);
 
