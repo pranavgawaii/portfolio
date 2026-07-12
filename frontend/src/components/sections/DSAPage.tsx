@@ -26,6 +26,7 @@ const DSAPage: React.FC<Props> = () => {
   const [submittedIds, setSubmittedIds] = useState<Set<string>>(new Set());
   const [expandedTopic, setExpandedTopic] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
   // This sheet reflects Pranav's own solving progress — everyone can see it,
   // only the admin account can check problems off.
@@ -34,6 +35,7 @@ const DSAPage: React.FC<Props> = () => {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.solvedIds)) setSubmittedIds(new Set(data.solvedIds));
+        if (data.updatedAt) setUpdatedAt(data.updatedAt);
       })
       .catch(err => console.error('Failed to load DSA progress', err))
       .finally(() => setLoaded(true));
@@ -61,6 +63,8 @@ const DSAPage: React.FC<Props> = () => {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error || `HTTP ${res.status} ${res.statusText}`);
       }
+      const data = await res.json();
+      if (data.updatedAt) setUpdatedAt(data.updatedAt);
     } catch (err: any) {
       console.error('Failed to save DSA progress', err);
       alert(`Failed to save to database: ${err.message}. Reverting...`);
@@ -135,6 +139,11 @@ const DSAPage: React.FC<Props> = () => {
               <span className="font-sans font-bold text-2xl text-text-light dark:text-text-dark">{solved}</span>
               <span className="text-sm text-text-muted-light dark:text-text-muted-dark">/ {total} solved</span>
             </div>
+            {updatedAt && (
+              <p className="text-[11px] text-text-muted-light dark:text-text-muted-dark opacity-60 mt-1">
+                Last updated {new Date(updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </p>
+            )}
           </div>
           
           <div className="flex items-center gap-4 text-xs font-mono">

@@ -1,20 +1,22 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
 import { requireAdmin } from './_lib/admin.js';
+import { logError } from './_lib/logError.js';
 
 // Single global document: the DSA sheet reflects the admin's own solving
 // progress. Everyone can view it; only the verified admin can edit it.
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
 
+  let db;
   try {
-    const db = await getDb();
+    db = await getDb();
     const progress = db.collection('dsa_progress');
 
     if (req.method === 'GET') {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       const doc = await progress.findOne({ _id: 'admin' });
-      res.status(200).json({ solvedIds: doc?.solvedIds || [] });
+      res.status(200).json({ solvedIds: doc?.solvedIds || [], updatedAt: doc?.updatedAt || null });
       return;
     }
 
@@ -28,18 +30,16 @@ export default async function handler(req, res) {
         return;
       }
 
-      await progress.updateOne(
-        { _id: 'admin' },
-        { $set: { solvedIds, updatedAt: new Date().toISOString() } },
-        { upsert: true }
-      );
-      res.status(200).json({ ok: true, solvedIds });
+      const updatedAt = new Date().toISOString();
+      await progress.updateOne({ _id: 'admin' }, { $set: { solvedIds, updatedAt } }, { upsert: true });
+      res.status(200).json({ ok: true, solvedIds, updatedAt });
       return;
     }
 
     res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('[dsa-progress] handler error:', err);
+    logError(db, 'dsa-progress', err);
     res.status(500).json({ error: err.message || 'Internal server error' });
   }
 }

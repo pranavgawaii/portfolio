@@ -1,6 +1,8 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
 import { getVerifiedUserId } from './_lib/admin.js';
+import { checkRateLimit } from './_lib/rateLimit.js';
+import { logError } from './_lib/logError.js';
 
 function countsFromVotes(votes) {
   const counts = {};
@@ -23,8 +25,9 @@ export default async function handler(req, res) {
   const slug = req.query.slug || (req.body && req.body.slug);
   if (!slug) { res.status(400).json({ error: 'Missing slug' }); return; }
 
+  let db;
   try {
-    const db = await getDb();
+    db = await getDb();
     const reactions = db.collection('reactions');
 
     if (req.method === 'GET') {
@@ -43,6 +46,9 @@ export default async function handler(req, res) {
       const { emoji } = req.body || {};
       if (!emoji) { res.status(400).json({ error: 'Missing emoji' }); return; }
 
+      const allowed = await checkRateLimit(db, `reactions:post:${userId}`, { windowMs: 60 * 1000, max: 30 });
+      if (!allowed) { res.status(429).json({ error: 'Too many reactions — please slow down.' }); return; }
+
       const doc = await reactions.findOne({ slug });
       const votes = doc?.votes || {};
       const current = new Set(votes[emoji] || []);
@@ -60,6 +66,7 @@ export default async function handler(req, res) {
     res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('[reactions] handler error:', err);
+    logError(db, 'reactions', err);
     res.status(500).json({ error: err.message || 'Internal server error' });
   }
 }

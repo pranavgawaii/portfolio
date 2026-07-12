@@ -6,6 +6,8 @@ export default async function handler(req, res) {
 
   let analyticsSize = 0;
   let commentsCount = 0;
+  let recentErrors = [];
+  let errorCount24h = 0;
 
   try {
     const db = await getDb();
@@ -14,6 +16,11 @@ export default async function handler(req, res) {
 
     const commentDocs = await db.collection('comments').find({}).toArray();
     commentsCount = commentDocs.reduce((total, doc) => total + (doc.items?.length || 0), 0);
+
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const errorCol = db.collection('error_logs');
+    recentErrors = await errorCol.find({}).sort({ timestamp: -1 }).limit(10).toArray();
+    errorCount24h = (await errorCol.find({ timestamp: { $gte: since } }).toArray()).length;
   } catch (e) {
     console.error('[Health] Error:', e);
   }
@@ -25,5 +32,7 @@ export default async function handler(req, res) {
     timestamp: new Date().toISOString(),
     analyticsSize,
     commentsCount,
+    errorCount24h,
+    recentErrors,
   });
 }

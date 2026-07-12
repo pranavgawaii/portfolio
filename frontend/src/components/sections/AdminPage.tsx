@@ -143,7 +143,7 @@ const AdminPage: React.FC = () => {
       await fetch(`${API}/api/comments/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id }),
+        body: JSON.stringify({ slug, commentId, parentId }),
       });
       await fetchComments();
     } catch {}

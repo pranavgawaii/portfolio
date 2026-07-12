@@ -187,7 +187,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
       const res = await fetch(`${API}/api/comments/delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ slug, commentId, parentId, clerkUserId: user.id }),
+        body: JSON.stringify({ slug, commentId, parentId }),
       });
       if (!res.ok) console.error('[comments] delete failed:', res.status);
       await fetchComments();
