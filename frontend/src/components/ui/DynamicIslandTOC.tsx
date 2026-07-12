@@ -18,12 +18,16 @@ function CircleProgress({ percentage }: { percentage: number }) {
   );
 }
 
-export function DynamicIslandTOC({ selector = 'article h2, article h3, article h4' }: { selector?: string }) {
+export function DynamicIslandTOC({
+  selector = 'article h2, article h3, article h4',
+  hideAfterSelector,
+}: { selector?: string; hideAfterSelector?: string }) {
   const [headings, setHeadings] = useState<HeadingData[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -54,11 +58,20 @@ export function DynamicIslandTOC({ selector = 'article h2, article h3, article h
       setActiveId(cur);
       const total = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(total > 0 ? Math.min(100, (window.scrollY / total) * 100) : 0);
+
+      // Hide once the reader reaches the given boundary (e.g. the reactions
+      // bar) — the island shouldn't keep floating over the footer/discussion.
+      if (hideAfterSelector) {
+        const boundary = document.querySelector(hideAfterSelector) as HTMLElement | null;
+        const stillBefore = boundary ? boundary.getBoundingClientRect().top > 140 : true;
+        setVisible(stillBefore);
+        if (!stillBefore) setIsExpanded(false);
+      }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, [headings]);
+  }, [headings, hideAfterSelector]);
 
   const minLevel = useMemo(() => headings.length ? Math.min(...headings.map(h => h.level)) : 1, [headings]);
   const activeHeading = headings.find(h => h.id === activeId);
@@ -83,11 +96,14 @@ export function DynamicIslandTOC({ selector = 'article h2, article h3, article h
 
       {/* Island */}
       <div className="fixed bottom-7 left-1/2 z-[9999] -translate-x-1/2">
-        <motion.div
-          initial={{ y: 60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-        >
+        <AnimatePresence>
+          {visible && (
+          <motion.div
+            initial={{ y: 60, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 60, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+          >
           <motion.div
             onClick={() => { if (!isExpanded) setIsExpanded(true); }}
             initial={false}
@@ -189,6 +205,8 @@ export function DynamicIslandTOC({ selector = 'article h2, article h3, article h
             </motion.div>
           </motion.div>
         </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </>
   );

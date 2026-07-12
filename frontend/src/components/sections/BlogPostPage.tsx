@@ -537,7 +537,7 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
       {/* Body */}
       {blog.content ? (
         <>
-          <DynamicIslandTOC selector="article h2, article h3" />
+          <DynamicIslandTOC selector="article h2, article h3" hideAfterSelector="#post-reactions" />
           <article className="max-w-[640px]">
             {blog.content.map((block, i) =>
               block.type === 'heading' ? (
@@ -560,7 +560,7 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
 
       {/* Reactions */}
       {blog.isLocal && (
-        <div className="max-w-[640px] mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-800">
+        <div id="post-reactions" className="max-w-[640px] mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-800">
           <Reactions slug={blog.slug} />
         </div>
       )}

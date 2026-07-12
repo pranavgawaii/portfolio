@@ -8,8 +8,13 @@ export function isOAuthPopupPath(pathname: string): boolean {
  * Opens Google sign-in in a small popup window instead of redirecting the
  * whole tab away to accounts.google.com. Must be called synchronously from
  * a click handler — browsers block window.open() calls made after an await.
+ *
+ * Defaults to a full page reload on completion — Clerk's cross-tab session
+ * sync isn't reliably instant, and a reload is the simplest guarantee that
+ * every signed-in-dependent bit of UI (reactions, likes, admin controls)
+ * picks up the new session immediately instead of requiring a manual refresh.
  */
-export function openGoogleSignInPopup(onComplete?: () => void) {
+export function openGoogleSignInPopup(onComplete: () => void = () => window.location.reload()) {
   const width = 480;
   const height = 640;
   const left = window.screenX + Math.max(0, (window.outerWidth - width) / 2);
