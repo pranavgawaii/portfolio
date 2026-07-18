@@ -268,16 +268,18 @@ const SystemArchitecture = () => {
 
   return (
     <div className="w-full">
-      <Label>Request Lifecycle simulation</Label>
-      <div className="flex flex-col items-center border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/40 relative">
+      <div className="flex items-center justify-between mb-3.5">
+        <Label>Request Lifecycle simulation</Label>
         <button
           onClick={triggerRequest}
           disabled={pulseStage !== 'idle'}
-          className="absolute right-4 top-4 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-[10.5px] font-sans font-semibold disabled:opacity-50 hover:bg-neutral-50 dark:hover:bg-white/5 transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-950 text-[10.5px] font-sans font-semibold disabled:opacity-50 hover:bg-neutral-50 dark:hover:bg-white/5 transition-all active:scale-95 shadow-sm"
         >
           <Play size={11} fill="currentColor" />
           Send Request
         </button>
+      </div>
+      <div className="flex flex-col items-center border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/40">
 
         <div className="grid grid-cols-3 gap-6 items-center w-full my-6 relative">
           {/* Connector Paths with flowing pulses */}
