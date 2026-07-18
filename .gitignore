@@ -25,3 +25,9 @@ debug_*.js
 
 .vercel
 .vercel-test-env.txt
+
+# Blog Banner Design tool
+blog-banner-design/
+
+# AI Coding Assistant Configs
+.claude/

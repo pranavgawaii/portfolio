@@ -394,3 +394,12 @@ a[href*="clerk.com"],
 .cl-dividerRow {
   display: none !important;
 }
+
+/* Focus Mode overrides to hide global layout elements (Navbar, spacers) */
+body.focus-mode-active nav,
+body.focus-mode-active .fixed.top-3.inset-x-0.z-50,
+body.focus-mode-active .w-full.h-16.pointer-events-none {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

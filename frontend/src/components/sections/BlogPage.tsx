@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 // ─── Shared Share Modal ───────────────────────────────────────────────────────
 export const ShareModal: React.FC<{ post: BlogPost; onClose: () => void }> = ({ post, onClose }) => {
   const [copied, setCopied] = useState(false);
-  const url = `${window.location.origin}/blog/${post.slug}`;
+  const url = `https://www.pranavx.in/blog/${post.slug}`;
   const displayHost = window.location.host.replace(/^www\./, '');
 
   const copy = async () => {
@@ -32,14 +32,14 @@ export const ShareModal: React.FC<{ post: BlogPost; onClose: () => void }> = ({ 
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 8 }}
         transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-        className="relative w-full max-w-sm bg-white dark:bg-[#111] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-[460px] bg-white dark:bg-[#111] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-neutral-100 dark:border-neutral-800">
           <div>
             <p className="font-sans font-semibold text-sm text-text-light dark:text-text-dark">Share</p>
-            <p className="font-mono text-[11px] text-text-muted-light dark:text-text-muted-dark mt-0.5 truncate max-w-[220px]">"{post.title}"</p>
+            <p className="font-mono text-[11px] text-text-muted-light dark:text-text-muted-dark mt-0.5 truncate max-w-[300px]">"{post.title}"</p>
           </div>
           <button
             onClick={onClose}
@@ -51,8 +51,8 @@ export const ShareModal: React.FC<{ post: BlogPost; onClose: () => void }> = ({ 
 
         <div className="px-5 py-4 space-y-4">
           {/* URL row */}
-          <div className="flex items-center gap-2 h-9 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-white/[0.03] px-3">
-            <span className="flex-1 font-mono text-[10px] text-text-muted-light dark:text-text-muted-dark truncate">{displayHost}</span>
+          <div className="flex items-center gap-2 h-10 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-white/[0.03] px-3">
+            <span className="flex-1 font-mono text-[11px] text-text-muted-light dark:text-text-muted-dark truncate">{url}</span>
             <button
               onClick={copy}
               className="shrink-0 flex items-center gap-1.5 text-[11px] font-mono text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark transition-colors"

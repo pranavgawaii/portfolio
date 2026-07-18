@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BLOGS, BlogPost } from '../../config/constants';
-import { ArrowLeft, Share2, X, MessageCircle, LogIn, Send, Trash2, LogOut, ThumbsUp, CornerDownRight } from 'lucide-react';
+import { ArrowLeft, Share2, X, MessageCircle, LogIn, Send, Trash2, LogOut, ThumbsUp, CornerDownRight, Book, BookOpen, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShareModal } from './BlogPage';
 import Reactions from '../ui/Reactions';
 import BlogDiagram from '../features/BlogDiagram';
 import { DynamicIslandTOC } from '../ui/DynamicIslandTOC';
+import { TextGradientScroll } from '../ui/text-gradient-scroll';
 import { track } from '../../hooks/useAnalytics';
 
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
@@ -481,33 +482,71 @@ const ReadingProgress: React.FC = () => {
 
 const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
   const [shareOpen, setShareOpen] = useState(false);
+  const [isReadMode, setIsReadMode] = useState(false);
   const readingTime = blog.content
     ? Math.ceil(blog.content.reduce((acc, b) => acc + (b.text?.split(' ').length ?? 0), 0) / 200)
     : null;
 
+  useEffect(() => {
+    if (isReadMode) {
+      document.body.classList.add('focus-mode-active');
+    } else {
+      document.body.classList.remove('focus-mode-active');
+    }
+    return () => {
+      document.body.classList.remove('focus-mode-active');
+    };
+  }, [isReadMode]);
+
   return (
     <div className="pt-8 pb-24">
       <ReadingProgress />
+      {/* Floating Focus Toggle */}
+      {blog.content && (
+        <button
+          onClick={() => setIsReadMode(!isReadMode)}
+          className={`fixed top-4 right-4 sm:top-6 sm:right-6 z-[150] flex items-center gap-2 px-4 py-2 rounded-xl border text-[12px] font-medium shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] backdrop-blur-xl transition-all duration-300 active:scale-95 group ${
+            isReadMode
+              ? 'bg-neutral-900 border-neutral-800 text-white dark:bg-white dark:border-white/10 dark:text-neutral-900'
+              : 'bg-white/70 border-neutral-200/80 dark:bg-neutral-950/70 dark:border-white/[0.06] text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100 hover:border-neutral-300 dark:hover:border-white/[0.12]'
+          }`}
+        >
+          {isReadMode ? (
+            <>
+              <Book size={14} className="animate-pulse" />
+              <span>exit focus</span>
+            </>
+          ) : (
+            <>
+              <BookOpen size={14} className="group-hover:rotate-3 transition-transform" />
+              <span>focus mode</span>
+            </>
+          )}
+        </button>
+      )}
+
       {/* Nav bar */}
-      <div className="flex items-center justify-between mb-10">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-[13px] text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors group"
-        >
-          <ArrowLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" />
-          All posts
-        </button>
-        <button
-          onClick={() => setShareOpen(true)}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 text-[13px] text-neutral-500 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all"
-        >
-          <Share2 size={12} />
-          Share
-        </button>
-      </div>
+      {!isReadMode && (
+        <div className="flex items-center justify-between mb-10">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-[13px] text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-colors group"
+          >
+            <ArrowLeft size={13} className="group-hover:-translate-x-0.5 transition-transform" />
+            All posts
+          </button>
+          <button
+            onClick={() => setShareOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 text-[11px] font-mono text-neutral-500 dark:text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:border-neutral-300 dark:hover:border-neutral-600 transition-all"
+          >
+            <Share2 size={12} />
+            share
+          </button>
+        </div>
+      )}
 
       {/* Hero */}
-      {blog.image && (
+      {!isReadMode && blog.image && (
         <motion.div
           initial={{ opacity: 0, scale: 0.99 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -520,7 +559,7 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
       )}
 
       {/* Meta */}
-      <div className="flex items-center gap-2 flex-wrap mb-4">
+      <div className={`flex items-center gap-2 flex-wrap mb-4 ${isReadMode ? 'justify-center' : ''}`}>
         {blog.tags?.map(t => (
           <span key={t} className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-500">
             {t}
@@ -531,28 +570,69 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
       </div>
 
       {/* Title */}
-      <h1 className="font-sans font-bold text-3xl sm:text-[36px] text-neutral-900 dark:text-neutral-100 tracking-tight leading-[1.15] mb-12">
+      <h1 className={`font-sans font-bold tracking-tight leading-[1.15] mb-12 ${
+        isReadMode ? 'text-center text-4xl sm:text-[42px] max-w-[700px] mx-auto text-neutral-900 dark:text-neutral-100' : 'text-3xl sm:text-[36px] text-neutral-900 dark:text-neutral-100'
+      }`}>
         {blog.title}
       </h1>
 
       {/* Body */}
       {blog.content ? (
         <>
-          <DynamicIslandTOC selector="article h2, article h3" hideAfterSelector="#post-reactions" />
-          <article className="max-w-[640px]">
-            {blog.content.map((block, i) =>
-              block.type === 'heading' ? (
-                <h2 key={i} className="font-sans font-bold text-[19px] text-neutral-900 dark:text-neutral-100 tracking-tight mt-10 mb-3 leading-snug">
-                  {block.text}
-                </h2>
-              ) : block.type === 'diagram' ? (
-                <BlogDiagram key={i} id={block.diagram} caption={block.caption} />
-              ) : (
+          {!isReadMode && <DynamicIslandTOC selector="article h2, article h3" hideAfterSelector="#post-reactions" />}
+          <article key={isReadMode ? 'read' : 'normal'} className={`mx-auto ${isReadMode ? 'max-w-[700px]' : 'max-w-[640px]'}`}>
+            {blog.content.map((block, i) => {
+              if (block.type === 'diagram') {
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <BlogDiagram id={block.diagram} caption={block.caption} />
+                  </motion.div>
+                );
+              }
+
+              if (isReadMode && block.text) {
+                if (block.type === 'heading') {
+                  return (
+                    <TextGradientScroll
+                      key={i}
+                      text={block.text}
+                      type="word"
+                      className="font-sans font-bold text-neutral-900 dark:text-neutral-100 tracking-tight mt-10 mb-3 leading-snug text-[22px]"
+                    />
+                  );
+                }
+
+                return (
+                  <TextGradientScroll
+                    key={i}
+                    text={block.text}
+                    type="word"
+                    className="text-neutral-700 dark:text-neutral-300 mb-5 font-normal text-[16.5px] leading-[1.95]"
+                  />
+                );
+              }
+
+              // Normal Mode
+              if (block.type === 'heading') {
+                return (
+                  <h2 key={i} className="font-sans font-bold text-[19px] text-neutral-900 dark:text-neutral-100 tracking-tight mt-10 mb-3 leading-snug">
+                    {block.text}
+                  </h2>
+                );
+              }
+
+              return (
                 <p key={i} className="text-[15px] text-neutral-700 dark:text-neutral-300 leading-[1.9] mb-5 font-normal">
                   {block.text}
                 </p>
-              )
-            )}
+              );
+            })}
           </article>
         </>
       ) : blog.link ? (
@@ -563,13 +643,13 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
 
       {/* Reactions */}
       {blog.isLocal && (
-        <div id="post-reactions" className="max-w-[640px] mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-800">
+        <div id="post-reactions" className={`mx-auto mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-800 ${isReadMode ? 'max-w-[700px]' : 'max-w-[640px]'}`}>
           <Reactions slug={blog.slug} />
         </div>
       )}
 
       {/* Footer strip */}
-      <div className="max-w-[640px] mt-8 flex items-center justify-between">
+      <div className={`mx-auto mt-8 flex items-center justify-between ${isReadMode ? 'max-w-[700px]' : 'max-w-[640px]'}`}>
         <button onClick={onBack} className="text-[13px] text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors">
           ← All posts
         </button>
@@ -583,7 +663,7 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
       </div>
 
       {/* Related posts */}
-      {(() => {
+      {!isReadMode && (() => {
         const related = BLOGS.filter(b => b.slug !== blog.slug && b.isLocal && b.tags?.some(t => blog.tags?.includes(t))).slice(0, 2);
         if (!related.length) return null;
         return (
@@ -593,7 +673,7 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
               {related.map(r => (
                 <button
                   key={r.slug}
-                  onClick={() => { window.scrollTo({ top: 0 }); /* parent openBlog handled via custom event */ window.dispatchEvent(new CustomEvent('open-blog', { detail: r })); }}
+                  onClick={() => { window.scrollTo({ top: 0 }); window.dispatchEvent(new CustomEvent('open-blog', { detail: r })); }}
                   className="group w-full text-left flex items-start gap-3 py-3 rounded-xl hover:bg-neutral-50 dark:hover:bg-white/[0.03] transition-colors px-3 -mx-3"
                 >
                   {r.image && <img src={r.image} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />}
@@ -610,7 +690,7 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
       })()}
 
       {/* Comments */}
-      <div className="max-w-[640px]">
+      <div className={`mx-auto ${isReadMode ? 'max-w-[700px]' : 'max-w-[640px]'}`}>
         <CommentSection slug={blog.slug} />
       </div>
 

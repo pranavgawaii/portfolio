@@ -3,13 +3,13 @@
   <url><loc>https://pranavx.in/</loc><priority>1.0</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://pranavx.in/projects</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://pranavx.in/blog</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/how-sql-actually-works</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/why-i-build</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/git-visual-workflow</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/sih-2024</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/the-illusion-of-progress</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/how-i-think-about-ai-products</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/on-being-a-student-engineer</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
-  <url><loc>https://pranavx.in/blog/the-price-of-starting-over</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/howsqlactuallyworks</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/whyibuild</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/gitvisualworkflow</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/sih2024</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/theillusionofprogress</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/howithinkaboutaiproducts</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/onbeingastudentengineer</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
+  <url><loc>https://pranavx.in/blog/thepriceofstartingover</loc><priority>0.7</priority><changefreq>yearly</changefreq></url>
   <url><loc>https://pranavx.in/resume</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
 </urlset>

@@ -276,7 +276,7 @@ export const ICONS_MAP: Record<string, any> = {
 export const BLOGS: BlogPost[] = [
   {
     id: "blog-internal-6",
-    slug: "how-sql-actually-works",
+    slug: "howsqlactuallyworks",
     title: "How SQL Actually Works",
     description: "Tables, queries, joins, indexes, transactions: the whole picture, drawn out. The post I wish someone had handed me before my first slow endpoint.",
     image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2068&auto=format&fit=crop",
@@ -347,7 +347,7 @@ export const BLOGS: BlogPost[] = [
       {
         type: "diagram",
         diagram: "join-tables",
-        caption: "The join matches orders.user_id to users.id. Asha appears twice because she placed two orders; the join follows the data, not the other way around."
+        caption: "The join matches orders.user_id to users.id. Pranav appears twice because he placed two orders; the join follows the data, not the other way around."
       },
       {
         type: "heading",
@@ -480,7 +480,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-internal-1",
-    slug: "why-i-build",
+    slug: "whyibuild",
     title: "Why I Build",
     description: "On obsession, overnight servers, and what it actually feels like to ship something from zero.",
     image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop",
@@ -557,7 +557,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-1",
-    slug: "git-visual-workflow",
+    slug: "gitvisualworkflow",
     title: "Git Visual Workflow",
     description: "A beginner's guide to mastering Git visually. Understand branches, commits, and merges with easy-to-follow diagrams.",
     image: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?q=80&w=2076&auto=format&fit=crop",
@@ -568,7 +568,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-2",
-    slug: "sih-2024",
+    slug: "sih2024",
     title: "From Ideas to Impact: My SIH 2024 Journey",
     description: "A detailed account of my Smart India Hackathon experience: the problem statement, the team, the 36-hour grind, and the lessons that stuck.",
     image: "/blogsih2024.jpg",
@@ -579,7 +579,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-internal-2",
-    slug: "the-illusion-of-progress",
+    slug: "theillusionofprogress",
     title: "The Illusion of Progress",
     description: "Why watching tutorials all day feels like learning but isn't. The difference between consuming knowledge and actually building something.",
     image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=2070&auto=format&fit=crop",
@@ -604,7 +604,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-internal-3",
-    slug: "how-i-think-about-ai-products",
+    slug: "howithinkaboutaiproducts",
     title: "How I Think About AI Products",
     description: "Most AI products are search bars with a language model attached. The ones that last are built around a problem, not a model.",
     image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?q=80&w=2070&auto=format&fit=crop",
@@ -628,7 +628,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-internal-5",
-    slug: "the-price-of-starting-over",
+    slug: "thepriceofstartingover",
     title: "The Price of Starting Over",
     description: "On deleting months of work, the courage it takes to restart with better judgment, and why the second version is always built on the ruins of the first.",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop",
@@ -658,7 +658,7 @@ export const BLOGS: BlogPost[] = [
   },
   {
     id: "blog-internal-4",
-    slug: "on-being-a-student-engineer",
+    slug: "onbeingastudentengineer",
     title: "On Being a Student Engineer",
     description: "The strange position of building real things while sitting in lectures. What college teaches you, what it doesn't, and why both matter.",
     image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop",
