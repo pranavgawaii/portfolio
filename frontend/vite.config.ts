@@ -6,7 +6,7 @@ export default defineConfig(() => {
   return {
     envDir: path.resolve(__dirname, '..'),
     server: {
-      port: 3002,
+      port: Number(process.env.PORT) || 3000,
       host: '0.0.0.0',
       historyApiFallback: true,
       // /api is served locally by `vercel dev --listen 3001` (see root package.json's "dev" script)
@@ -21,7 +21,7 @@ export default defineConfig(() => {
 
     publicDir: 'public',
     preview: {
-      port: 3002,
+      port: 3000,
       host: '0.0.0.0',
       proxy: {
         '/api': {

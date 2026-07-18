@@ -4,6 +4,7 @@ import { ArrowLeft, Share2, X, MessageCircle, LogIn, Send, Trash2, LogOut, Thumb
 import { motion, AnimatePresence } from 'motion/react';
 import { ShareModal } from './BlogPage';
 import Reactions from '../ui/Reactions';
+import BlogDiagram from '../features/BlogDiagram';
 import { DynamicIslandTOC } from '../ui/DynamicIslandTOC';
 import { track } from '../../hooks/useAnalytics';
 
@@ -544,6 +545,8 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
                 <h2 key={i} className="font-sans font-bold text-[19px] text-neutral-900 dark:text-neutral-100 tracking-tight mt-10 mb-3 leading-snug">
                   {block.text}
                 </h2>
+              ) : block.type === 'diagram' ? (
+                <BlogDiagram key={i} id={block.diagram} caption={block.caption} />
               ) : (
                 <p key={i} className="text-[15px] text-neutral-700 dark:text-neutral-300 leading-[1.9] mb-5 font-normal">
                   {block.text}
