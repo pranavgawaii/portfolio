@@ -2,7 +2,7 @@ import React from 'react';
 import { Download, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
 
-const DRIVE_ID = '1rzKHkdME-8SsIoQqEqh6ZVAoKYXoQ7M4';
+const DRIVE_ID = '1boNL4UPwe1n71af10VWWRU4Vw1L7rTT-';
 const DRIVE_PREVIEW = `https://drive.google.com/file/d/${DRIVE_ID}/preview`;
 const DRIVE_DOWNLOAD = `https://drive.google.com/uc?export=download&id=${DRIVE_ID}`;
 const DRIVE_VIEW = `https://drive.google.com/file/d/${DRIVE_ID}/view`;

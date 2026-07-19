@@ -1,8 +1,8 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
 
-const VIEW_LINK = 'https://drive.google.com/file/d/1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi/preview';
-const DOWNLOAD_LINK = 'https://drive.google.com/uc?export=download&id=1ZTe3LT5xuc27A-FXvUr_zHr9NOKqUlUi';
+const VIEW_LINK = 'https://drive.google.com/file/d/1boNL4UPwe1n71af10VWWRU4Vw1L7rTT-/preview';
+const DOWNLOAD_LINK = 'https://drive.google.com/uc?export=download&id=1boNL4UPwe1n71af10VWWRU4Vw1L7rTT-';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
