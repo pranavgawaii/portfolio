@@ -65,22 +65,21 @@ const Footer: React.FC = () => {
     const API = API_BASE;
     if (!API && typeof window !== 'undefined' && !window.location.origin) return;
 
-    // Admin opt-out
-    if (localStorage.getItem('admin_opt_out') === 'true') return;
-
-    // Only show once per session
+    const isOptedOut = localStorage.getItem('admin_opt_out') === 'true';
     const already = sessionStorage.getItem('_visitor_toast');
-    if (already) return;
+    const shouldPeek = isOptedOut || already;
 
-    fetch(`${API}/api/track-visitor`)
+    fetch(`${API}/api/track-visitor${shouldPeek ? '?peek=1' : ''}`)
       .then(res => res.json())
       .then(data => {
         if (data?.count) {
           setVisitorData({ count: data.count, location: data.location || 'Earth' });
-          setShowToast(true);
-          sessionStorage.setItem('_visitor_toast', '1');
-          // Auto-dismiss after 6 seconds
-          setTimeout(() => setShowToast(false), 6000);
+          if (!shouldPeek) {
+            setShowToast(true);
+            sessionStorage.setItem('_visitor_toast', '1');
+            // Auto-dismiss after 6 seconds
+            setTimeout(() => setShowToast(false), 6000);
+          }
         }
       })
       .catch(() => {/* silent */});

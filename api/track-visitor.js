@@ -26,12 +26,18 @@ export default async function handler(req, res) {
     const db = await getDb();
     const visitors = db.collection('visitors');
 
-    await visitors.insertOne({
-      timestamp: new Date().toISOString(),
-      userAgent: req.headers['user-agent'] || 'Unknown',
-      location: locationStr,
-      ip: ip || 'local',
-    });
+    // Only log the visitor if they are not peeking
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const isPeek = url.searchParams.get('peek') === '1';
+
+    if (!isPeek) {
+      await visitors.insertOne({
+        timestamp: new Date().toISOString(),
+        userAgent: req.headers['user-agent'] || 'Unknown',
+        location: locationStr,
+        ip: ip || 'local',
+      });
+    }
 
     const realCount = await visitors.countDocuments();
 
