@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense, createContext, useContext } from 'react';
 import { track } from './hooks/useAnalytics';
+import { usePageTimer } from './hooks/usePageTimer';
 import { playClick, playGeneralClick } from './lib/clickSound';
 import { EXPERIENCE, PROJECTS, BLOGS, BlogPost } from './config/constants';
 import Hero from './components/sections/Hero';
@@ -349,6 +350,25 @@ const App: React.FC = () => {
     return () => document.removeEventListener('click', h, true);
   }, []);
 
+  // Track external link clicks (GitHub, LinkedIn, Twitter, etc.)
+  useEffect(() => {
+    const onExternalClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest('a[href]') as HTMLAnchorElement | null;
+      if (!anchor || !anchor.href) return;
+      try {
+        const url = new URL(anchor.href);
+        if (url.origin !== window.location.origin) {
+          track({ type: 'external_click', url: anchor.href.slice(0, 200), domain: url.hostname });
+        }
+      } catch {}
+    };
+    document.addEventListener('click', onExternalClick, true);
+    return () => document.removeEventListener('click', onExternalClick, true);
+  }, []);
+
+  // Page time tracking
+  const currentPath = page === 'blog-post' && selectedBlog ? `/blog/${selectedBlog.slug}` : `/${page === 'home' ? '' : page}`;
+  usePageTimer(currentPath);
 
   // Global keyboard shortcuts
   useEffect(() => {

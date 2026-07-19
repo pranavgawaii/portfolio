@@ -4,8 +4,6 @@ import { motion } from 'motion/react';
 
 const DRIVE_ID = '1boNL4UPwe1n71af10VWWRU4Vw1L7rTT-';
 const DRIVE_PREVIEW = `https://drive.google.com/file/d/${DRIVE_ID}/preview`;
-const DRIVE_DOWNLOAD = `https://drive.google.com/uc?export=download&id=${DRIVE_ID}`;
-const DRIVE_VIEW = `https://drive.google.com/file/d/${DRIVE_ID}/view`;
 
 const ResumePage: React.FC = () => (
   <motion.div
@@ -27,8 +25,9 @@ const ResumePage: React.FC = () => (
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Routes through /api/track-resume which logs the view + redirects to Drive */}
         <a
-          href={DRIVE_VIEW}
+          href="/api/track-resume?type=view"
           target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border-light dark:border-border-dark text-sm font-medium text-text-light dark:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors"
         >
@@ -36,7 +35,7 @@ const ResumePage: React.FC = () => (
           Open
         </a>
         <a
-          href={DRIVE_DOWNLOAD}
+          href="/api/track-resume?type=download"
           target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-4 py-1.5 bg-text-light dark:bg-text-dark text-background-light dark:text-background-dark rounded-full text-sm font-semibold hover:scale-105 transition-transform active:scale-95"
         >
@@ -46,7 +45,7 @@ const ResumePage: React.FC = () => (
       </div>
     </div>
 
-    {/* ── Viewer — full width, height follows A4 proportions (grows down, never shrinks sideways) ── */}
+    {/* ── Viewer — full width, A4 proportions ── */}
     <div
       className="w-full rounded-xl overflow-hidden border border-border-light dark:border-border-dark bg-white dark:bg-neutral-900"
       style={{ aspectRatio: '1 / 1.4142' }}

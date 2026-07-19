@@ -498,6 +498,28 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
     };
   }, [isReadMode]);
 
+  // ── Scroll depth tracking ─────────────────────────────────────────────────
+  useEffect(() => {
+    const milestones: Array<25 | 50 | 75 | 100> = [25, 50, 75, 100];
+    const fired = new Set<number>();
+
+    const onScroll = () => {
+      const scrolled = window.scrollY + window.innerHeight;
+      const total = document.documentElement.scrollHeight;
+      if (total <= window.innerHeight) return; // page fits on screen
+      const pct = Math.round((scrolled / total) * 100);
+      milestones.forEach(m => {
+        if (pct >= m && !fired.has(m)) {
+          fired.add(m);
+          track({ type: 'scroll_depth', slug: blog.slug, depth: m });
+        }
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [blog.slug]);
+
   return (
     <div className="pt-8 pb-24">
       <ReadingProgress />
