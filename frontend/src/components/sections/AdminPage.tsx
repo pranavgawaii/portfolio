@@ -200,22 +200,28 @@ const AdminPage: React.FC = () => {
   const fetchAnalytics = useCallback(async () => {
     setLoadingAnalytics(true);
     try {
-      const res = await fetch(`${API}/api/analytics`);
+      const token = await getToken();
+      const res = await fetch(`${API}/api/analytics`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (res.ok) setAnalytics(await res.json());
     } catch {}
     setLoadingAnalytics(false);
-  }, []);
+  }, [getToken]);
 
   const fetchHealth = useCallback(async () => {
     setLoadingHealth(true);
     const start = Date.now();
     try {
-      const res = await fetch(`${API}/api/health`);
+      const token = await getToken();
+      const res = await fetch(`${API}/api/health`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setHealthLatency(Date.now() - start);
       if (res.ok) setHealth(await res.json());
     } catch { setHealthLatency(null); }
     setLoadingHealth(false);
-  }, []);
+  }, [getToken]);
 
   useEffect(() => {
     if (!isAdmin) return;

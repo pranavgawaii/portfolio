@@ -1,8 +1,10 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
+import { requireAdmin } from './_lib/admin.js';
 
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
+  if (!(await requireAdmin(req, res))) return;
 
   let analyticsSize = 0;
   let commentsCount = 0;
