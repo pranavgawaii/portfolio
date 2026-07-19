@@ -58,6 +58,7 @@ const Footer: React.FC = () => {
   const { user } = useUser();
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
   const [githubHover, setGithubHover] = useState(false);
+  const [visitorHover, setVisitorHover] = useState(false);
   const [visitorData, setVisitorData] = useState<VisitorData | null>(null);
   const [showToast, setShowToast] = useState(false);
 
@@ -172,15 +173,41 @@ const Footer: React.FC = () => {
               {visitorData && (
                 <>
                   <span className="text-border-light dark:text-border-dark text-xs">|</span>
-                  <div className="flex items-center gap-3 text-xs font-medium text-text-muted-light dark:text-text-muted-dark">
-                    <div className="flex items-center gap-1.5" title="Total Visitors">
+                  <div 
+                    className="relative flex items-center gap-3 text-xs font-medium text-text-muted-light dark:text-text-muted-dark cursor-pointer hover:text-text-light dark:hover:text-text-dark transition-colors"
+                    onMouseEnter={() => setVisitorHover(true)}
+                    onMouseLeave={() => setVisitorHover(false)}
+                    onClick={() => {
+                      if (visitorData) {
+                        setShowToast(false); // reset animation
+                        setTimeout(() => setShowToast(true), 50);
+                      }
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5">
                       <Users size={12} className="text-emerald-500" />
                       <span>#{visitorData.count.toLocaleString()}</span>
                     </div>
-                    <div className="flex items-center gap-1.5" title="Your Location">
+                    <div className="flex items-center gap-1.5">
                       <MapPin size={12} className="text-amber-500" />
                       <span>{visitorData.location}</span>
                     </div>
+
+                    <AnimatePresence>
+                      {visitorHover && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -4, x: "-50%", scale: 0.92 }}
+                          animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
+                          exit={{ opacity: 0, y: -2, x: "-50%", scale: 0.92 }}
+                          transition={{ duration: 0.12 }}
+                          className="absolute -top-10 left-1/2 px-2.5 py-1.5 rounded-lg text-[10px] font-medium whitespace-nowrap pointer-events-none z-10
+                            bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 shadow-lg flex flex-col items-center leading-none"
+                        >
+                          Click to view details
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-100" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </>
               )}
