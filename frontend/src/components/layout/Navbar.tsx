@@ -4,8 +4,8 @@ import { useTheme } from 'next-themes';
 import { useNav } from '../../App';
 import AnimatedThemeToggler from '../ui/AnimatedThemeToggler';
 import AskMeModal from '../modals/AskMeModal';
-import { useUser, useClerk } from '@clerk/clerk-react';
-import { LogOut, LayoutDashboard, Command } from 'lucide-react';
+import { useUser } from '@clerk/clerk-react';
+import { Command } from 'lucide-react';
 import { track } from '../../hooks/useAnalytics';
 
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
@@ -14,20 +14,9 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted]       = useState(false);
   const [askOpen, setAskOpen]       = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const { page, goHome, goProjects, goBlog, goDSA, goAdmin, roast, triggerRoast } = useNav();
+  const { page, goHome, goProjects, goBlog, goDSA, roast, triggerRoast } = useNav();
   const { isSignedIn, user } = useUser();
-  const { signOut } = useClerk();
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
-
-  useEffect(() => {
-    const h = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
-    };
-    document.addEventListener('mousedown', h);
-    return () => document.removeEventListener('mousedown', h);
-  }, []);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -177,84 +166,6 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
               )}
             </div>
 
-            {/* Admin avatar — only shown to admin */}
-            {isSignedIn && user && isAdmin && (
-              <div className="relative ml-0.5" ref={menuRef}>
-                <motion.button
-                  whileTap={{ scale: 0.93 }}
-                  onClick={() => setUserMenuOpen(o => !o)}
-                  className="relative w-7 h-7 rounded-[10px] overflow-hidden
-                    ring-[1.5px] ring-amber-300/80 dark:ring-amber-600/60
-                    hover:ring-amber-400 dark:hover:ring-amber-500
-                    shadow-[0_2px_8px_rgba(245,158,11,0.2)] dark:shadow-[0_2px_8px_rgba(245,158,11,0.15)]
-                    transition-all duration-150"
-                  title="Admin"
-                >
-                  {user.imageUrl
-                    ? <img src={user.imageUrl} alt="" className="w-full h-full object-cover" />
-                    : <div className="w-full h-full bg-amber-100 dark:bg-amber-900/60 flex items-center justify-center text-[11px] font-bold text-amber-700 dark:text-amber-300">{user.firstName?.[0]}</div>
-                  }
-                </motion.button>
-
-                <AnimatePresence>
-                  {userMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95, filter: 'blur(4px)' }}
-                      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, y: 6, scale: 0.95, filter: 'blur(4px)' }}
-                      transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                      className="absolute right-0 top-[38px] w-54 min-w-[210px]
-                        bg-white/85 dark:bg-neutral-950/85
-                        backdrop-blur-2xl backdrop-saturate-150
-                        border border-white/60 dark:border-white/[0.07]
-                        rounded-2xl
-                        shadow-[0_2px_0_rgba(255,255,255,0.8)_inset,0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]
-                        dark:shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_16px_48px_rgba(0,0,0,0.6),0_4px_12px_rgba(0,0,0,0.4)]
-                        overflow-hidden z-[60]"
-                    >
-                      {/* Header */}
-                      <div className="px-4 py-3.5 border-b border-neutral-100/80 dark:border-white/[0.05]">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <p className="text-[12px] font-semibold text-neutral-900 dark:text-neutral-100 truncate flex-1">{user.fullName || user.firstName}</p>
-                          <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-md
-                            bg-amber-100/80 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400
-                            border border-amber-200/60 dark:border-amber-800/50">admin</span>
-                        </div>
-                        <p className="text-[10px] text-neutral-400 dark:text-neutral-500 truncate">{user.primaryEmailAddress?.emailAddress}</p>
-                      </div>
-                      {/* Dashboard */}
-                      <button
-                        onClick={() => { goAdmin(); setUserMenuOpen(false); }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium
-                          text-neutral-600 dark:text-neutral-300
-                          hover:bg-neutral-50 dark:hover:bg-white/[0.04]
-                          hover:text-neutral-900 dark:hover:text-white
-                          transition-colors"
-                      >
-                        <div className="w-6 h-6 rounded-lg bg-neutral-100 dark:bg-white/[0.06] flex items-center justify-center">
-                          <LayoutDashboard size={12} />
-                        </div>
-                        Admin Dashboard
-                      </button>
-                      {/* Sign out */}
-                      <button
-                        onClick={() => { signOut(); setUserMenuOpen(false); }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-[12px] font-medium
-                          text-red-400 hover:text-red-500
-                          hover:bg-red-50/50 dark:hover:bg-red-950/20
-                          transition-colors
-                          border-t border-neutral-100/80 dark:border-white/[0.05]"
-                      >
-                        <div className="w-6 h-6 rounded-lg bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
-                          <LogOut size={12} className="text-red-400" />
-                        </div>
-                        Sign out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
           </div>
         </motion.nav>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
+import { useUser, useClerk, useAuth, UserButton } from '@clerk/clerk-react';
 import { openGoogleSignInPopup } from '../../lib/oauthPopup';
 import { motion, AnimatePresence } from 'motion/react';
 import { PROJECTS, BLOGS, EXPERIENCE } from '../../config/constants.tsx';
@@ -323,10 +323,7 @@ const AdminPage: React.FC = () => {
             <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">admin</span>
           </div>
           <div className="flex items-center gap-3">
-            {user?.imageUrl && <img src={user.imageUrl} className="w-7 h-7 rounded-full ring-2 ring-border-light dark:ring-border-dark" alt="" />}
-            <button onClick={() => signOut()} className="flex items-center gap-1.5 text-[11px] font-mono text-text-muted-light dark:text-text-muted-dark hover:text-red-400 transition-colors">
-              <LogOut size={11} /> Sign out
-            </button>
+            <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: "w-8 h-8 ring-2 ring-border-light dark:ring-border-dark" } }} />
           </div>
         </div>
         <p className="text-sm text-text-muted-light dark:text-text-muted-dark mt-0.5">pranavx.in · portfolio analytics</p>
@@ -364,6 +361,34 @@ const AdminPage: React.FC = () => {
                 <KpiCard label="Comments"       value={totalComments}                                   icon={<MessageCircle size={16} />} color="text-sky-500" />
                 <KpiCard label="AskMe opens"    value={analytics?.eventCounts?.askme_open ?? 0}         icon={<Zap size={16} />} color="text-pink-500" />
               </div>
+
+              {/* Admin Controls */}
+              <GlassCard className="p-5">
+                <SectionHead title="Admin controls" />
+                <div className="flex items-center justify-between mt-2">
+                  <div>
+                    <p className="text-sm font-medium text-text-light dark:text-text-dark">Opt out of tracking</p>
+                    <p className="text-[11px] text-text-muted-light dark:text-text-muted-dark mt-0.5">Disable analytics tracking for this device/browser.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const isOptedOut = localStorage.getItem('admin_opt_out') === 'true';
+                      if (isOptedOut) localStorage.removeItem('admin_opt_out');
+                      else localStorage.setItem('admin_opt_out', 'true');
+                      // trigger a re-render
+                      setTab('system'); setTimeout(() => setTab('overview'), 0);
+                    }}
+                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors ${
+                      localStorage.getItem('admin_opt_out') === 'true' ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-800'
+                    }`}
+                  >
+                    <span className="sr-only">Toggle tracking</span>
+                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      localStorage.getItem('admin_opt_out') === 'true' ? 'translate-x-2' : '-translate-x-2'
+                    }`} />
+                  </button>
+                </div>
+              </GlassCard>
 
               {/* Device breakdown */}
               {analytics && deviceTotal > 0 && (
@@ -811,33 +836,6 @@ const AdminPage: React.FC = () => {
                 )}
               </GlassCard>
 
-              {/* Admin Controls */}
-              <GlassCard className="p-5">
-                <SectionHead title="Admin controls" />
-                <div className="flex items-center justify-between mt-2">
-                  <div>
-                    <p className="text-sm font-medium text-text-light dark:text-text-dark">Opt out of tracking</p>
-                    <p className="text-[11px] text-text-muted-light dark:text-text-muted-dark mt-0.5">Disable analytics tracking for this device/browser.</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      const isOptedOut = localStorage.getItem('admin_opt_out') === 'true';
-                      if (isOptedOut) localStorage.removeItem('admin_opt_out');
-                      else localStorage.setItem('admin_opt_out', 'true');
-                      // trigger a re-render by updating state (force update hack since we don't track localStorage natively in state here)
-                      setTab('overview'); setTimeout(() => setTab('system'), 0);
-                    }}
-                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors ${
-                      localStorage.getItem('admin_opt_out') === 'true' ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-800'
-                    }`}
-                  >
-                    <span className="sr-only">Toggle tracking</span>
-                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      localStorage.getItem('admin_opt_out') === 'true' ? 'translate-x-2' : '-translate-x-2'
-                    }`} />
-                  </button>
-                </div>
-              </GlassCard>
 
               {/* Environment */}
               <GlassCard className="overflow-hidden">
