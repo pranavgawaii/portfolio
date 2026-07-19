@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PROFILE, ICONS_MAP } from '../../config/constants';
 import { useNav } from '../../App';
 import { useUser } from '@clerk/clerk-react';
-import { Github, Users, MapPin, X } from 'lucide-react';
+import { Github, Eye, Globe, X } from 'lucide-react';
 import { API_BASE } from '../../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -11,7 +11,13 @@ const ADMIN_EMAIL = 'pranvgg@gmail.com';
 interface VisitorData { count: number; location: string; }
 
 // ── Visitor Toast ─────────────────────────────────────────────────────────────
-const VisitorToast: React.FC<{ data: VisitorData; onDismiss: () => void }> = ({ data, onDismiss }) => {
+const getOrdinal = (n: number) => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n.toLocaleString() + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
+const VisitorToast: React.FC<{ data: VisitorData; onDismiss: () => void; setHovered: (v: boolean) => void }> = ({ data, onDismiss, setHovered }) => {
   const countryCode = data.location.split(', ').pop()?.trim();
   const flag = (() => {
     if (!countryCode || countryCode.length !== 2) return '🌍';
@@ -31,12 +37,15 @@ const VisitorToast: React.FC<{ data: VisitorData; onDismiss: () => void }> = ({ 
         shadow-[0_8px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)]
         text-sm font-medium text-text-light dark:text-text-dark
         whitespace-nowrap max-w-[calc(100vw-2rem)]"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <span className="text-xl leading-none">{flag}</span>
       <div className="min-w-0">
         <p className="text-xs font-semibold text-text-light dark:text-text-dark">
-          You are visitor{' '}
-          <span className="font-black text-emerald-500">#{data.count.toLocaleString()}</span>
+          You are the{' '}
+          <span className="font-black text-emerald-500">{getOrdinal(data.count)}</span>{' '}
+          visitor
         </p>
         <p className="text-[10px] font-mono text-text-muted-light dark:text-text-muted-dark opacity-70 truncate">
           from {data.location}
@@ -86,6 +95,16 @@ const Footer: React.FC = () => {
   const [visitorHover, setVisitorHover] = useState(false);
   const [visitorData, setVisitorData] = useState<VisitorData | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [toastHovered, setToastHovered] = useState(false);
+
+  // Handle toast timeout logic
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    if (showToast && !toastHovered) {
+      timeoutId = setTimeout(() => setShowToast(false), 2500); // 2.5 seconds dismiss
+    }
+    return () => clearTimeout(timeoutId);
+  }, [showToast, toastHovered]);
 
   useEffect(() => {
     const API = API_BASE;
@@ -104,8 +123,7 @@ const Footer: React.FC = () => {
             setShowToast(true);
             playPopSound();
             sessionStorage.setItem('_visitor_toast', '1');
-            // Auto-dismiss after 6 seconds
-            setTimeout(() => setShowToast(false), 6000);
+            // Auto-dismiss handled by the dedicated useEffect above
           }
         }
       })
@@ -117,7 +135,7 @@ const Footer: React.FC = () => {
       {/* ── Visitor toast ────────────────────────────────────────────────── */}
       <AnimatePresence>
         {showToast && visitorData && (
-          <VisitorToast data={visitorData} onDismiss={() => setShowToast(false)} />
+          <VisitorToast data={visitorData} onDismiss={() => setShowToast(false)} setHovered={setToastHovered} />
         )}
       </AnimatePresence>
 
@@ -209,18 +227,17 @@ const Footer: React.FC = () => {
                         setTimeout(() => {
                           setShowToast(true);
                           playPopSound();
-                          // Auto-dismiss after 6 seconds just like the initial load
-                          setTimeout(() => setShowToast(false), 6000);
+                          // Auto-dismiss is handled by the dedicated useEffect
                         }, 50);
                       }
                     }}
                   >
                     <div className="flex items-center gap-1.5">
-                      <Users size={12} className="text-emerald-500" />
-                      <span>#{visitorData.count.toLocaleString()}</span>
+                      <Eye size={12} className="text-neutral-500 dark:text-neutral-400" />
+                      <span>{visitorData.count.toLocaleString()}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin size={12} className="text-amber-500" />
+                    <div className="flex items-center gap-1.5 ml-1">
+                      <Globe size={12} className="text-neutral-500 dark:text-neutral-400" />
                       <span>{visitorData.location}</span>
                     </div>
 
