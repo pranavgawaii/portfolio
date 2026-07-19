@@ -31,10 +31,11 @@ interface AnalyticsData {
   blogViews: Record<string, number>;
   projectClicks: Record<string, number>;
   deviceBreakdown: { mobile: number; tablet: number; desktop: number };
+  osBreakdown: Record<string, number>;
   avgDuration: Record<string, { total: number; count: number }>;
   scrollDepth: Record<string, Record<string, number>>;
   externalClicks: Record<string, number>;
-  recentEvents: Array<{ type: string; path?: string; slug?: string; projectId?: string; timestamp: string; ua?: string; device?: string; sessionId?: string; url?: string; domain?: string; duration?: number; depth?: number }>;
+  recentEvents: Array<{ type: string; path?: string; slug?: string; projectId?: string; timestamp: string; ua?: string; device?: string; os?: string; osVersion?: string; sessionId?: string; url?: string; domain?: string; duration?: number; depth?: number }>;
   totalEvents: number;
   uniqueSessionsToday: number;
   topLocations: Array<{ _id: string; count: number }>;
@@ -62,10 +63,24 @@ const EVENT_COLORS: Record<string, string> = {
   external_click: 'bg-orange-500',
 };
 
-const DEVICE_ICONS: Record<string, React.ReactNode> = {
-  mobile: <Smartphone size={14} />,
-  tablet: <Tablet size={14} />,
-  desktop: <Monitor size={14} />,
+const OS_COLORS: Record<string, string> = {
+  macOS: 'bg-blue-500',
+  Windows: 'bg-sky-400',
+  Android: 'bg-emerald-500',
+  iOS: 'bg-violet-500',
+  Linux: 'bg-amber-500',
+  ChromeOS: 'bg-teal-500',
+  unknown: 'bg-neutral-400',
+};
+
+const OS_ICONS: Record<string, string> = {
+  macOS: '🍎',
+  Windows: '🪟',
+  Android: '🤖',
+  iOS: '📱',
+  Linux: '🐧',
+  ChromeOS: '🌐',
+  unknown: '❓',
 };
 
 const countryFlag = (loc: string) => {
@@ -353,7 +368,7 @@ const AdminPage: React.FC = () => {
               {/* Device breakdown */}
               {analytics && deviceTotal > 0 && (
                 <GlassCard className="p-5">
-                  <SectionHead title="Device breakdown" />
+                  <SectionHead title="Device type" />
                   <div className="flex justify-around py-2">
                     <DeviceRing label="Desktop" count={analytics.deviceBreakdown.desktop} total={deviceTotal} color="text-blue-500" icon={<Monitor size={14} />} />
                     <DeviceRing label="Mobile"  count={analytics.deviceBreakdown.mobile}  total={deviceTotal} color="text-violet-500" icon={<Smartphone size={14} />} />
@@ -361,6 +376,38 @@ const AdminPage: React.FC = () => {
                   </div>
                 </GlassCard>
               )}
+
+              {/* OS breakdown */}
+              {analytics && Object.keys(analytics.osBreakdown || {}).length > 0 && (() => {
+                const entries = (Object.entries(analytics.osBreakdown) as [string, number][])
+                  .sort((a, b) => b[1] - a[1]);
+                const maxOs = entries[0]?.[1] || 1;
+                return (
+                  <GlassCard className="p-5">
+                    <SectionHead title="Operating system" />
+                    <div className="space-y-2.5">
+                      {entries.map(([label, count]) => {
+                        const osName = label.split(' ')[0];
+                        const color = OS_COLORS[osName] || 'bg-neutral-400';
+                        const icon = OS_ICONS[osName] || '💻';
+                        return (
+                          <div key={label} className="flex items-center gap-3">
+                            <span className="text-base leading-none w-5 text-center">{icon}</span>
+                            <p className="text-[11px] font-mono text-text-light dark:text-text-dark w-28 shrink-0 truncate">{label}</p>
+                            <div className="flex-1 h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                              <motion.div className={`h-full rounded-full ${color}`}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(count / maxOs) * 100}%` }}
+                                transition={{ duration: 0.7, ease: 'easeOut' }} />
+                            </div>
+                            <p className="text-[11px] font-mono font-bold text-text-light dark:text-text-dark w-8 text-right tabular-nums">{count}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </GlassCard>
+                );
+              })()}
 
               {/* Geo + Avg time — two columns */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -1,12 +1,56 @@
 import { getDb } from '../_lib/mongodb.js';
 import { applyCors } from '../_lib/cors.js';
 
-/** Parse UA string into device category */
-function parseDevice(ua) {
-  if (!ua) return 'desktop';
-  if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) return 'mobile';
-  if (/iPad|Tablet/i.test(ua)) return 'tablet';
-  return 'desktop';
+/**
+ * Parse UA string into:
+ *   os      — macOS | Windows | Android | iOS | Linux | ChromeOS | unknown
+ *   osVersion — e.g. "14", "10", "15.1", "10_15_7" etc.
+ *   device  — mobile | tablet | desktop  (kept for backward compat)
+ */
+function parseUA(ua) {
+  if (!ua) return { os: 'unknown', osVersion: '', device: 'desktop' };
+
+  // Android — must come before Linux check
+  const android = ua.match(/Android\s*([\d._]+)?/i);
+  if (android) {
+    const ver = (android[1] || '').replace(/_/g, '.').split('.').slice(0, 2).join('.');
+    const isTablet = /Tablet|iPad/i.test(ua) || !/Mobile/i.test(ua);
+    return { os: 'Android', osVersion: ver, device: isTablet ? 'tablet' : 'mobile' };
+  }
+
+  // iPhone / iPad (iOS)
+  const ios = ua.match(/OS\s*([\d_]+)\s*like\s*Mac/i);
+  if (/iPhone/i.test(ua)) {
+    const ver = ios ? ios[1].replace(/_/g, '.').split('.').slice(0, 2).join('.') : '';
+    return { os: 'iOS', osVersion: ver, device: 'mobile' };
+  }
+  if (/iPad/i.test(ua)) {
+    const ver = ios ? ios[1].replace(/_/g, '.').split('.').slice(0, 2).join('.') : '';
+    return { os: 'iOS', osVersion: ver, device: 'tablet' };
+  }
+
+  // Windows
+  const win = ua.match(/Windows NT\s*([\d.]+)/i);
+  if (win) {
+    const ntMap: Record<string, string> = { '10.0': '10/11', '6.3': '8.1', '6.2': '8', '6.1': '7', '6.0': 'Vista' };
+    const ver = ntMap[win[1]] || win[1];
+    return { os: 'Windows', osVersion: ver, device: 'desktop' };
+  }
+
+  // macOS
+  const mac = ua.match(/Mac OS X\s*([\d_]+)/i);
+  if (mac && !/iPhone|iPad/i.test(ua)) {
+    const ver = mac[1].replace(/_/g, '.').split('.').slice(0, 2).join('.');
+    return { os: 'macOS', osVersion: ver, device: 'desktop' };
+  }
+
+  // ChromeOS
+  if (/CrOS/i.test(ua)) return { os: 'ChromeOS', osVersion: '', device: 'desktop' };
+
+  // Linux
+  if (/Linux/i.test(ua)) return { os: 'Linux', osVersion: '', device: 'desktop' };
+
+  return { os: 'unknown', osVersion: '', device: 'desktop' };
 }
 
 export default async function handler(req, res) {
@@ -16,13 +60,15 @@ export default async function handler(req, res) {
   try {
     const event = req.body || {};
     const ua = (req.headers['user-agent'] || '').slice(0, 150);
-    const device = parseDevice(ua);
+    const { os, osVersion, device } = parseUA(ua);
     const sessionId = typeof event.sessionId === 'string' ? event.sessionId.slice(0, 64) : null;
 
     const entry = {
       ...event,
       sessionId,
       device,
+      os,
+      osVersion,
       timestamp: new Date().toISOString(),
       ua,
       ref: (req.headers['referer'] || '').slice(0, 200),
@@ -55,9 +101,14 @@ export default async function handler(req, res) {
     if (!data.scrollDepth) data.scrollDepth = {};
     if (!data.externalClicks) data.externalClicks = {};
     if (!data.uniqueSessions) data.uniqueSessions = {};
+    if (!data.osBreakdown) data.osBreakdown = {};
 
-    // Device
+    // Device (mobile/tablet/desktop)
     data.deviceBreakdown[device] = (data.deviceBreakdown[device] || 0) + 1;
+
+    // OS — e.g. "macOS", "Windows", "Android 14", "iOS 17"
+    const osLabel = osVersion ? `${os} ${osVersion}` : os;
+    data.osBreakdown[osLabel] = (data.osBreakdown[osLabel] || 0) + 1;
 
     // Event type counters
     data.eventCounts[event.type] = (data.eventCounts[event.type] || 0) + 1;
