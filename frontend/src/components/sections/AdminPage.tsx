@@ -811,6 +811,34 @@ const AdminPage: React.FC = () => {
                 )}
               </GlassCard>
 
+              {/* Admin Controls */}
+              <GlassCard className="p-5">
+                <SectionHead title="Admin controls" />
+                <div className="flex items-center justify-between mt-2">
+                  <div>
+                    <p className="text-sm font-medium text-text-light dark:text-text-dark">Opt out of tracking</p>
+                    <p className="text-[11px] text-text-muted-light dark:text-text-muted-dark mt-0.5">Disable analytics tracking for this device/browser.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const isOptedOut = localStorage.getItem('admin_opt_out') === 'true';
+                      if (isOptedOut) localStorage.removeItem('admin_opt_out');
+                      else localStorage.setItem('admin_opt_out', 'true');
+                      // trigger a re-render by updating state (force update hack since we don't track localStorage natively in state here)
+                      setTab('overview'); setTimeout(() => setTab('system'), 0);
+                    }}
+                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors ${
+                      localStorage.getItem('admin_opt_out') === 'true' ? 'bg-emerald-500' : 'bg-neutral-200 dark:bg-neutral-800'
+                    }`}
+                  >
+                    <span className="sr-only">Toggle tracking</span>
+                    <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      localStorage.getItem('admin_opt_out') === 'true' ? 'translate-x-2' : '-translate-x-2'
+                    }`} />
+                  </button>
+                </div>
+              </GlassCard>
+
               {/* Environment */}
               <GlassCard className="overflow-hidden">
                 <p className="text-[10px] font-mono uppercase tracking-widest text-text-muted-light dark:text-text-muted-dark opacity-50 px-5 py-3 border-b border-border-light dark:border-border-dark">Environment</p>

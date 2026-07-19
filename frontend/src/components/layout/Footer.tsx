@@ -65,6 +65,9 @@ const Footer: React.FC = () => {
     const API = API_BASE;
     if (!API && typeof window !== 'undefined' && !window.location.origin) return;
 
+    // Admin opt-out
+    if (localStorage.getItem('admin_opt_out') === 'true') return;
+
     // Only show once per session
     const already = sessionStorage.getItem('_visitor_toast');
     if (already) return;

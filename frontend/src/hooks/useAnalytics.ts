@@ -30,6 +30,7 @@ export type AnalyticsEvent =
 
 // ── Core tracker ─────────────────────────────────────────────────────────────
 export function track(event: AnalyticsEvent) {
+  if (typeof window !== 'undefined' && localStorage.getItem('admin_opt_out') === 'true') return;
   const payload = { ...event, sessionId: getOrCreateSession() };
   fetch(`${API}/api/analytics/track`, {
     method: 'POST',
@@ -40,6 +41,7 @@ export function track(event: AnalyticsEvent) {
 
 // ── Beacon variant (for use in beforeunload / visibilitychange) ───────────────
 export function trackBeacon(event: AnalyticsEvent) {
+  if (typeof window !== 'undefined' && localStorage.getItem('admin_opt_out') === 'true') return;
   if (!navigator.sendBeacon) { track(event); return; }
   const payload = JSON.stringify({ ...event, sessionId: getOrCreateSession() });
   navigator.sendBeacon(`${API}/api/analytics/track`, new Blob([payload], { type: 'application/json' }));

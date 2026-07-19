@@ -1,14 +1,6 @@
 import { getDb } from './_lib/mongodb.js';
 import { applyCors } from './_lib/cors.js';
 
-/**
- * VISITOR_BASE_OFFSET — adds a realistic starting count to account for
- * real visitors before analytics tracking was set up (1+ year of traffic).
- *
- * Set to 0 to disable. Only known to us — remove whenever you want.
- */
-const VISITOR_BASE_OFFSET = 2600;
-
 export default async function handler(req, res) {
   if (applyCors(req, res)) return;
   if (req.method !== 'GET') { res.status(405).end(); return; }
@@ -42,9 +34,8 @@ export default async function handler(req, res) {
     });
 
     const realCount = await visitors.countDocuments();
-    const displayCount = realCount + VISITOR_BASE_OFFSET;
 
-    res.status(200).json({ count: displayCount, location: locationStr });
+    res.status(200).json({ count: realCount, location: locationStr });
   } catch (err) {
     console.error('[Track Visitor] Error:', err);
     res.status(500).json({ error: err.message });
