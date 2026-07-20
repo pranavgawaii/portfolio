@@ -183,6 +183,7 @@ const AdminPage: React.FC = () => {
   const [loadingHealth, setLoadingHealth] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [healthLatency, setHealthLatency] = useState<number | null>(null);
+  const [selectedUtmBlog, setSelectedUtmBlog] = useState(BLOGS[0]?.slug || '');
 
   const isAdmin = user?.id === ADMIN_CLERK_ID;
 
@@ -519,8 +520,19 @@ const AdminPage: React.FC = () => {
               <GlassCard className="p-5">
                 <SectionHead title="Share Trackable Link" />
                 <p className="text-xs text-text-muted-light dark:text-text-muted-dark mb-4">
-                  Select a platform below to automatically generate and copy a trackable link for your blog post. The clicks will appear in the "Traffic Sources" section.
+                  Select a blog post and platform below to automatically generate and copy a trackable link.
                 </p>
+                <div className="mb-4">
+                  <select
+                    value={selectedUtmBlog}
+                    onChange={(e) => setSelectedUtmBlog(e.target.value)}
+                    className="w-full max-w-sm px-3 py-2 text-xs font-mono bg-neutral-100 dark:bg-neutral-800 text-text-light dark:text-text-dark rounded-lg border border-border-light dark:border-border-dark focus:outline-none focus:ring-1 focus:ring-neutral-400 dark:focus:ring-neutral-600"
+                  >
+                    {BLOGS.map(b => (
+                      <option key={b.slug} value={b.slug}>{b.title}</option>
+                    ))}
+                  </select>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { label: 'Twitter', val: 'twitter', icon: '🐦' },
@@ -531,7 +543,7 @@ const AdminPage: React.FC = () => {
                     <button
                       key={platform.val}
                       onClick={() => {
-                        const url = `https://www.pranavx.in/blog/howsqlactuallyworks?v=1&utm_source=${platform.val}`;
+                        const url = `https://www.pranavx.in/blog/${selectedUtmBlog}?v=1&utm_source=${platform.val}`;
                         navigator.clipboard.writeText(url);
                         alert(`Copied ${platform.label} link: \n${url}`);
                       }}
