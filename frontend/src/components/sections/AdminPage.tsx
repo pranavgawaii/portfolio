@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUser, useClerk, useAuth, UserButton } from '@clerk/clerk-react';
-import { openGoogleSignInPopup } from '../../lib/oauthPopup';
+import { SignInProviderModal } from '../auth/SignInProviderModal';
 import { motion, AnimatePresence } from 'motion/react';
 import { PROJECTS, BLOGS, EXPERIENCE } from '../../config/constants.tsx';
 import {
@@ -184,6 +184,7 @@ const AdminPage: React.FC = () => {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [healthLatency, setHealthLatency] = useState<number | null>(null);
   const [selectedUtmBlog, setSelectedUtmBlog] = useState(BLOGS[0]?.slug || '');
+  const [signInModalOpen, setSignInModalOpen] = useState(false);
 
   const isAdmin = user?.id === ADMIN_CLERK_ID;
 
@@ -267,9 +268,12 @@ const AdminPage: React.FC = () => {
         <h1 className="font-sans font-bold text-lg text-text-light dark:text-text-dark mb-1">Admin access</h1>
         <p className="text-sm text-text-muted-light dark:text-text-muted-dark">Sign in with your admin account to continue.</p>
       </div>
-      <button onClick={() => openGoogleSignInPopup()} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:opacity-85 transition-opacity">
+      <button onClick={() => setSignInModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium hover:opacity-85 transition-opacity">
         <LogIn size={14} /> Sign in
       </button>
+      <AnimatePresence>
+        {signInModalOpen && <SignInProviderModal onClose={() => setSignInModalOpen(false)} label="Sign in as admin" />}
+      </AnimatePresence>
     </div>
   );
 

@@ -4,7 +4,7 @@ import { useUser, useAuth } from '@clerk/clerk-react';
 import { ThumbsUp, Flame, Lightbulb, Heart } from 'lucide-react';
 
 import { API_BASE as API } from '../../lib/api';
-import { openGoogleSignInPopup } from '../../lib/oauthPopup';
+import { SignInProviderModal } from '../auth/SignInProviderModal';
 
 const REACTIONS = [
   { key: 'like',      Icon: ThumbsUp,  label: 'Useful',      activeColor: 'text-blue-500',   activeBg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/60' },
@@ -26,6 +26,7 @@ const Reactions: React.FC<Props> = ({ slug }) => {
   const [burst, setBurst] = useState<ReactionKey | null>(null);
   const [tooltip, setTooltip] = useState<ReactionKey | null>(null);
   const [pending, setPending] = useState<ReactionKey | null>(null);
+  const [signInModalOpen, setSignInModalOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -46,7 +47,7 @@ const Reactions: React.FC<Props> = ({ slug }) => {
 
   const toggle = async (key: ReactionKey) => {
     if (!isSignedIn) {
-      openGoogleSignInPopup();
+      setSignInModalOpen(true);
       return;
     }
     if (pending) return;
@@ -156,6 +157,10 @@ const Reactions: React.FC<Props> = ({ slug }) => {
           );
         })}
       </div>
+
+      <AnimatePresence>
+        {signInModalOpen && <SignInProviderModal onClose={() => setSignInModalOpen(false)} label="Sign in to react" />}
+      </AnimatePresence>
     </div>
   );
 };

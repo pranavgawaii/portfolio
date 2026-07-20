@@ -11,7 +11,7 @@ import SqlBanner from '../features/SqlBanner';
 import { track } from '../../hooks/useAnalytics';
 
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
-import { openGoogleSignInPopup } from '../../lib/oauthPopup';
+import { SignInProviderModal } from '../auth/SignInProviderModal';
 
 import { API_BASE as API } from '../../lib/api';
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
@@ -129,6 +129,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   const [replySubmitting, setReplySubmitting] = useState<string | null>(null);
   const [likePending, setLikePending] = useState<string | null>(null);
+  const [signInModalOpen, setSignInModalOpen] = useState(false);
 
   const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
 
@@ -200,7 +201,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
   };
 
   const handleLike = async (commentId: string, parentId?: string) => {
-    if (!isSignedIn) { openGoogleSignInPopup(); return; }
+    if (!isSignedIn) { setSignInModalOpen(true); return; }
     if (likePending) return;
     setLikePending(commentId);
     try {
@@ -307,7 +308,7 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
       ) : (
         <motion.button
           whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
-          onClick={() => openGoogleSignInPopup()}
+          onClick={() => setSignInModalOpen(true)}
           className="w-full mb-8 flex items-center justify-center gap-2.5 px-4 py-4 rounded-2xl border border-dashed border-neutral-200 dark:border-neutral-700 text-[13px] text-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-all group"
         >
           <LogIn size={14} className="group-hover:translate-x-0.5 transition-transform" />
@@ -451,6 +452,10 @@ const AuthCommentSection: React.FC<{ slug: string }> = ({ slug }) => {
           )}
         </AnimatePresence>
       )}
+
+      <AnimatePresence>
+        {signInModalOpen && <SignInProviderModal onClose={() => setSignInModalOpen(false)} />}
+      </AnimatePresence>
     </div>
   );
 };
