@@ -35,7 +35,8 @@ interface AnalyticsData {
   avgDuration: Record<string, { total: number; count: number }>;
   scrollDepth: Record<string, Record<string, number>>;
   externalClicks: Record<string, number>;
-  recentEvents: Array<{ type: string; path?: string; slug?: string; projectId?: string; timestamp: string; ua?: string; device?: string; os?: string; osVersion?: string; sessionId?: string; url?: string; domain?: string; duration?: number; depth?: number }>;
+  utmSources: Record<string, number>;
+  recentEvents: Array<{ type: string; path?: string; slug?: string; projectId?: string; timestamp: string; ua?: string; device?: string; os?: string; osVersion?: string; sessionId?: string; url?: string; domain?: string; duration?: number; depth?: number; source?: string }>;
   totalEvents: number;
   uniqueSessionsToday: number;
   topLocations: Array<{ _id: string; count: number }>;
@@ -54,6 +55,7 @@ const EVENT_LABELS: Record<string, string> = {
   page_view: 'Page view', blog_open: 'Blog read', project_click: 'Project view',
   askme_open: 'Ask Me', resume_view: 'Resume viewed', contact_open: 'Contact', share: 'Share',
   page_leave: 'Page leave', scroll_depth: 'Scroll depth', external_click: 'External link',
+  utm_source: 'UTM source',
 };
 
 const EVENT_COLORS: Record<string, string> = {
@@ -288,6 +290,7 @@ const AdminPage: React.FC = () => {
   const topBlogs     = (Object.entries(analytics?.blogViews || {}) as [string, number][]).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const topProjects  = (Object.entries(analytics?.projectClicks || {}) as [string, number][]).sort((a, b) => b[1] - a[1]).slice(0, 5);
   const topExternal  = (Object.entries(analytics?.externalClicks || {}) as [string, number][]).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const topUtm       = (Object.entries(analytics?.utmSources || {}) as [string, number][]).sort((a, b) => b[1] - a[1]).slice(0, 8);
   const topDuration  = Object.entries(analytics?.avgDuration || {})
     .filter(([, d]) => (d as { total: number; count: number }).count > 0)
     .map(([path, d]) => ({ path, avg: Math.round((d as { total: number; count: number }).total / (d as { total: number; count: number }).count) }))
@@ -297,6 +300,7 @@ const AdminPage: React.FC = () => {
   const maxBlog      = topBlogs[0]?.[1] || 1;
   const maxProject   = topProjects[0]?.[1] || 1;
   const maxExternal  = topExternal[0]?.[1] || 1;
+  const maxUtm       = topUtm[0]?.[1] || 1;
   const maxDuration  = topDuration[0]?.avg || 1;
 
   // Resume
@@ -579,6 +583,16 @@ const AdminPage: React.FC = () => {
                     </GlassCard>
                   )}
 
+                  {/* UTM Sources */}
+                  {topUtm.length > 0 && (
+                    <GlassCard className="p-5">
+                      <SectionHead title="Traffic Sources (UTM)" />
+                      <div className="space-y-2.5">
+                        {topUtm.map(([src, count]) => <AnimBar key={src} label={src} value={count} max={maxUtm} color="bg-sky-500" />)}
+                      </div>
+                    </GlassCard>
+                  )}
+
                   {/* Avg time */}
                   {topDuration.length > 0 && (
                     <GlassCard className="p-5">
@@ -608,7 +622,7 @@ const AdminPage: React.FC = () => {
                             <div className="flex items-baseline gap-2 flex-wrap">
                               <span className="text-[11px] font-mono text-text-light dark:text-text-dark">{EVENT_LABELS[e.type] || e.type}</span>
                               <span className="text-[10px] font-mono text-text-muted-light dark:text-text-muted-dark opacity-60 truncate max-w-[180px]">
-                                {e.path || e.slug || e.domain || e.projectId}
+                                {e.path || e.slug || e.domain || e.projectId || e.source}
                                 {e.duration ? ` · ${fmtDuration(e.duration)}` : ''}
                                 {e.depth ? ` · ${e.depth}%` : ''}
                               </span>

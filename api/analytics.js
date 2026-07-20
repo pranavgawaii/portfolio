@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       totalPageViews: 0, totalEvents: 0,
       deviceBreakdown: { mobile: 0, tablet: 0, desktop: 0 },
       avgDuration: {}, scrollDepth: {}, externalClicks: {}, uniqueSessions: {},
-      osBreakdown: {},
+      osBreakdown: {}, utmSources: {},
     };
 
     // ── Recent events (last 50) ───────────────────────────────────────────────
@@ -79,6 +79,7 @@ export default async function handler(req, res) {
       avgDuration: data.avgDuration || {},
       scrollDepth: data.scrollDepth || {},
       externalClicks: data.externalClicks || {},
+      utmSources: data.utmSources || {},
       recentEvents,
       totalEvents: data.totalEvents || 0,
       uniqueSessionsToday: uniqueSessionsToday.length,

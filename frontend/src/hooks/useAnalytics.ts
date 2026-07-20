@@ -26,7 +26,8 @@ export type AnalyticsEvent =
   | { type: 'share'; slug: string }
   | { type: 'page_leave'; path: string; duration: number }
   | { type: 'scroll_depth'; slug: string; depth: 25 | 50 | 75 | 100 }
-  | { type: 'external_click'; url: string; domain: string };
+  | { type: 'external_click'; url: string; domain: string }
+  | { type: 'utm_source'; source: string };
 
 // ── Core tracker ─────────────────────────────────────────────────────────────
 export function track(event: AnalyticsEvent) {

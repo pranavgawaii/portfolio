@@ -299,6 +299,10 @@ const App: React.FC = () => {
 
   // ── Parse URL on mount so direct links work ─────────────────────────────
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const utmSource = searchParams.get('utm_source');
+    if (utmSource) track({ type: 'utm_source', source: utmSource.toLowerCase() });
+
     const path = window.location.pathname;
     if (path.startsWith('/blog/')) {
       const slug = path.replace('/blog/', '');

@@ -102,6 +102,7 @@ export default async function handler(req, res) {
     if (!data.externalClicks) data.externalClicks = {};
     if (!data.uniqueSessions) data.uniqueSessions = {};
     if (!data.osBreakdown) data.osBreakdown = {};
+    if (!data.utmSources) data.utmSources = {};
 
     // Device (mobile/tablet/desktop)
     data.deviceBreakdown[device] = (data.deviceBreakdown[device] || 0) + 1;
@@ -151,6 +152,12 @@ export default async function handler(req, res) {
     if (event.type === 'external_click' && event.domain) {
       const domain = String(event.domain).slice(0, 100);
       data.externalClicks[domain] = (data.externalClicks[domain] || 0) + 1;
+    }
+
+    // UTM Sources
+    if (event.type === 'utm_source' && event.source) {
+      const src = String(event.source).slice(0, 50);
+      data.utmSources[src] = (data.utmSources[src] || 0) + 1;
     }
 
     // Unique sessions (approximate — count per day bucket)
