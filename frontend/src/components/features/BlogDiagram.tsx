@@ -943,7 +943,10 @@ const PgvectorQuery = () => {
             </div>
 
             {/* Vector query line */}
-            <div className="absolute left-[50%] top-[50%] flex items-start origin-top-left -rotate-[35deg]">
+            <div 
+              className="absolute left-[50%] top-[50%] flex items-start origin-top-left"
+              style={{ transform: 'rotate(-35deg)' }}
+            >
               <div className="h-px w-16 bg-emerald-500 relative">
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-500" />
               </div>
@@ -951,7 +954,10 @@ const PgvectorQuery = () => {
             </div>
 
             {/* Match vector line */}
-            <div className="absolute left-[50%] top-[50%] flex items-start origin-top-left -rotate-[44deg]">
+            <div 
+              className="absolute left-[50%] top-[50%] flex items-start origin-top-left transition-transform duration-200"
+              style={{ transform: `rotate(${-35 + Math.acos(similarity) * (180 / Math.PI)}deg)` }}
+            >
               <div className="h-px w-14 bg-neutral-800 dark:bg-neutral-200 relative">
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-neutral-500" />
               </div>

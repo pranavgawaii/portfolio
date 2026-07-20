@@ -7,6 +7,7 @@ import Reactions from '../ui/Reactions';
 import BlogDiagram from '../features/BlogDiagram';
 import { DynamicIslandTOC } from '../ui/DynamicIslandTOC';
 import { TextGradientScroll } from '../ui/text-gradient-scroll';
+import SqlBanner from '../features/SqlBanner';
 import { track } from '../../hooks/useAnalytics';
 
 import { useUser, useClerk, useAuth } from '@clerk/clerk-react';
@@ -568,16 +569,20 @@ const BlogPostPage: React.FC<Props> = ({ blog, onBack }) => {
       )}
 
       {/* Hero */}
-      {!isReadMode && blog.image && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.99 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="w-full rounded-2xl overflow-hidden mb-10"
-          style={{ aspectRatio: '2.4 / 1' }}
-        >
-          <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
-        </motion.div>
+      {!isReadMode && (
+        blog.slug === 'howsqlactuallyworks' ? (
+          <SqlBanner />
+        ) : blog.image ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.99 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="w-full rounded-2xl overflow-hidden mb-10"
+            style={{ aspectRatio: '2.4 / 1' }}
+          >
+            <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
+          </motion.div>
+        ) : null
       )}
 
       {/* Meta */}
