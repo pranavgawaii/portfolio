@@ -157,7 +157,9 @@ export default async function handler(req, res) {
     // UTM Sources
     if (event.type === 'utm_source' && event.source) {
       const src = String(event.source).slice(0, 50);
-      data.utmSources[src] = (data.utmSources[src] || 0) + 1;
+      const pathLabel = event.path ? ` (${String(event.path).replace('/blog/', '').replace('/', 'home')})` : '';
+      const key = `${src}${pathLabel}`.slice(0, 100);
+      data.utmSources[key] = (data.utmSources[key] || 0) + 1;
     }
 
     // Unique sessions (approximate — count per day bucket)

@@ -301,7 +301,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const utmSource = searchParams.get('utm_source');
-    if (utmSource) track({ type: 'utm_source', source: utmSource.toLowerCase() });
+    if (utmSource) track({ type: 'utm_source', source: utmSource.toLowerCase(), path: window.location.pathname });
 
     const path = window.location.pathname;
     if (path.startsWith('/blog/')) {
