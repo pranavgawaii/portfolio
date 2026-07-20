@@ -20,6 +20,10 @@
             "destination": "/blog.html"
         },
         {
+            "source": "/blog/howsqlactuallyworks",
+            "destination": "/howsqlactuallyworks.html"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

@@ -45,7 +45,8 @@ export default defineConfig(() => {
           dsa: path.resolve(__dirname, 'dsa.html'),
           projects: path.resolve(__dirname, 'projects.html'),
           resume: path.resolve(__dirname, 'resume.html'),
-          blog: path.resolve(__dirname, 'blog.html')
+          blog: path.resolve(__dirname, 'blog.html'),
+          howsqlactuallyworks: path.resolve(__dirname, 'howsqlactuallyworks.html')
         },
         output: {
           manualChunks: {
