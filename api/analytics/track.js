@@ -32,7 +32,7 @@ function parseUA(ua) {
   // Windows
   const win = ua.match(/Windows NT\s*([\d.]+)/i);
   if (win) {
-    const ntMap: Record<string, string> = { '10.0': '10/11', '6.3': '8.1', '6.2': '8', '6.1': '7', '6.0': 'Vista' };
+    const ntMap = { '10.0': '10/11', '6.3': '8.1', '6.2': '8', '6.1': '7', '6.0': 'Vista' };
     const ver = ntMap[win[1]] || win[1];
     return { os: 'Windows', osVersion: ver, device: 'desktop' };
   }
