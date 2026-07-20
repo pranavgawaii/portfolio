@@ -511,7 +511,38 @@ const AdminPage: React.FC = () => {
           {/* ════════════════════════════════════════════ ANALYTICS ══ */}
           {tab === 'analytics' && (
             <div className="space-y-8">
-              <div className="flex justify-end"><RefreshBtn onClick={fetchAnalytics} loading={loadingAnalytics} /></div>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold font-sans text-text-light dark:text-text-dark tracking-tight">Campaign & Link Builder</h2>
+                <RefreshBtn onClick={fetchAnalytics} loading={loadingAnalytics} />
+              </div>
+              
+              <GlassCard className="p-5">
+                <SectionHead title="Share Trackable Link" />
+                <p className="text-xs text-text-muted-light dark:text-text-muted-dark mb-4">
+                  Select a platform below to automatically generate and copy a trackable link for your blog post. The clicks will appear in the "Traffic Sources" section.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: 'Twitter', val: 'twitter', icon: '🐦' },
+                    { label: 'LinkedIn', val: 'linkedin', icon: '💼' },
+                    { label: 'Reddit', val: 'reddit', icon: '🤖' },
+                    { label: 'Discord', val: 'discord', icon: '🎮' }
+                  ].map(platform => (
+                    <button
+                      key={platform.val}
+                      onClick={() => {
+                        const url = `https://www.pranavx.in/blog/howsqlactuallyworks?v=1&utm_source=${platform.val}`;
+                        navigator.clipboard.writeText(url);
+                        alert(`Copied ${platform.label} link: \n${url}`);
+                      }}
+                      className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-text-light dark:text-text-dark rounded-lg transition-colors border border-border-light dark:border-border-dark"
+                    >
+                      <span>{platform.icon}</span>
+                      {platform.label}
+                    </button>
+                  ))}
+                </div>
+              </GlassCard>
 
               {!analytics ? (
                 <p className="text-sm text-text-muted-light dark:text-text-muted-dark opacity-40 italic">No analytics data yet.</p>
