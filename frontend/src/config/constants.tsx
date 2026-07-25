@@ -291,7 +291,7 @@ export const BLOGS: BlogPost[] = [
     slug: "howsqlactuallyworks",
     title: "How SQL Actually Works",
     description: "Tables, queries, joins, indexes, transactions: the whole picture, drawn out. The post I wish someone had handed me before my first slow endpoint.",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2068&auto=format&fit=crop",
+    image: "/sql-banner-v2.png",
     date: "Jul 18, 2026",
     tags: ["SQL", "Databases", "Engineering"],
     platform: "Portfolio",
