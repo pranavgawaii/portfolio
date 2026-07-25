@@ -64,14 +64,24 @@ export const portfolioKB: PortfolioKB = {
   ],
 
   experience: [
-    // ── Add your work experience here ──────────────────────────────────────
-    // Example:
-    // {
-    //   company: 'Acme Corp',
-    //   role: 'Frontend Developer Intern',
-    //   duration: 'Jun 2024 – Aug 2024',
-    //   highlights: ['Built X', 'Improved Y by Z%'],
-    // },
+    {
+      company: 'Adhyay, IIT Mandi',
+      role: 'Project Intern',
+      duration: 'Jul 2026 – Present',
+      highlights: [
+        'Contributing to Adhyay, an AI-powered learning platform leveraging LLMs and RAG architecture under the Director of IIT Mandi',
+        'Executed integration & system testing and validated reliability of LLM-based workflows (Concept Explorer and Quiz Generator)'
+      ]
+    },
+    {
+      company: 'CraftaStudio (AI SaaS Startup)',
+      role: 'Software Developer',
+      duration: 'Jan 2026 – Jun 2026',
+      highlights: [
+        'Built AI-native SaaS platform with parallel code generation and block dependency graph',
+        'Implemented multi-LLM fallback chain (Claude Haiku, Groq, OpenRouter, Gemini) and BullMQ job queues'
+      ]
+    }
   ],
 
   socials: {

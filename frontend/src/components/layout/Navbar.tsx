@@ -5,7 +5,7 @@ import { useNav } from '../../App';
 import AnimatedThemeToggler from '../ui/AnimatedThemeToggler';
 import AskMeModal from '../modals/AskMeModal';
 import { useUser, useClerk } from '@clerk/clerk-react';
-import { Command, LogOut, LayoutDashboard } from 'lucide-react';
+import { Command, LogOut, LayoutDashboard, Search } from 'lucide-react';
 import { track } from '../../hooks/useAnalytics';
 
 const ADMIN_EMAIL = 'pranvgg@gmail.com';
@@ -51,7 +51,6 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
     { label: 'Projects', active: page === 'projects',                       action: goProjects,    mobile: true },
     { label: 'Blog',     active: page === 'blog' || page === 'blog-post',   action: goBlog,        mobile: true },
     { label: 'Resume',   active: page === 'resume',                         action: onResumeOpen,  mobile: true },
-    { label: 'Sheet',    active: page === 'dsa',                            action: goDSA,         mobile: false },
   ];
 
   const openSearch = () =>
@@ -115,19 +114,19 @@ const Navbar: React.FC<{ onResumeOpen: () => void }> = ({ onResumeOpen }) => {
             {/* Search — ⌘K */}
             <button
               onClick={openSearch}
-              className="hidden sm:flex items-center gap-2 px-3 py-[7px] rounded-[13px] text-[12px] font-medium
-                text-neutral-400 dark:text-neutral-500
-                hover:text-neutral-700 dark:hover:text-neutral-200
-                hover:bg-neutral-100/70 dark:hover:bg-white/[0.05]
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-[7px] rounded-[13px] text-[12px] font-medium
+                text-neutral-500 dark:text-neutral-400
+                hover:text-neutral-900 dark:hover:text-white
+                hover:bg-neutral-100/80 dark:hover:bg-white/[0.08]
                 transition-all duration-150 group"
               title="Search (⌘K)"
             >
-              <Command size={12} className="text-neutral-400 dark:text-neutral-500 group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors" />
-              <span className="hidden md:inline text-[12px]">Search</span>
-              <kbd className="hidden md:inline text-[9px] font-mono px-1 py-0.5 rounded
-                bg-neutral-100/80 dark:bg-white/[0.06]
-                border border-neutral-200/60 dark:border-white/[0.06]
-                text-neutral-400 dark:text-neutral-600">K</kbd>
+              <Search size={13} className="text-neutral-400 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors" />
+              <span className="hidden sm:inline text-[12px] font-medium">Search</span>
+              <kbd className="hidden md:inline-flex items-center text-[9px] font-mono px-1.5 py-0.5 rounded-md
+                bg-neutral-200/60 dark:bg-white/[0.08]
+                border border-neutral-300/50 dark:border-white/[0.08]
+                text-neutral-500 dark:text-neutral-400 font-bold">⌘K</kbd>
             </button>
 
             {/* Ask me */}

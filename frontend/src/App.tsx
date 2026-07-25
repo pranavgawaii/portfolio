@@ -26,13 +26,12 @@ const BlogSection      = React.lazy(() => import('./components/sections/BlogSect
 const ProjectsPage     = React.lazy(() => import('./components/sections/ProjectsPage'));
 const BlogPage         = React.lazy(() => import('./components/sections/BlogPage'));
 const BlogPostPage     = React.lazy(() => import('./components/sections/BlogPostPage'));
-const DSAPage          = React.lazy(() => import('./components/sections/DSAPage'));
 const ResumePage       = React.lazy(() => import('./components/sections/ResumePage'));
 const AdminPage        = React.lazy(() => import('./components/sections/AdminPage'));
 const NotFoundPage     = React.lazy(() => import('./components/sections/NotFoundPage'));
 
 // ─── Nav context ─────────────────────────────────────────────────────────────
-export type Page = 'home' | 'project-detail' | 'projects' | 'blog' | 'blog-post' | 'dsa' | 'resume' | 'admin' | 'not-found';
+export type Page = 'home' | 'project-detail' | 'projects' | 'blog' | 'blog-post' | 'resume' | 'admin' | 'not-found';
 
 export interface RoastEvent { text: string; id: number }
 
@@ -46,7 +45,6 @@ interface NavCtx {
   goProjects: () => void;
   goBlog: () => void;
   openBlog: (b: BlogPost) => void;
-  goDSA: () => void;
   goAdmin: () => void;
   roast: RoastEvent | null;
   triggerRoast: () => void;
@@ -62,7 +60,6 @@ export const NavContext = createContext<NavCtx>({
   goProjects: () => {},
   goBlog: () => {},
   openBlog: () => {},
-  goDSA: () => {},
   goAdmin: () => {},
   roast: null,
   triggerRoast: () => {},
@@ -276,7 +273,6 @@ const App: React.FC = () => {
   const goHome     = () => nav('home', '/');
   const goProjects = () => nav('projects', '/projects');
   const goBlog     = () => nav('blog', '/blog');
-  const goDSA      = () => nav('dsa', '/dsa');
   const openResume = () => { nav('resume', '/resume'); track({ type: 'resume_view' }); };
   const goAdmin    = () => nav('admin', '/dashboard-x7');
   
@@ -313,8 +309,6 @@ const App: React.FC = () => {
       setPage('blog');
     } else if (path === '/projects') {
       setPage('projects');
-    } else if (path === '/dsa') {
-      setPage('dsa');
     } else if (path === '/resume') {
       setPage('resume');
     } else if (path === '/dashboard-x7') {
@@ -332,8 +326,7 @@ const App: React.FC = () => {
         const slug = p.replace('/blog/', '');
         const found = BLOGS.find(b => b.slug === slug);
         if (found) { setSelectedBlog(found); setPage('blog-post'); }
-      } else if (p === '/dsa') setPage('dsa');
-      else if (p === '/resume') setPage('resume');
+      } else if (p === '/resume') setPage('resume');
       else if (p === '/dashboard-x7') setPage('admin');
     };
     window.addEventListener('popstate', onPop);
@@ -386,7 +379,6 @@ const App: React.FC = () => {
       else if (e.key === 'p') { e.preventDefault(); goProjects(); }
       else if (e.key === 'b') { e.preventDefault(); goBlog(); }
       else if (e.key === 'r') { e.preventDefault(); openResume(); }
-      else if (e.key === 's') { e.preventDefault(); goDSA(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -402,7 +394,7 @@ const App: React.FC = () => {
 
   return (
     <ClerkWrapper>
-      <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goDSA, goAdmin, roast, triggerRoast }}>
+      <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goAdmin, roast, triggerRoast }}>
         <div className="min-h-screen bg-transparent text-text-light dark:text-text-dark font-sans antialiased flex flex-col items-center">
           <StarryBackground />
           <Navbar onResumeOpen={openResume} />
@@ -444,11 +436,6 @@ const App: React.FC = () => {
                 {page === 'blog-post' && selectedBlog && (
                   <Suspense fallback={<Skel />}>
                     <BlogPostPage blog={selectedBlog} onBack={goBlog} />
-                  </Suspense>
-                )}
-                {page === 'dsa' && (
-                  <Suspense fallback={<Skel />}>
-                    <DSAPage onBack={goHome} />
                   </Suspense>
                 )}
                 {page === 'resume' && (

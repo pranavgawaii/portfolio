@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { PROJECTS } from '../../config/constants';
 import { ProjectItem } from '../../types/index';
-import { ArrowUpRight, Github, PlayCircle, Globe } from 'lucide-react';
+import { ArrowUpRight, Github, Globe } from 'lucide-react';
 import { getTechLogo } from '../ui/TechLogo';
 
 const getDomain = (url: string) => {
@@ -126,7 +126,6 @@ const ProjectEntry: React.FC<{
   const bc        = project.status ? badgeClass(project.status) : '';
   const dc        = project.status ? dotClass(project.status) : '';
   const ctx       = project.status ? contextLine(project.status) : '';
-  const hasYT     = !!project.youtube;
   const hasLink   = project.link && project.link !== project.github;
 
   return (
@@ -167,9 +166,6 @@ const ProjectEntry: React.FC<{
             )}
             {hasLink && (
               <LinkChip icon={Globe} label={getDomain(project.link!)} href={project.link!} colorClass="text-blue-500 dark:text-blue-400" />
-            )}
-            {hasYT && (
-              <LinkChip icon={PlayCircle} label="demo" href={project.youtube!} colorClass="text-red-500 dark:text-red-400" />
             )}
           </div>
           

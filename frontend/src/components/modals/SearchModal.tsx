@@ -31,14 +31,13 @@ const SearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { openBlog, openProject, goBlog, goHome, goProjects, openResume, goDSA } = useNav();
+  const { openBlog, openProject, goBlog, goHome, goProjects, openResume } = useNav();
 
   const QUICK_ACTIONS = [
     { icon: Home,     label: 'Home',       shortcut: 'G', action: goHome },
     { icon: Layers,   label: 'Projects',   shortcut: 'P', action: goProjects },
     { icon: BookOpen, label: 'Blog',       shortcut: 'B', action: goBlog },
     { icon: FileText, label: 'Resume',     shortcut: 'R', action: openResume },
-    { icon: Terminal, label: 'DSA Sheet',  shortcut: 'S', action: goDSA },
   ];
 
   const actions = query.trim().length > 0

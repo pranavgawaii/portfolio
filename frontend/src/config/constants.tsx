@@ -12,7 +12,7 @@ export const PROFILE: ProfileData = {
     { name: "LinkedIn", url: "https://linkedin.com/in/pranavgawai", icon: "linkedin" },
     { name: "GitHub", url: "https://github.com/pranavgawaii", icon: "github" },
     { name: "Medium", url: "https://medium.com/@pranavgawai", icon: "medium" },
-    { name: "Instagram", url: "https://www.instagram.com/pranavgawai_/", icon: "instagram" },
+    { name: "YouTube", url: "https://www.youtube.com/@pranavgawai_18", icon: "youtube" },
     { name: "Email", url: "mailto:pranavgawai1518@gmail.com", icon: "mail" },
   ],
   skills: [
@@ -42,11 +42,24 @@ export const EDUCATION: EducationItem[] = [
 
 export const EXPERIENCE: ExperienceItem[] = [
   {
+    id: "exp-4",
+    role: "Project Intern",
+    company: "Adhyay, IIT Mandi",
+    period: "Jul 2026 to Present",
+    type: "Current",
+    location: "Mandi, India",
+    description: [
+      "Contributing to Adhyay, an AI-powered learning platform leveraging LLMs and RAG architecture under the Director of IIT Mandi, by executing integration and system testing.",
+      "Validated the reliability of LLM-based workflows (Concept Explorer and Quiz Generator) by testing prompt inputs and verifying generated outputs."
+    ],
+    techStack: ["Python", "PyTest", "Postman", "LLM Evaluation", "Prompt Testing", "System Testing", "Integration Testing", "RAG Architecture", "Git"]
+  },
+  {
     id: "exp-3",
     role: "Software Developer",
-    company: "CraftaStudio",
-    period: "Jan 2026 to Present",
-    type: "Current",
+    company: "CraftaStudio (AI SaaS Startup)",
+    period: "Jan 2026 to Jun 2026",
+    type: "Startup",
     location: "Remote",
     logo: undefined,
     description: [
@@ -54,7 +67,7 @@ export const EXPERIENCE: ExperienceItem[] = [
       "Designed a block dependency graph (DAG) on ReactFlow canvas with Monaco Editor integration.",
       "Implemented an LLM fallback chain: Claude Haiku → Groq → OpenRouter → Gemini → Sarvam for resilient inference.",
       "Managed BullMQ job queues, Python FastAPI agent layer, and PostgreSQL via Prisma on Railway.",
-      "Filed Invention Disclosure Form with MIT-ADT's RDC-IPR Cell; applied for AWS Activate credits.",
+      "Secured AWS Activate startup credits to scale cloud infrastructure, compute, and database resources.",
     ],
     techStack: ["Next.js", "FastAPI", "ReactFlow", "Monaco Editor", "BullMQ", "Prisma", "PostgreSQL", "Claude Haiku", "Groq"]
   },
@@ -152,8 +165,7 @@ export const PROJECTS: ProjectItem[] = [
     longDescription: "MedSecure24 is a real-time medical vitals monitoring system built with end-to-end encryption. Uses AES-256 for data at rest, JWT for auth, and Socket.io for sub-2 second live transmission. Built and presented in a 24-hour national cybersecurity hackathon securing 1st place.",
     techStack: ["React", "Node.js", "PostgreSQL", "AES-256", "Socket.io", "JWT"],
     github: "https://github.com/pranavgawaii/medsecure",
-    link: "https://youtu.be/Q7ZKzBrLb5E",
-    youtube: "https://youtu.be/Q7ZKzBrLb5E",
+    link: "https://github.com/pranavgawaii/medsecure",
     status: "",
     image: "/medsecure24_preview.jpg",
     architecture: [
@@ -172,7 +184,6 @@ export const PROJECTS: ProjectItem[] = [
     techStack: ["React", "TypeScript", "Node.js", "Gemini API", "Socket.io", "Google OAuth"],
     github: "https://github.com/pranavgawaii/sahara-main",
     link: "https://github.com/pranavgawaii/sahara-main",
-    youtube: "https://youtu.be/YhirH5UDh-4",
     status: "",
     image: "/sahara_preview.jpg",
     architecture: [
@@ -270,6 +281,7 @@ export const ICONS_MAP: Record<string, any> = {
   twitter: Twitter,
   x: XIcon,
   medium: MediumIcon,
+  youtube: Youtube,
   instagram: Instagram
 };
 

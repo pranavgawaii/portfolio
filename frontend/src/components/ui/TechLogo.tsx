@@ -290,6 +290,43 @@ const LOGOS: Record<string, React.FC<{ size?: number }>> = {
       <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fill="white" fontFamily="sans-serif" fontWeight="bold" fontSize="28">Ex</text>
     </svg>
   ),
+  'pytest': ({ size = 20 }) => (
+    <svg viewBox="0 0 128 128" width={size} height={size}>
+      <rect width="128" height="128" rx="16" fill="#0A9EDC"/>
+      <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fill="#FFEE00" fontFamily="sans-serif" fontWeight="bold" fontSize="28">py.test</text>
+    </svg>
+  ),
+  'postman': ({ size = 20 }) => (
+    <svg viewBox="0 0 128 128" width={size} height={size}>
+      <rect width="128" height="128" rx="16" fill="#FF6C37"/>
+      <path fill="white" d="M64 24C41.9 24 24 41.9 24 64s17.9 40 40 40 40-17.9 40-40S86.1 24 64 24zm18 32l-14 14 6 18-18-10-18 10 6-18-14-14 18-2 8-16 8 16 18 2z"/>
+    </svg>
+  ),
+  'rag architecture': ({ size = 20 }) => (
+    <svg viewBox="0 0 128 128" width={size} height={size}>
+      <rect width="128" height="128" rx="16" fill="#8B5CF6"/>
+      <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fill="white" fontFamily="monospace" fontWeight="bold" fontSize="32">RAG</text>
+    </svg>
+  ),
+  'rag': ({ size = 20 }) => LOGOS['rag architecture']!({ size }),
+  'system testing': ({ size = 20 }) => (
+    <svg viewBox="0 0 128 128" width={size} height={size}>
+      <rect width="128" height="128" rx="16" fill="#10B981"/>
+      <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fill="white" fontFamily="monospace" fontWeight="bold" fontSize="30">SYS</text>
+    </svg>
+  ),
+  'integration testing': ({ size = 20 }) => (
+    <svg viewBox="0 0 128 128" width={size} height={size}>
+      <rect width="128" height="128" rx="16" fill="#3B82F6"/>
+      <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fill="white" fontFamily="monospace" fontWeight="bold" fontSize="30">INT</text>
+    </svg>
+  ),
+  'llm evaluation': ({ size = 20 }) => (
+    <svg viewBox="0 0 128 128" width={size} height={size}>
+      <rect width="128" height="128" rx="16" fill="#6366F1"/>
+      <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fill="white" fontFamily="monospace" fontWeight="bold" fontSize="28">EVAL</text>
+    </svg>
+  ),
 };
 
 export const getTechLogo = (tech: string): React.FC<{ size?: number }> | null => {

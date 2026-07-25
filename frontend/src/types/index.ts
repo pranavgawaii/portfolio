@@ -11,7 +11,7 @@ export interface ExperienceItem {
   period: string;
   description: string[];
   techStack?: string[];
-  type: 'Current' | 'Past' | 'Internship' | 'Part-time';
+  type: 'Current' | 'Past' | 'Internship' | 'Part-time' | 'Freelance' | 'Startup' | string;
   location?: string;
   logo?: string;
 }
@@ -41,7 +41,6 @@ export interface ProjectItem {
   github?: string;
   status?: string;
   image?: string;
-  youtube?: string;
   tech?: string[];
   architecture?: ProjectArchitectureLayer[];
 }

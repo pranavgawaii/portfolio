@@ -745,13 +745,22 @@ const AdminPage: React.FC = () => {
               {/* Recent resume log */}
               {(rs?.recentLogs?.length ?? 0) > 0 && (
                 <GlassCard className="p-5">
-                  <SectionHead title="Recent resume activity" />
+                  <SectionHead title="Recent resume activity & Recruiter Requests" />
                   <div className="space-y-0 divide-y divide-border-light dark:divide-border-dark max-h-80 overflow-y-auto">
-                    {rs!.recentLogs.map((log, i) => (
+                    {rs!.recentLogs.map((log: any, i: number) => (
                       <div key={i} className="flex items-center gap-3 py-2.5">
-                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${log.type === 'download' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-[11px] font-mono font-semibold text-text-light dark:text-text-dark capitalize">{log.type}</span>
+                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          log.type === 'download' ? 'bg-emerald-500' : log.email ? 'bg-violet-500' : 'bg-rose-500'
+                        }`} />
+                        <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+                          <span className="text-[11px] font-mono font-semibold text-text-light dark:text-text-dark capitalize">
+                            {log.type?.replace('_', ' ')}
+                          </span>
+                          {log.email && (
+                            <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-md border border-emerald-500/20 flex items-center gap-1">
+                              📩 {log.email} {log.company ? `(${log.company})` : ''}
+                            </span>
+                          )}
                           <span className="text-[10px] font-mono text-text-muted-light dark:text-text-muted-dark opacity-60">{log.deviceType}</span>
                           {log.country && <span className="text-[10px] font-mono text-text-muted-light dark:text-text-muted-dark opacity-50 truncate">{countryFlag(log.country)} {log.country}</span>}
                         </div>
