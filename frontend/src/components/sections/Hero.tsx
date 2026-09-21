@@ -4,16 +4,21 @@ import { AnimatePresence, motion } from 'motion/react';
 import ProgressiveImage from '../ui/ProgressiveImage';
 import ContactModal from '../modals/ContactModal';
 import { useNav } from '../../App';
+import { useIntroPhase, IntroReveal } from '../layout/IntroAnimation';
 
 const Hero: React.FC = () => {
   const [showContact, setShowContact] = useState(false);
   const [showZoom, setShowZoom]       = useState(false);
   const [mounted, setMounted]         = useState(false);
   const { openResume, roast } = useNav();
+  const introPhase = useIntroPhase();
 
   useEffect(() => { setMounted(true); }, []);
 
   if (!mounted) return null;
+
+  // Avatar is hidden while the floating clone handles it
+  const hideAvatar = introPhase !== 'visible' && introPhase !== 'done';
 
   return (
     <>
@@ -22,8 +27,10 @@ const Hero: React.FC = () => {
         <div className="flex items-center gap-4 mb-5">
           <div className="relative shrink-0">
             <button
+              data-hero-avatar
               onClick={() => setShowZoom(true)}
-              className="w-24 h-24 rounded-2xl overflow-hidden hover:ring-2 hover:ring-neutral-400 dark:hover:ring-neutral-500 transition-all duration-300"
+              className="w-24 h-24 rounded-2xl overflow-hidden hover:ring-2 hover:ring-neutral-400 dark:hover:ring-neutral-500 transition-shadow duration-300"
+              style={{ opacity: hideAvatar ? 0 : 1 }}
             >
               <ProgressiveImage src="/avatar.jpg" alt="Pranav Gawai" className="w-full h-full object-cover" />
             </button>
@@ -57,7 +64,7 @@ const Hero: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          <div className="flex-1 min-w-0">
+          <IntroReveal delay={0} className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h1 className="font-sans font-bold text-2xl sm:text-3xl text-text-light dark:text-text-dark tracking-tight leading-none">
                 Pranav Gawai
@@ -79,53 +86,59 @@ const Hero: React.FC = () => {
               </span>
               <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 tracking-wide">Open to roles</span>
             </div>
-          </div>
+          </IntroReveal>
         </div>
 
         {/* Bio */}
-        <p className="text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark mb-4 w-full">
-          Final year CSE student building{' '}
-          <span className="bg-blue-100/70 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded font-medium">AI-native products</span>. 
-          Competing in national hackathons. Looking for an early AI team to join.
-        </p>
+        <IntroReveal delay={0.15}>
+          <p className="text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark mb-4 w-full">
+            Final year CSE student building{' '}
+            <span className="bg-blue-100/70 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded font-medium">AI-native products</span>. 
+            Competing in national hackathons. Looking for an early AI team to join.
+          </p>
+        </IntroReveal>
 
         {/* Social icons */}
-        <div className="flex items-center gap-3 text-text-muted-light dark:text-text-muted-dark mb-6">
-          {PROFILE.socials.map(s => {
-            const Icon = ICONS_MAP[s.icon.toLowerCase()];
-            return Icon ? (
-              <a
-                key={s.name}
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative group/social hover:text-text-light dark:hover:text-text-dark transition-colors duration-200"
-              >
-                <Icon size={20} strokeWidth={1.5} />
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-sans bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 px-2 py-0.5 rounded opacity-0 group-hover/social:opacity-100 transition-opacity pointer-events-none z-20">
-                  {s.name}
-                </span>
-              </a>
-            ) : null;
-          })}
-        </div>
+        <IntroReveal delay={0.25}>
+          <div className="flex items-center justify-center gap-3 text-text-muted-light dark:text-text-muted-dark mb-6">
+            {PROFILE.socials.map(s => {
+              const Icon = ICONS_MAP[s.icon.toLowerCase()];
+              return Icon ? (
+                <a
+                  key={s.name}
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative group/social hover:text-text-light dark:hover:text-text-dark transition-colors duration-200"
+                >
+                  <Icon size={20} strokeWidth={1.5} />
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-sans bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 px-2 py-0.5 rounded opacity-0 group-hover/social:opacity-100 transition-opacity pointer-events-none z-20">
+                    {s.name}
+                  </span>
+                </a>
+              ) : null;
+            })}
+          </div>
+        </IntroReveal>
 
         {/* CTAs */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={openResume}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light dark:border-border-dark text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-all duration-200"
-          >
-            View Resume
-          </button>
-          <button
-            onClick={() => setShowContact(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light dark:border-border-dark text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-all duration-200"
-          >
-            Get in touch
-            <span className="text-text-light dark:text-text-dark">→</span>
-          </button>
-        </div>
+        <IntroReveal delay={0.35}>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              onClick={openResume}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light dark:border-border-dark text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-all duration-200"
+            >
+              View Resume
+            </button>
+            <button
+              onClick={() => setShowContact(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light dark:border-border-dark text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark hover:bg-neutral-50 dark:hover:bg-white/5 transition-all duration-200"
+            >
+              Get in touch
+              <span className="text-text-light dark:text-text-dark">→</span>
+            </button>
+          </div>
+        </IntroReveal>
       </header>
 
       <ContactModal isOpen={showContact} onClose={() => setShowContact(false)} />
