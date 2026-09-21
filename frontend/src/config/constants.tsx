@@ -75,7 +75,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     id: "exp-2",
     role: "Full Stack Developer",
     company: "Danges Academy",
-    period: "Nov 2025 to Present",
+    period: "Nov 2025 to Dec 2025",
     type: "Freelance",
     location: "Freelance",
     logo: "/dange.png",
