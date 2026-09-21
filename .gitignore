@@ -31,3 +31,6 @@ blog-banner-design/
 
 # AI Coding Assistant Configs
 .claude/
+
+# Assets / Generators
+s3-banner/
