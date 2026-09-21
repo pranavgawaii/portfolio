@@ -20,7 +20,7 @@ const KB: Array<{ patterns: RegExp; answer: string; demo?: 'auren' }> = [
   },
   {
     patterns: /experience|job|work|internship|company|craftastudio|danges|yes boss/i,
-    answer: "I'm currently a Software Developer at **CraftaStudio** (Jan 2026 – Present), building an AI-native code generation platform. I also freelance for **Danges Academy** (Nov 2025). Previously interned at **Yes Boss Technology** (Jun–Sep 2025) building Django REST APIs, improving latency by ~30%.",
+    answer: "I'm currently a Software Developer at **CraftaStudio** (Jan 2026 – Present), building an AI-native code generation platform. I also freelanced for **Danges Academy** (Nov 2025 – Dec 2025). Previously interned at **Yes Boss Technology** (Jun–Sep 2025) building Django REST APIs, improving latency by ~30%.",
   },
   {
     patterns: /skill|tech|stack|language|framework/i,
