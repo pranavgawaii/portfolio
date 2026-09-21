@@ -5,6 +5,7 @@ import { playClick, playGeneralClick } from './lib/clickSound';
 import { EXPERIENCE, PROJECTS, BLOGS, BlogPost } from './config/constants';
 import Hero from './components/sections/Hero';
 import Navbar from './components/layout/Navbar';
+import IntroAnimation, { IntroPhase, IntroContext, IntroReveal } from './components/layout/IntroAnimation';
 import StarryBackground from './components/ui/StarryBackground';
 import { AnimatePresence, motion } from 'motion/react';
 import SearchModal from './components/modals/SearchModal';
@@ -97,68 +98,84 @@ const HomePage: React.FC<{ openProject: (p: ProjectItem) => void }> = ({ openPro
   const { goProjects } = useNav();
   return (
   <>
-    {/* Hero */}
+    {/* Hero — content reveal is handled internally via IntroReveal */}
     <section id="home" className="mb-14">
       <Hero />
     </section>
 
     {/* Experience */}
-    <Sec id="experience" title="Experience">
-      <Suspense fallback={<Skel />}>
-        <div className="space-y-1">
-          {EXPERIENCE.map(exp => <ExperienceCard key={exp.id} experience={exp} />)}
-        </div>
-      </Suspense>
-    </Sec>
+    <IntroReveal delay={0.5}>
+      <Sec id="experience" title="Experience">
+        <Suspense fallback={<Skel />}>
+          <div className="space-y-1">
+            {EXPERIENCE.map(exp => <ExperienceCard key={exp.id} experience={exp} />)}
+          </div>
+        </Suspense>
+      </Sec>
+    </IntroReveal>
 
     {/* Projects — top 3 only */}
-    <Sec id="projects" title="Projects">
-      <Suspense fallback={<Skel />}>
-        <div className="flex flex-col">
-          {PROJECTS.slice(0, 3).map(p => (
-            <ProjectCard key={p.id} project={p} onClick={() => openProject(p)} />
-          ))}
-        </div>
-        <div className="mt-5 flex justify-center">
-          <button
-            onClick={goProjects}
-            className="text-sm text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark transition-colors underline underline-offset-4 decoration-dashed"
-          >
-            Show all projects →
-          </button>
-        </div>
-      </Suspense>
-    </Sec>
+    <IntroReveal delay={0.65}>
+      <Sec id="projects" title="Projects">
+        <Suspense fallback={<Skel />}>
+          <div className="flex flex-col">
+            {PROJECTS.slice(0, 3).map(p => (
+              <ProjectCard key={p.id} project={p} onClick={() => openProject(p)} />
+            ))}
+          </div>
+          <div className="mt-5 flex justify-center">
+            <button
+              onClick={goProjects}
+              className="text-sm text-text-muted-light dark:text-text-muted-dark hover:text-text-light dark:hover:text-text-dark transition-colors underline underline-offset-4 decoration-dashed"
+            >
+              Show all projects →
+            </button>
+          </div>
+        </Suspense>
+      </Sec>
+    </IntroReveal>
 
     {/* Tech Expertise */}
-    <section id="stack" className="mb-14">
-      <Suspense fallback={<Skel />}><TechMarquee /></Suspense>
-    </section>
+    <IntroReveal delay={0.8}>
+      <section id="stack" className="mb-14">
+        <Suspense fallback={<Skel />}><TechMarquee /></Suspense>
+      </section>
+    </IntroReveal>
 
     {/* Activity heatmap */}
-    <Sec id="github" title="Activity">
-      <Suspense fallback={<Skel />}><GitHubActivity /></Suspense>
-    </Sec>
+    <IntroReveal delay={0.9}>
+      <Sec id="github" title="Activity">
+        <Suspense fallback={<Skel />}><GitHubActivity /></Suspense>
+      </Sec>
+    </IntroReveal>
 
     {/* Education */}
-    <Sec id="education" title="Education">
-      <Suspense fallback={<Skel />}><Education /></Suspense>
-    </Sec>
+    <IntroReveal delay={1.0}>
+      <Sec id="education" title="Education">
+        <Suspense fallback={<Skel />}><Education /></Suspense>
+      </Sec>
+    </IntroReveal>
 
     {/* About */}
-    <Sec id="about" title="About">
-      <Suspense fallback={<Skel />}><AboutMe /></Suspense>
-    </Sec>
+    <IntroReveal delay={1.1}>
+      <Sec id="about" title="About">
+        <Suspense fallback={<Skel />}><AboutMe /></Suspense>
+      </Sec>
+    </IntroReveal>
 
     {/* Blog */}
-    <Sec id="blog" title="Blog">
-      <Suspense fallback={<Skel />}>
-        <BlogSection />
-      </Suspense>
-    </Sec>
+    <IntroReveal delay={1.15}>
+      <Sec id="blog" title="Blog">
+        <Suspense fallback={<Skel />}>
+          <BlogSection />
+        </Suspense>
+      </Sec>
+    </IntroReveal>
 
     {/* Quote */}
-    <Suspense fallback={null}><QuotesCTA /></Suspense>
+    <IntroReveal delay={1.2}>
+      <Suspense fallback={null}><QuotesCTA /></Suspense>
+    </IntroReveal>
   </>
   );
 };
@@ -225,6 +242,13 @@ const App: React.FC = () => {
   const [pageKey, setPageKey]         = useState(0);
   const [roast, setRoast]             = useState<RoastEvent | null>(null);
   const [boom, setBoom]               = useState<number | null>(null);
+  // Intro animation — phase-driven state machine
+  const [introPhase, setIntroPhase] = useState<IntroPhase>(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 'done';
+    const path = typeof window !== 'undefined' ? window.location.pathname : '/';
+    if (path !== '/' && path !== '') return 'done';
+    return 'visible';
+  });
   const roastCountRef = useRef(0);
   const roastIdRef = useRef(0);
   const boomIdRef = useRef(0);
@@ -394,10 +418,34 @@ const App: React.FC = () => {
 
   return (
     <ClerkWrapper>
+      <IntroContext.Provider value={introPhase}>
       <NavContext.Provider value={{ page, selectedProject, selectedBlog, goHome, openProject, openResume, goProjects, goBlog, openBlog, goAdmin, roast, triggerRoast }}>
         <div className="min-h-screen bg-transparent text-text-light dark:text-text-dark font-sans antialiased flex flex-col items-center">
           <StarryBackground />
-          <Navbar onResumeOpen={openResume} />
+
+          {/* Navbar — fades out during collapse, back in during rebuild */}
+          <motion.div
+            className="w-full"
+            initial={false}
+            animate={{
+              opacity: introPhase === 'collapsing' || introPhase === 'centered' ? 0 : 1,
+              y: introPhase === 'collapsing' || introPhase === 'centered' ? -10 : 0,
+            }}
+            transition={
+              introPhase === 'rebuilding'
+                ? { duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }
+                : introPhase === 'collapsing'
+                  ? { duration: 0.4, ease: [0.4, 0, 1, 1] }
+                  : { duration: 0 }
+            }
+          >
+            <Navbar onResumeOpen={openResume} />
+          </motion.div>
+
+          {/* Intro animation overlay — avatar clone + text */}
+          {introPhase !== 'done' && (
+            <IntroAnimation onPhaseChange={setIntroPhase} />
+          )}
 
           {/* Boom payoff — kicks in from the 5th click onward: a strobing whiteout */}
           <AnimatePresence>
@@ -494,6 +542,7 @@ const App: React.FC = () => {
           </AnimatePresence>
         </div>
       </NavContext.Provider>
+      </IntroContext.Provider>
     </ClerkWrapper>
   );
 };
