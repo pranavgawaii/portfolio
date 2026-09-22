@@ -300,7 +300,7 @@ const AdminPage: React.FC = () => {
     .filter(([, d]) => (d as { total: number; count: number }).count > 0)
     .map(([path, d]) => ({ path, avg: Math.round((d as { total: number; count: number }).total / (d as { total: number; count: number }).count) }))
     .sort((a, b) => b.avg - a.avg).slice(0, 6);
-  const deviceTotal  = Object.values(analytics?.deviceBreakdown || { mobile: 0, tablet: 0, desktop: 0 }).reduce((a, b) => a + b, 0);
+  const deviceTotal  = Object.values(analytics?.deviceBreakdown || { mobile: 0, tablet: 0, desktop: 0 }).reduce((a, b) => (a as number) + (b as number), 0) as number;
   const maxPage      = topPages[0]?.[1] || 1;
   const maxBlog      = topBlogs[0]?.[1] || 1;
   const maxProject   = topProjects[0]?.[1] || 1;
@@ -310,8 +310,8 @@ const AdminPage: React.FC = () => {
 
   // Resume
   const rs = analytics?.resumeSummary;
-  const resumeTopCountries = rs ? Object.entries(rs.countryBreakdown).sort((a, b) => b[1] - a[1]).slice(0, 6) : [];
-  const resumeMaxCountry   = resumeTopCountries[0]?.[1] || 1;
+  const resumeTopCountries = rs ? Object.entries(rs.countryBreakdown).sort((a, b) => (b[1] as number) - (a[1] as number)).slice(0, 6) : [];
+  const resumeMaxCountry   = (resumeTopCountries[0]?.[1] as number) || 1;
 
   // Blog scroll funnels
   const blogFunnels = topBlogs.map(([slug]) => {
@@ -406,7 +406,7 @@ const AdminPage: React.FC = () => {
               </GlassCard>
 
               {/* Device breakdown */}
-              {analytics && deviceTotal > 0 && (
+              {analytics && (deviceTotal as number) > 0 && (
                 <GlassCard className="p-5">
                   <SectionHead title="Device type" />
                   <div className="flex justify-around py-2">
@@ -733,7 +733,7 @@ const AdminPage: React.FC = () => {
                         <p className="text-[11px] font-mono text-text-muted-light dark:text-text-muted-dark flex-1 truncate">{country}</p>
                         <div className="w-24 h-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
                           <motion.div className="h-full rounded-full bg-rose-500" initial={{ width: 0 }}
-                            animate={{ width: `${(count / resumeMaxCountry) * 100}%` }} transition={{ duration: 0.7 }} />
+                            animate={{ width: `${((count as number) / (resumeMaxCountry as number)) * 100}%` }} transition={{ duration: 0.7 }} />
                         </div>
                         <p className="text-[11px] font-mono font-bold text-text-light dark:text-text-dark w-8 text-right tabular-nums">{count}</p>
                       </div>
