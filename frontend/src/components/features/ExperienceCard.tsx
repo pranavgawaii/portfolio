@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getTechLogo } from '../ui/TechLogo';
 
-const TechChip = ({ tech }: { tech: string }) => {
+const TechChip = ({ tech }: { tech: string; key?: React.Key }) => {
   const Logo = getTechLogo(tech);
   const [hovered, setHovered] = React.useState(false);
   return (
