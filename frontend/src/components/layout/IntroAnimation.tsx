@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 import { motion } from 'motion/react';
 
 // ─── Shared types & context ──────────────────────────────────────────────────
-export type IntroPhase = 'visible' | 'collapsing' | 'centered' | 'rebuilding' | 'done';
+export type IntroPhase = 'visible' | 'collapsing' | 'centered' | 'rebuilding' | 'rebuilding-landed' | 'done';
 
 export const IntroContext = createContext<IntroPhase>('done');
 export const useIntroPhase = () => useContext(IntroContext);
@@ -20,7 +20,8 @@ interface IntroRevealProps {
 
 export const IntroReveal: React.FC<IntroRevealProps> = ({ delay = 0, children, className }) => {
   const phase = useIntroPhase();
-  const shouldShow = phase === 'visible' || phase === 'done' || phase === 'rebuilding';
+  const isRebuilding = phase === 'rebuilding' || phase === 'rebuilding-landed';
+  const shouldShow = phase === 'visible' || phase === 'done' || isRebuilding;
 
   return (
     <motion.div
@@ -32,7 +33,7 @@ export const IntroReveal: React.FC<IntroRevealProps> = ({ delay = 0, children, c
           : { opacity: 0, filter: 'blur(8px)', y: 16 }
       }
       transition={
-        phase === 'rebuilding'
+        isRebuilding
           ? { duration: 0.7, delay, ease: EASE_OUT_QUINT }
           : phase === 'collapsing'
             ? { duration: 0.45, ease: EASE_IN }
@@ -66,7 +67,7 @@ const AVATAR_SIZE = 120;
 const GREETING = "Hey, I'm Pranav";
 
 const IntroAnimation: React.FC<IntroAnimationProps> = ({ onPhaseChange }) => {
-  const [showClone, setShowClone] = useState(false);
+  const [showClone, setShowClone] = useState(true);
   const [avatarPos, setAvatarPos] = useState<'above' | 'center' | 'hero'>('above');
   const [textState, setTextState] = useState<'hidden' | 'revealing' | 'exiting'>('hidden');
   const [cloneOpacity, setCloneOpacity] = useState(1);
@@ -113,42 +114,37 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onPhaseChange }) => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const t = (fn: () => void, ms: number) => { timers.push(setTimeout(fn, ms)); };
 
-    // T=200 — Collapse: content fades, clone appears above viewport
+    // T=100 — Avatar drops from above to center immediately
+    t(() => setAvatarPos('center'), 100);
+
+    // T=900 — Centered phase
+    t(() => onPhaseChange('centered'), 900);
+
+    // T=1400 — Text reveals letter-by-letter
+    t(() => setTextState('revealing'), 1400);
+
+    // T=2300 — Text exits AND avatar starts returning to hero
     t(() => {
-      onPhaseChange('collapsing');
-      setShowClone(true);
-    }, 200);
-
-    // T=500 — Avatar drops from above to center
-    t(() => setAvatarPos('center'), 500);
-
-    // T=1300 — Centered phase
-    t(() => onPhaseChange('centered'), 1300);
-
-    // T=1800 — Text reveals letter-by-letter
-    t(() => setTextState('revealing'), 1800);
-
-    // T=2700 — Rebuild: content starts reappearing, text exits
-    t(() => {
-      onPhaseChange('rebuilding');
       setTextState('exiting');
-    }, 2700);
-
-    // T=3500 — Re-measure & avatar moves to hero position
-    t(() => {
       measure();
       forceRender(n => n + 1);
       setAvatarPos('hero');
-    }, 3500);
+    }, 2300);
 
-    // T=4150 — Phase done: real avatar snaps in instantly. Start fading out clone.
+    // T=2500 — Mid-flight: start rebuilding the page content behind the avatar
+    t(() => onPhaseChange('rebuilding'), 2500);
+
+    // T=2950 — Avatar arrived at hero. Show real avatar, crossfade clone out.
     t(() => {
-      onPhaseChange('done');
+      onPhaseChange('rebuilding-landed');
       setCloneOpacity(0);
-    }, 4150);
+    }, 2950);
 
-    // T=4400 — Unmount clone completely
-    t(() => setDone(true), 4400);
+    // T=3200 — Clone visual fully hidden, unmount it
+    t(() => setDone(true), 3200);
+
+    // T=4600 — Content has finished rebuilding, mark entire intro as 'done'
+    t(() => onPhaseChange('done'), 4600);
 
     return () => timers.forEach(clearTimeout);
   }, [ready]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -156,7 +152,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onPhaseChange }) => {
   // ── Render ─────────────────────────────────────────────────────────────────
   if (done || !ready) return null;
 
-  const heroRect = heroRectRef.current!;
+  const hasHeroRect = !!heroRectRef.current;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
@@ -165,9 +161,10 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onPhaseChange }) => {
   const cloneCenterTop = vh / 2 - AVATAR_SIZE / 2 - 16;
 
   // Transform offset: center → hero position
-  const heroOffsetX = (heroRect.left + heroRect.width / 2) - vw / 2;
-  const heroOffsetY = (heroRect.top + heroRect.height / 2) - (vh / 2 - 16);
-  const heroScale = heroRect.width / AVATAR_SIZE;
+  const heroOffsetX = hasHeroRect ? (heroRectRef.current!.left + heroRectRef.current!.width / 2) - vw / 2 : 0;
+  const heroOffsetY = hasHeroRect ? (heroRectRef.current!.top + heroRectRef.current!.height / 2) - (vh / 2 - 16) : 0;
+
+  const heroScale = hasHeroRect ? heroRectRef.current!.width / AVATAR_SIZE : 1;
 
   // Drop distance: far enough above the viewport to be invisible
   const aboveY = -(cloneCenterTop + AVATAR_SIZE + 60);
@@ -183,7 +180,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onPhaseChange }) => {
   // Avatar transition — spring for the drop, smooth ease for the return
   const avatarTransition =
     avatarPos === 'center'
-      ? { type: 'spring' as const, damping: 14, stiffness: 80, mass: 1.2 }
+      ? { type: 'spring' as const, damping: 15, stiffness: 60, mass: 1.5 }
       : avatarPos === 'hero'
         ? { duration: 0.65, ease: EASE_OUT_QUINT }
         : { duration: 0 };
