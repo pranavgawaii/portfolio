@@ -10,15 +10,22 @@ const Hero: React.FC = () => {
   const [showContact, setShowContact] = useState(false);
   const [showZoom, setShowZoom]       = useState(false);
   const [mounted, setMounted]         = useState(false);
+  const [copied, setCopied]           = useState(false);
   const { openResume, roast } = useNav();
   const introPhase = useIntroPhase();
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText('pranavgawai1518@gmail.com');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => { setMounted(true); }, []);
 
   if (!mounted) return null;
 
   // Avatar is hidden while the floating clone handles it
-  const hideAvatar = introPhase !== 'visible' && introPhase !== 'done';
+  const hideAvatar = introPhase === 'collapsing' || introPhase === 'centered' || introPhase === 'rebuilding';
 
   return (
     <>
@@ -26,6 +33,7 @@ const Hero: React.FC = () => {
         {/* Identity block */}
         <div className="flex items-center gap-4 mb-5">
           <div className="relative shrink-0">
+
             <button
               data-hero-avatar
               onClick={() => setShowZoom(true)}
@@ -94,7 +102,8 @@ const Hero: React.FC = () => {
           <p className="text-sm leading-relaxed text-text-muted-light dark:text-text-muted-dark mb-4 w-full">
             Final year CSE student building{' '}
             <span className="bg-blue-100/70 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded font-medium">AI-native products</span>. 
-            Competing in national hackathons. Looking for an early AI team to join.
+            Competing in national hackathons. Looking for an early AI team to join.{' '}
+            Currently building in public and shipping fast.
           </p>
         </IntroReveal>
 
@@ -136,6 +145,23 @@ const Hero: React.FC = () => {
             >
               Get in touch
               <span className="text-text-light dark:text-text-dark">→</span>
+            </button>
+            <button
+              onClick={copyEmail}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-border-light dark:border-border-dark transition-all duration-200 relative overflow-hidden"
+              style={copied ? { borderColor: 'rgb(34 197 94 / 0.5)', color: 'rgb(34 197 94)' } : { color: 'var(--text-muted)' }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {copied ? (
+                  <motion.span key="copied" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex items-center gap-1.5">
+                    ✓ Copied!
+                  </motion.span>
+                ) : (
+                  <motion.span key="copy" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }} className="flex items-center gap-1.5">
+                    Copy email
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </IntroReveal>
