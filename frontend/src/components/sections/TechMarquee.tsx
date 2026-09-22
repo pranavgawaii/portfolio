@@ -33,7 +33,7 @@ const SKILL_MAP: Record<string, string> = {
   "Clerk": "clerk",
 };
 
-const Chip = ({ skill }: { skill: string }) => {
+const Chip = ({ skill }: { skill: string; key?: React.Key }) => {
   const icon = SKILL_MAP[skill] || skill.toLowerCase().replace(/[\s.]+/g, '');
   const isInvertible = ["nextdotjs", "vercel", "github", "clerk", "openrouter", "prisma"].includes(icon);
   
