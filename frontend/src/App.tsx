@@ -247,7 +247,7 @@ const App: React.FC = () => {
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 'done';
     const path = typeof window !== 'undefined' ? window.location.pathname : '/';
     if (path !== '/' && path !== '') return 'done';
-    return 'visible';
+    return 'collapsing';
   });
   const roastCountRef = useRef(0);
   const roastIdRef = useRef(0);
@@ -315,6 +315,17 @@ const App: React.FC = () => {
     const h = (e: Event) => { const blog = (e as CustomEvent).detail; if (blog) openBlog(blog); };
     window.addEventListener('open-blog', h);
     return () => window.removeEventListener('open-blog', h);
+  }, []);
+
+  // Hide bottom blur when user reaches the footer
+  const [atBottom, setAtBottom] = useState(false);
+  useEffect(() => {
+    const onScroll = () => {
+      const distFromBottom = document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
+      setAtBottom(distFromBottom < 100);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // ── Parse URL on mount so direct links work ─────────────────────────────
@@ -503,6 +514,14 @@ const App: React.FC = () => {
                 )}
             </motion.main>
           </AnimatePresence>
+
+          {/* Premium bottom-blur fade — hides near footer */}
+          {!atBottom && (
+            <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-20 z-40 transition-opacity duration-500">
+              <div className="absolute inset-0 backdrop-blur-[6px] [mask-image:linear-gradient(to_top,black_0%,black_40%,transparent_100%)]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-bg-dark via-bg-light/60 dark:via-bg-dark/60 to-transparent" />
+            </div>
+          )}
 
           {/* Footer outside AnimatePresence — never flickers */}
           <div className="w-full">
