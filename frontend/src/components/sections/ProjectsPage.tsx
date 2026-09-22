@@ -42,7 +42,7 @@ interface Props {
 }
 
 /* ── TechChip identical to ExperienceCard ─────────────────────────────────── */
-const TechChip = ({ tech }: { tech: string }) => {
+const TechChip = ({ tech }: { tech: string; key?: React.Key }) => {
   const Logo = getTechLogo(tech);
   const [hovered, setHovered] = React.useState(false);
   return (
