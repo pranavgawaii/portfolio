@@ -295,8 +295,10 @@ const App: React.FC = () => {
     setPage(p);
     setPageKey(k => k + 1);
     window.history.pushState({}, '', url);
+    // instant avoids fighting the opacity fade with a simultaneous scroll animation
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     track({ type: 'page_view', path: url });
+    // 320ms > 150ms fade-in, so footer appears only after content is visible
     footerTimerRef.current = setTimeout(() => setFooterReady(true), 320);
   };
 
