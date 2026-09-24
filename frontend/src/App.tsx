@@ -297,6 +297,7 @@ const App: React.FC = () => {
     window.history.pushState({}, '', url);
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     track({ type: 'page_view', path: url });
+    footerTimerRef.current = setTimeout(() => setFooterReady(true), 320);
   };
 
   const goHome     = () => nav('home', '/');
