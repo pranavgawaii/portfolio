@@ -295,7 +295,7 @@ const App: React.FC = () => {
     setPage(p);
     setPageKey(k => k + 1);
     window.history.pushState({}, '', url);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     track({ type: 'page_view', path: url });
   };
 
