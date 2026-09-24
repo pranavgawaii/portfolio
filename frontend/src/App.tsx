@@ -260,6 +260,7 @@ const App: React.FC = () => {
   useEffect(() => () => {
     if (roastTimerRef.current) clearTimeout(roastTimerRef.current);
     if (boomTimerRef.current) clearTimeout(boomTimerRef.current);
+    if (footerTimerRef.current) clearTimeout(footerTimerRef.current);
   }, []);
 
   useEffect(() => {
