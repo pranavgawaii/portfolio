@@ -529,8 +529,15 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {/* Footer outside AnimatePresence — never flickers */}
-          <div className="w-full">
+          {/* Footer — opacity gate prevents flash before page content */}
+          <div
+            className="w-full"
+            style={{
+              opacity: footerReady ? 1 : 0,
+              transition: footerReady ? 'opacity 0.2s ease-out' : 'none',
+              pointerEvents: footerReady ? 'auto' : 'none',
+            }}
+          >
             <Suspense fallback={null}><Footer /></Suspense>
           </div>
 
