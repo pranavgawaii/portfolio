@@ -242,6 +242,8 @@ const App: React.FC = () => {
   const [pageKey, setPageKey]         = useState(0);
   const [roast, setRoast]             = useState<RoastEvent | null>(null);
   const [boom, setBoom]               = useState<number | null>(null);
+  const [footerReady, setFooterReady] = useState(true);
+  const footerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Intro animation — phase-driven state machine
   const [introPhase, setIntroPhase] = useState<IntroPhase>(() => {
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 'done';
