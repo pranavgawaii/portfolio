@@ -536,6 +536,7 @@ const App: React.FC = () => {
               opacity: footerReady ? 1 : 0,
               transition: footerReady ? 'opacity 0.2s ease-out' : 'none',
               pointerEvents: footerReady ? 'auto' : 'none',
+              willChange: footerReady ? 'auto' : 'opacity',
             }}
           >
             <Suspense fallback={null}><Footer /></Suspense>
