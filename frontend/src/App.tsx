@@ -290,6 +290,8 @@ const App: React.FC = () => {
   };
 
   const nav = (p: Page, url: string) => {
+    setFooterReady(false);
+    if (footerTimerRef.current) clearTimeout(footerTimerRef.current);
     setPage(p);
     setPageKey(k => k + 1);
     window.history.pushState({}, '', url);
