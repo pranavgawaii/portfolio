@@ -529,7 +529,7 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {/* Footer — opacity gate prevents flash before page content */}
+          {/* Footer — stays mounted always, opacity toggled on nav to prevent flash */}
           <div
             className="w-full"
             style={{
